@@ -44,7 +44,7 @@ body::-webkit-scrollbar-thumb:active {
 :root {
   --base: #191a1b;
   --fore: #ffffff;
-  --foreSecondary: #cacaca;
+  --primSecondary: #cacaca;
   --accent: #23b2c5;
   --display: Syne;
   --content: Inter;
@@ -59,7 +59,7 @@ body::-webkit-scrollbar-thumb:active {
 [data-theme=light] {
   --base: #f8f4e8;
   --fore: #000000;
-  --foreSecondary: #3f3f3f;
+  --primSecondary: #3f3f3f;
   --accent: #eb8d40;
   --brightness: brightness(.8);
 }

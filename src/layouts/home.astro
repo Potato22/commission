@@ -43,6 +43,20 @@
     <title>Potto Commissions</title>
   </head>
   <body>
+    <div class="themetogglecont">
+      <div class="togglecont" title="Change to Light Mode">
+        <div class="splash"></div><label class="checkboxtrig"
+          ><input type="checkbox" id="ttogle" />
+          <div class="material-icons-outlined theme-icon">light_mode</div>
+        </label>
+      </div>
+      <a href="tos.astro" class="floatwindows">
+        <div>
+          <div class="floatwindowsstring">Open TOS</div>
+        </div>
+      </a>
+    </div>
+
     <slot />
 
     <div class="endOfPage">
@@ -79,7 +93,7 @@
   .footer {
     display: flex;
     justify-content: center;
-	padding-bottom: 1.5em;
+    padding-bottom: 1.5em;
   }
 
   .flexbox1 {
@@ -116,7 +130,7 @@
 
   .tosPageLink {
     font-family: var(--display), sans-serif;
-    color: var(--textD) !important;
+    color: var(--accent) !important;
 
     &:hover {
       text-decoration: underline !important;

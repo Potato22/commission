@@ -1,5 +1,5 @@
 ---
-import Type from "./TypeCards.astro";
+import Type from "../TypeCards.astro";
 ---
 
 <div class="mainSelections" id="menu">
@@ -7,6 +7,7 @@ import Type from "./TypeCards.astro";
     <div class="label" id="label">
       <span>Comm</span><span id="typewriter"></span>
     </div>
+    <span class="labelSecondary">Available Options</span>
     <script>
       const text = "ission";
       const typewriter = document.getElementById("typewriter");
@@ -23,7 +24,8 @@ import Type from "./TypeCards.astro";
 
         // Calculate progress based on element position
         const progress = Math.min(
-          Math.max(
+
+        Math.max(
             (triggerPoint - rect.top) / (triggerPoint * 0.5), // Adjust 0.5 to control animation length
             0
           ),
@@ -45,7 +47,8 @@ import Type from "./TypeCards.astro";
   <style>
     #pageLabel {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       padding: 2rem 0;
     }
     .label {
@@ -57,44 +60,45 @@ import Type from "./TypeCards.astro";
       color: var(--base);
       border-radius: 15px;
     }
+    .labelSecondary {
+      font-family: var(--doto);
+      font-size: 1em;
+      margin-top: .5em;
+      color: var(--accent);
+      font-weight: bold;
+    }
   </style>
+
+
   <Type
     typeTitle="Sketch Book"
     description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     images={[
       { src: "/imgs/trainstation.jpg", alt: "grow" },
       { src: "/imgs/trainstation.jpg", alt: "grow" },
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
     ]}
     price="10"
     tags={["Stackable", "No Backgrounds", "Simple Backgrounds"]}
-    isDisabled
   />
   <Type
-    typeTitle="jyeah"
+    typeTitle="Headshot"
     description="im kill"
     images={[
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
     ]}
     price="73922"
     tags={["best selling", "fuckoff"]}
   />
   <Type
-    typeTitle="1"
+    typeTitle="Fullbody"
     description="one"
     images={[
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
       { src: "/imgs/trainstation.jpg", alt: "grow" },
     ]}
     price="1"
     tags={["1", "one", "èèn"]}
   />
+
+
 </div>
 
 <style>
@@ -104,5 +108,15 @@ import Type from "./TypeCards.astro";
     flex-direction: column;
     align-items: center;
     gap: 2rem;
+    user-select: none;
   }
 </style>
+
+<div id="configModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+    <div id="modalBody">
+      <!-- Config UI will be injected here -->
+    </div>
+  </div>
+</div>
