@@ -9,6 +9,7 @@ export interface CardData {
     }[];
     price: string;
     tags: string[];
+    isDisabled?: boolean;
 }
 
 export const bodyTypes = ["pony", "semi-anthro", "anthro"];

@@ -18,8 +18,8 @@ function getTagClass(tag: string) {
 }
 ---
 
-<PersistentWindow ignoreScrollCheck />
 <Configurator>
+  <PersistentWindow ignoreScrollCheck />
   <div class="cardBody" id={cardId} transition:name={`cardIMGG-${cardId}`}>
     <div class="imgGrid">
       <div class="imgContainer">
@@ -64,7 +64,8 @@ function getTagClass(tag: string) {
       </div>
     </div>
     <div class="infobox">
-      <div class="infocel1">
+      <div id="backB" class="material-symbols-rounded">arrow_back</div>
+      <div class="infocell1">
         <div class="typeTitle">{cardData.title}</div>
         <div class="description" set:html={cardData.description} />
         <div class="tags">
@@ -87,7 +88,16 @@ function getTagClass(tag: string) {
 </div>
 
 <script>
-  //document.documentElement.setAttribute('data-theme', 'light');
+  function inibackButton() {
+    const back = document.getElementById("backB") as HTMLElement;
+    back.addEventListener("click", () => {
+      window.history.back();
+    });
+  }
+  inibackButton();
+  document.addEventListener("astro:after-swap", () => {
+    inibackButton();
+  });
 </script>
 
 <style>
@@ -101,8 +111,8 @@ function getTagClass(tag: string) {
     background-color: var(--base);
     padding: 1rem;
     transition: width var(--animDur) var(--sleek);
-    //border-radius: var(--cardRounding);
-    border: 1px solid white;
+    border-radius: 0px;
+    //border: 1px solid white;
     transition:
       background 0.2s var(--sleek),
       border 0.2s var(--sleek);
@@ -116,14 +126,31 @@ function getTagClass(tag: string) {
 
   .infobox {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     color: var(--fore);
     padding: 0 1em;
     position: relative;
     transition: color 0.2s var(--sleek);
   }
 
-  .infocel1 {
+  #backB {
+    color: var(--fore);
+    border: 1px solid var(--fore);
+    align-self: flex-start;
+    font-size: 6em;
+    border-radius: calc(var(--cardRounding) / 1.5);
+    transition: all 0.2s var(--sleek);
+
+    &:hover {
+      background: var(--prim);
+      border-color: var(--prim);
+      color: var(--base);
+      cursor: pointer;
+      border-radius: 10%;
+    }
+  }
+
+  .infocell1 {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -176,7 +203,7 @@ function getTagClass(tag: string) {
     }
   }
 
-  .infocel2 {
+  .infocell2 {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -193,21 +220,22 @@ function getTagClass(tag: string) {
     justify-content: flex-end;
     font-size: 3em;
     transition: all var(--animDur) var(--sleek);
+    margin-top: 1em;
   }
 
   .startsFrom {
     font-family: var(--content);
     font-weight: 400;
-    font-size: 0.3em;
+    font-size: .5em;
     color: var(--foreSecondary);
-    transform: translateY(-0.5em);
+    transform: translateY(-0.7em);
     transition: color 0.2s var(--sleek);
   }
 
   .price {
     font-family: var(--content);
     font-weight: 900;
-    font-size: 1em;
+    font-size: 2em;
     color: var(--fore);
     transition: color 0.2s var(--sleek);
   }
@@ -229,20 +257,8 @@ function getTagClass(tag: string) {
     --imgGridRounding: calc(var(--cardRounding) / 1.5);
   }
 
-  .imgContainer:nth-child(1) {
-    border-radius: var(--imgGridRounding) 0 0 0;
-  }
-
-  .imgContainer:nth-child(2) {
-    border-radius: 0 var(--imgGridRounding) 0 0;
-  }
-
-  .imgContainer:nth-child(3) {
-    border-radius: 0 0 0 var(--imgGridRounding);
-  }
-
-  .imgContainer:nth-child(4) {
-    border-radius: 0 0 var(--imgGridRounding) 0;
+  .imgContainer {
+    border-radius: var(--imgGridRounding);
   }
 
   .img {

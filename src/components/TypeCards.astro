@@ -13,7 +13,6 @@ interface Props {
   price: string;
   tags: string[];
   isDisabled?: boolean;
-  isExpanded?: boolean;
 }
 const {
   typeTitle,
@@ -22,7 +21,6 @@ const {
   price,
   tags,
   isDisabled = false,
-  isExpanded = false,
 } = Astro.props;
 
 if (images.length > 4) {
@@ -44,9 +42,10 @@ if (images.length > 4) {
 
 const cardId = typeTitle.toLowerCase().replace(/\s+/g, "-");
 
-const disabled = isDisabled && !isExpanded ? "disabled" : "";
+const disabled = isDisabled  ? "disabled" : "";
 const configButtonText = isDisabled ? "Not available" : "Configure";
-const priceState = isDisabled ? "*na" : "€" + price;
+const priceState = isDisabled ? "n/a" : "€" + price;
+const interactive = isDisabled ? "false" : "true";
 
 //const bodyTypes = ["pony", "semi-anthro", "anthro"];
 function getTagClass(tag: string) {
@@ -57,7 +56,7 @@ function getTagClass(tag: string) {
 }
 ---
 
-<div class="cardBody" id={cardId} data-typeCard transition:name={`cardIMGG-${cardId}`}>
+<div class=`cardBody` id={cardId} data-interactive={interactive} transition:name={`cardIMGG-${cardId}`}>
   <div class="imgGrid">
     <div class="imgContainer">
       <img
@@ -101,7 +100,7 @@ function getTagClass(tag: string) {
     </div>
   </div>
   <div class="infobox">
-    <div class="infocel1">
+    <div class="infocell1">
       <div class="typeTitle">{typeTitle}</div>
       <div class="description" set:html={description} />
       <div class="tags">
@@ -112,7 +111,7 @@ function getTagClass(tag: string) {
         }
       </div>
     </div>
-    <div class="infocel2">
+    <div class="infocell2">
       <div class="priceBox">
         <span class="startsFrom">Starts from...</span>
         <div class="price">{priceState}</div>
@@ -129,7 +128,7 @@ function getTagClass(tag: string) {
 
   // Handle configure button click
   function initNavigate() {
-    document.querySelectorAll("[data-typeCard]").forEach((card) => {
+    document.querySelectorAll(`[data-interactive="true"]`).forEach((card) => {
       if (card instanceof HTMLElement) {
         card.addEventListener("click", () => {
           const cardIdPage = card.id;
@@ -153,6 +152,9 @@ function getTagClass(tag: string) {
 </script>
 
 <style>
+  [data-interactive="false"] {
+    filter: grayscale(1) brightness(0.5);
+  }
   .cardBody {
     --cardRounding: 50px;
     --animDur: 0.3s;
@@ -201,7 +203,7 @@ function getTagClass(tag: string) {
     transition: color 0.2s var(--sleek);
   }
 
-  .infocel1 {
+  .infocell1 {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -253,7 +255,7 @@ function getTagClass(tag: string) {
     }
   }
 
-  .infocel2 {
+  .infocell2 {
     position: absolute;
     display: flex;
     flex-direction: column;
