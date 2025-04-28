@@ -7,6 +7,7 @@ interface Props {
   images: {
     src: string;
     alt?: string;
+    pos?: string;
     style?: string; //lazy fuck solution
   }[];
   price: string;
@@ -56,14 +57,16 @@ function getTagClass(tag: string) {
 }
 ---
 
-<div class="cardBody" id={cardId} data-typeCard>
+<div class="cardBody" id={cardId} data-typeCard transition:name={`cardIMGG-${cardId}`}>
   <div class="imgGrid">
     <div class="imgContainer">
       <img
         src={images[0].src}
         alt={images[0].alt}
         class="img"
-        style={images[0].style}
+        style={images[0].pos
+          ? `object-position:${images[0].pos}`
+          : images[0].style}
       />
     </div>
     <div class="imgContainer">
@@ -71,7 +74,9 @@ function getTagClass(tag: string) {
         src={images[1].src}
         alt={images[1].alt}
         class="img"
-        style={images[1].style}
+        style={images[1].pos
+          ? `object-position:${images[1].pos}`
+          : images[1].style}
       />
     </div>
     <div class="imgContainer">
@@ -79,7 +84,9 @@ function getTagClass(tag: string) {
         src={images[2].src}
         alt={images[2].alt}
         class="img"
-        style={images[2].style}
+        style={images[2].pos
+          ? `object-position:${images[2].pos}`
+          : images[2].style}
       />
     </div>
     <div class="imgContainer">
@@ -87,7 +94,9 @@ function getTagClass(tag: string) {
         src={images[3].src}
         alt={images[3].alt}
         class="img"
-        style={images[3].style}
+        style={images[3].pos
+          ? `object-position:${images[3].pos}`
+          : images[3].style}
       />
     </div>
   </div>
@@ -154,7 +163,6 @@ function getTagClass(tag: string) {
     padding: 1rem;
     border: 1px solid var(--foreSecondary);
     //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: width var(--animDur) var(--sleek);
     border-radius: var(--cardRounding);
     transition:
       background 0.2s var(--sleek),

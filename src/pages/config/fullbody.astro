@@ -18,16 +18,18 @@ function getTagClass(tag: string) {
 }
 ---
 
+<PersistentWindow ignoreScrollCheck />
 <Configurator>
-  <PersistentWindow ignoreScrollCheck />
-  <div class="cardBody" id={cardId}>
+  <div class="cardBody" id={cardId} transition:name={`cardIMGG-${cardId}`}>
     <div class="imgGrid">
       <div class="imgContainer">
         <img
           src={cardData.images[0].src}
           alt={cardData.images[0].alt}
           class="img"
-          style={cardData.images[0].style}
+          style={cardData.images[0].pos
+            ? `object-position:${cardData.images[0].pos}`
+            : cardData.images[0].style}
         />
       </div>
       <div class="imgContainer">
@@ -35,7 +37,9 @@ function getTagClass(tag: string) {
           src={cardData.images[1].src}
           alt={cardData.images[1].alt}
           class="img"
-          style={cardData.images[1].style}
+          style={cardData.images[1].pos
+            ? `object-position:${cardData.images[1].pos}`
+            : cardData.images[1].style}
         />
       </div>
       <div class="imgContainer">
@@ -43,7 +47,9 @@ function getTagClass(tag: string) {
           src={cardData.images[2].src}
           alt={cardData.images[2].alt}
           class="img"
-          style={cardData.images[2].style}
+          style={cardData.images[2].pos
+            ? `object-position:${cardData.images[2].pos}`
+            : cardData.images[2].style}
         />
       </div>
       <div class="imgContainer">
@@ -51,7 +57,9 @@ function getTagClass(tag: string) {
           src={cardData.images[3].src}
           alt={cardData.images[3].alt}
           class="img"
-          style={cardData.images[3].style}
+          style={cardData.images[3].pos
+            ? `object-position:${cardData.images[3].pos}`
+            : cardData.images[3].style}
         />
       </div>
     </div>
@@ -66,8 +74,6 @@ function getTagClass(tag: string) {
             ))
           }
         </div>
-      </div>
-      <div class="infocel2">
         <div class="priceBox">
           <span class="startsFrom">Starts from...</span>
           <div class="price">€{cardData.price}</div>
@@ -97,6 +103,9 @@ function getTagClass(tag: string) {
     transition: width var(--animDur) var(--sleek);
     //border-radius: var(--cardRounding);
     border: 1px solid white;
+    transition:
+      background 0.2s var(--sleek),
+      border 0.2s var(--sleek);
   }
 
   .configWindow {
@@ -107,25 +116,26 @@ function getTagClass(tag: string) {
 
   .infobox {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
+    justify-content: flex-end;
     color: var(--fore);
     padding: 0 1em;
     position: relative;
+    transition: color 0.2s var(--sleek);
   }
 
   .infocel1 {
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    max-width: 80%;
+    align-items: flex-end;
+    width: 60%;
   }
 
   .typeTitle {
-    font-size: 3em;
+    font-size: 6em;
     font-family: var(--doto);
     font-weight: 900;
+    margin-bottom: 0.2em;
   }
 
   .description {
@@ -139,6 +149,7 @@ function getTagClass(tag: string) {
     margin-top: 1em;
     gap: 0.5em;
     flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .tag {
@@ -149,6 +160,9 @@ function getTagClass(tag: string) {
     padding: 0.2em 0.8em;
     border-radius: 20px;
     box-sizing: border-box;
+    transition:
+      background 0.2s var(--sleek),
+      color 0.2s var(--sleek);
 
     &.tag-best {
       background: gold;
@@ -187,6 +201,7 @@ function getTagClass(tag: string) {
     font-size: 0.3em;
     color: var(--foreSecondary);
     transform: translateY(-0.5em);
+    transition: color 0.2s var(--sleek);
   }
 
   .price {
@@ -194,6 +209,7 @@ function getTagClass(tag: string) {
     font-weight: 900;
     font-size: 1em;
     color: var(--fore);
+    transition: color 0.2s var(--sleek);
   }
 
   .imgGrid {
@@ -211,10 +227,6 @@ function getTagClass(tag: string) {
     transition: all var(--animDur) var(--sleek);
 
     --imgGridRounding: calc(var(--cardRounding) / 1.5);
-
-    &.expanded {
-      border-radius: var(--cardRounding / 2) !important;
-    }
   }
 
   .imgContainer:nth-child(1) {

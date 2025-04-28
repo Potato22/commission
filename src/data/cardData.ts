@@ -4,6 +4,7 @@ export interface CardData {
     images: {
         src: string;
         alt?: string;
+        pos?: string;
         style?: string; //lazy fuck solution
     }[];
     price: string;
@@ -58,7 +59,7 @@ export const cardList: Record<string, CardData> = {
             { src: "/imgs/showcase/fullbod1.jpg" },
             { src: "/imgs/showcase/fullbod2.jpg" },
             { src: "/imgs/showcase/fullbod3.jpg" },
-            { src: "/imgs/showcase/fullbod4.jpg" }
+            { src: "/imgs/showcase/fullbod4.jpg", pos: "top" },
         ],
         price: "25",
         tags: [
