@@ -107,7 +107,7 @@ const heroImages = [
 </style>
 
 <script>
-  function updateRounding() {
+  function heroTransition() {
     const forwarder = document.getElementById("forwarder");
     const arrow = document.getElementById("arrowClip");
     const heroElm = document.getElementById("hero");
@@ -140,9 +140,9 @@ const heroImages = [
     }
   }
 
-  window.addEventListener("scroll", updateRounding);
+  window.addEventListener("scroll", heroTransition);
 
-  updateRounding();
+  heroTransition();
 
   document.querySelector('a[href="#menu"]')?.addEventListener("click", (e) => {
     e.preventDefault();

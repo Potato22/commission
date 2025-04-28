@@ -56,7 +56,7 @@ function getTagClass(tag: string) {
 }
 ---
 
-<div class="cardBody" data-typeCard>
+<div class="cardBody" id={cardId} data-typeCard>
   <div class="imgGrid">
     <div class="imgContainer">
       <img
@@ -108,7 +108,7 @@ function getTagClass(tag: string) {
         <span class="startsFrom">Starts from...</span>
         <div class="price">{priceState}</div>
       </div>
-      <div class={`configureButton ${disabled}`} id={cardId}>
+      <div class={`configureButton ${disabled}`}>
         {configButtonText}
       </div>
     </div>
@@ -118,109 +118,127 @@ function getTagClass(tag: string) {
 <script>
   import { navigate } from "astro:transitions/client";
 
-  // Define the elements we need to toggle
-  const togglables = [
-    ".imgGrid",
-    ".imgContainer",
-    ".infocel2",
-    ".priceBox",
-    ".configureButton",
-  ];
-
-  // Helper function to toggle classes
-  function toggleElementClasses(
-    element: HTMLElement,
-    className: string,
-    action: "toggle" | "add" | "remove" = "toggle"
-  ) {
-    const elements = {
-      self: element,
-      children: togglables.reduce<Record<string, Element | Element[] | null>>(
-        (acc, selector) => {
-          return {
-            ...acc,
-            [selector]:
-              selector === ".imgContainer"
-                ? Array.from(element.querySelectorAll(selector))
-                : element.querySelector(selector),
-          };
-        },
-        {}
-      ),
-    };
-
-    // Toggle the main element
-    elements.self.classList[action](className);
-
-    // Toggle all child elements
-    Object.entries(elements.children).forEach(([selector, el]) => {
-      if (!el) return;
-
-      if (Array.isArray(el)) {
-        el.forEach((item) => item.classList[action](className));
-      } else {
-        el.classList[action](className);
-      }
-    });
-  }
-
-  // Handle card expansion
-  function handleCardClick(card: HTMLElement) {
-    // Close other cards
-    document.querySelectorAll("[data-typeCard]").forEach((otherCard) => {
-      if (
-        otherCard !== card &&
-        otherCard instanceof HTMLElement &&
-        otherCard.classList.contains("expanded")
-      ) {
-        toggleElementClasses(otherCard, "expanded", "remove");
-      }
-    });
-
-    // Toggle clicked card
-    toggleElementClasses(card, "expanded");
-  }
-
-  // Define and run the click handler initializer
-  function initCardClickHandlers() {
+  // Handle configure button click
+  function initNavigate() {
     document.querySelectorAll("[data-typeCard]").forEach((card) => {
       if (card instanceof HTMLElement) {
-        card.addEventListener("click", () => handleCardClick(card));
-      }
-    });
-  }
-  initCardClickHandlers();
-
-  // Handle configure button click
-  function initConfigureButtonClickHandlers() {
-    document.querySelectorAll(".configureButton").forEach((button) => {
-      if (button instanceof HTMLElement) {
-        button.addEventListener("click", (e) => {
-          const cardId = button.id;
-          const card = document.getElementById(cardId);
-          if (card) {
-            e.stopPropagation();
-            //openConfig(button.id);
-            //alert(`Configure ${cardId}`);
-            //good ol alert debugger
-            navigate(`/config/${cardId}`, {
-              state: {
-                cardId: cardId,
-                // Add any other state you want to pass
-              },
-            });
-          }
+        card.addEventListener("click", () => {
+          const cardIdPage = card.id;
+          //alert(`Configure ${cardIdPage}`);
+          //good ol alert debugger
+          navigate(`/config/${cardIdPage}`, {
+            state: {
+              // Add any other state you want to pass
+            },
+          });
         });
       }
     });
   }
-  initConfigureButtonClickHandlers();
+  initNavigate();
 
   // rehydrater
   document.addEventListener("astro:after-swap", () => {
-    initCardClickHandlers();
-    initConfigureButtonClickHandlers();
+    initNavigate();
   });
+
+  // Define the elements we need to toggle
+  //const togglables = [
+  //  ".imgGrid",
+  //  ".imgContainer",
+  //  ".infocel2",
+  //  ".priceBox",
+  //  ".configureButton",
+  //];
+
+  // Helper function to toggle classes
+  //function toggleElementClasses(
+  //  element: HTMLElement,
+  //  className: string,
+  //  action: "toggle" | "add" | "remove" = "toggle"
+  //) {
+  //  const elements = {
+  //    self: element,
+  //    children: togglables.reduce<Record<string, Element | Element[] | null>>(
+  //      (acc, selector) => {
+  //        return {
+  //          ...acc,
+  //          [selector]:
+  //            selector === ".imgContainer"
+  //              ? Array.from(element.querySelectorAll(selector))
+  //              : element.querySelector(selector),
+  //        };
+  //      },
+  //      {}
+  //    ),
+  //  };
+  //
+  //  // Toggle the main element
+  //  elements.self.classList[action](className);
+  //
+  //  // Toggle all child elements
+  //  Object.entries(elements.children).forEach(([selector, el]) => {
+  //    if (!el) return;
+  //
+  //    if (Array.isArray(el)) {
+  //      el.forEach((item) => item.classList[action](className));
+  //    } else {
+  //      el.classList[action](className);
+  //    }
+  //  });
+  //}
+
+  //// Handle card expansion
+  //function handleCardClick(card: HTMLElement) {
+  //  // Close other cards
+  //  document.querySelectorAll("[data-typeCard]").forEach((otherCard) => {
+  //    if (
+  //      otherCard !== card &&
+  //      otherCard instanceof HTMLElement &&
+  //      otherCard.classList.contains("expanded")
+  //    ) {
+  //      toggleElementClasses(otherCard, "expanded", "remove");
+  //    }
+  //  });
+  //
+  //  // Toggle clicked card
+  //  toggleElementClasses(card, "expanded");
+  //}
+
+  //// Define and run the click handler initializer
+  //function initCardClickHandlers() {
+  //  document.querySelectorAll("[data-typeCard]").forEach((card) => {
+  //    if (card instanceof HTMLElement) {
+  //      card.addEventListener("click", () => handleCardClick(card));
+  //    }
+  //  });
+  //}
+  //initCardClickHandlers();
+  //
+  //// Handle configure button click
+  //function initConfigureButtonClickHandlers() {
+  //  document.querySelectorAll(".configureButton").forEach((button) => {
+  //    if (button instanceof HTMLElement) {
+  //      button.addEventListener("click", (e) => {
+  //        const cardId = button.id;
+  //        const card = document.getElementById(cardId);
+  //        if (card) {
+  //          e.stopPropagation();
+  //          //openConfig(button.id);
+  //          //alert(`Configure ${cardId}`);
+  //          //good ol alert debugger
+  //          navigate(`/config/${cardId}`, {
+  //            state: {
+  //              cardId: cardId,
+  //              // Add any other state you want to pass
+  //            },
+  //          });
+  //        }
+  //      });
+  //    }
+  //  });
+  //}
+  //initConfigureButtonClickHandlers();
 </script>
 
 <style>
@@ -236,7 +254,9 @@ function getTagClass(tag: string) {
     //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: width var(--animDur) var(--sleek);
     border-radius: var(--cardRounding);
-    transition: background 0.2s var(--sleek), border 0.2s var(--sleek);
+    transition:
+      background 0.2s var(--sleek),
+      border 0.2s var(--sleek);
 
     &.expanded {
       width: 70%;
@@ -306,7 +326,9 @@ function getTagClass(tag: string) {
     padding: 0.2em 0.8em;
     border-radius: 20px;
     box-sizing: border-box;
-    transition: background 0.2s var(--sleek), color 0.2s var(--sleek);
+    transition:
+      background 0.2s var(--sleek),
+      color 0.2s var(--sleek);
 
     &.tag-best {
       background: gold;

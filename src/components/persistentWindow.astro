@@ -1,9 +1,9 @@
-<div class="themetogglecont">
+<div id="persistentWindow">
   <div class="horizontalAlign">
-    <div class="togglecont" title="Change to Light Mode">
+    <div id="togglecont" title="Change to Light Mode">
       <label class="checkboxtrig">
         <input type="checkbox" id="ttoggle" />
-        <div class="material-symbols-rounded theme-icon">light_mode</div>
+        <div class="material-symbols-rounded" id="theme-icon">light_mode</div>
       </label>
     </div>
     <a href="tos.astro" class="persistentButtons">
@@ -15,7 +15,7 @@
 </div>
 
 <style>
-  .themetogglecont {
+  #persistentWindow {
     height: 100vh;
     position: fixed;
     z-index: 3;
@@ -23,15 +23,23 @@
     align-items: flex-end;
     user-select: none;
     opacity: 1;
-    transition: all 0.2s var(--sleek);
+    transition: all .5s var(--sleek);
     padding: 1em;
+
+    opacity: 0;
+    transform: translateX(-30px);
+
+    &.active {
+      opacity: 1;
+      transform: translateX(0px);
+    }
   }
 
   #ttogle {
     display: none;
   }
 
-  .togglecont {
+  #togglecont {
     --size: 60px;
     --borderwidth: 1px;
     --rounding: 20px;
@@ -41,7 +49,7 @@
     height: var(--size);
     display: grid;
     place-items: center;
-    transition: all .5s var(--sleek);
+    transition: all 0.5s var(--sleek);
     border-radius: var(--rounding);
 
     background: linear-gradient(90deg, #242428 50%, #f8f4e8 50%);
@@ -104,7 +112,7 @@
     place-items: center;
   }
 
-  .theme-icon {
+  #theme-icon {
     color: white;
     vertical-align: middle;
     mix-blend-mode: exclusion;
@@ -113,7 +121,7 @@
   #ttoggle {
     display: none;
   }
-  
+
   .horizontalAlign {
     display: flex;
     justify-content: center;
@@ -135,7 +143,7 @@
     padding: 0.25em 1em;
 
     font-family: var(--doto);
-    font-weight: 900;;
+    font-weight: 900;
 
     color: var(--fore);
 
@@ -153,9 +161,24 @@
 </style>
 
 <script>
-  const toggleSwitch: Element | null = document.querySelector("#ttoggle");
+  const persistentWindowWrap = document.getElementById("persistentWindow");
+  const toggleSwitch: Element | null = document.getElementById("ttoggle");
   const currentTheme: string | null = localStorage.getItem("theme");
-  const tticcon = document.querySelector(".theme-icon") as HTMLElement;
+  const tticcon = document.getElementById("theme-icon") as HTMLElement;
+
+  window.addEventListener("scroll", () => {
+    if (persistentWindowWrap) {
+      const halfViewportHeight = window.innerHeight / 2;
+      if (window.scrollY > halfViewportHeight) {
+
+        persistentWindowWrap.classList.add("active");
+        persistentWindowWrap.style.pointerEvents = "auto";
+      } else {
+        persistentWindowWrap.classList.remove("active");
+        persistentWindowWrap.style.pointerEvents = "none";
+      }
+    }
+  });
 
   if (currentTheme) {
     document.documentElement.setAttribute("data-theme", currentTheme);
