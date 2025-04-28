@@ -232,10 +232,11 @@ function getTagClass(tag: string) {
     width: 50%;
     background-color: var(--accentSecondary);
     padding: 1rem;
-    //border: 2px solid var(--fore);
+    border: 1px solid var(--foreSecondary);
     //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: width var(--animDur) var(--sleek);
     border-radius: var(--cardRounding);
+    transition: background 0.2s var(--sleek), border 0.2s var(--sleek);
 
     &.expanded {
       width: 70%;
@@ -267,6 +268,7 @@ function getTagClass(tag: string) {
     color: var(--fore);
     padding: 0 1em;
     position: relative;
+    transition: color 0.2s var(--sleek);
   }
 
   .infocel1 {
@@ -304,6 +306,7 @@ function getTagClass(tag: string) {
     padding: 0.2em 0.8em;
     border-radius: 20px;
     box-sizing: border-box;
+    transition: background 0.2s var(--sleek), color 0.2s var(--sleek);
 
     &.tag-best {
       background: gold;
@@ -313,7 +316,7 @@ function getTagClass(tag: string) {
     &.tag-btype {
       border: 1px solid var(--primSecondary);
       background: transparent;
-      color: var(--prim);
+      color: var(--accent);
       display: none;
     }
   }
@@ -334,7 +337,6 @@ function getTagClass(tag: string) {
     align-items: flex-end;
     justify-content: flex-end;
     font-size: 3em;
-    transition: all var(--animDur) var(--sleek);
 
     &.expanded {
       font-size: 5em;
@@ -347,6 +349,7 @@ function getTagClass(tag: string) {
     font-size: 0.3em;
     color: var(--foreSecondary);
     transform: translateY(-0.5em);
+    transition: color 0.2s var(--sleek);
   }
 
   .price {
@@ -354,6 +357,7 @@ function getTagClass(tag: string) {
     font-weight: 900;
     font-size: 1em;
     color: var(--fore);
+    transition: color 0.2s var(--sleek);
   }
 
   .configureButton {

@@ -1,7 +1,7 @@
 ---
 import "../../styles/root.scss";
 import Configurator from "../../layouts/configurator.astro";
-import ThemeToggle from "../../components/themeHanlder.astro";
+import PersistentWindow from "../../components/persistentWindow.astro";
 import { cardList } from "../../data/cardData";
 import { bodyTypes } from "../../data/cardData";
 
@@ -19,7 +19,7 @@ function getTagClass(tag: string) {
 ---
 
 <Configurator>
-  <ThemeToggle />
+  <PersistentWindow />
   <div class="cardBody">
     <div class="imgGrid">
       {

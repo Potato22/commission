@@ -1,6 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
-
+import pottoCeramic from "../assets/Pottoceramic.png";
 
 ---
 
@@ -9,6 +9,7 @@ import { ClientRouter } from "astro:transitions";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href={pottoCeramic.src} />
 
     <!-- OG -->
     <meta property="og:type" content="website" />
@@ -35,7 +36,7 @@ import { ClientRouter } from "astro:transitions";
 
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_circle_right,arrow_downward"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_circle_right,arrow_downward,dark_mode,light_mode"
     />
 
     <script
@@ -46,20 +47,6 @@ import { ClientRouter } from "astro:transitions";
     <ClientRouter />
   </head>
   <body>
-    <div class="themetogglecont">
-      <div class="togglecont" title="Change to Light Mode">
-        <div class="splash"></div><label class="checkboxtrig"
-          ><input type="checkbox" id="ttogle" />
-          <div class="material-icons-outlined theme-icon">light_mode</div>
-        </label>
-      </div>
-      <a href="tos.astro" class="floatwindows">
-        <div>
-          <div class="floatwindowsstring">Open TOS</div>
-        </div>
-      </a>
-    </div>
-
     <div transition:animate="fade">
       <slot />
     </div>
