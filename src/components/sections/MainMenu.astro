@@ -10,38 +10,46 @@ import { cardList } from "../../data/cardData";
     </div>
     <span class="labelSecondary">Available Options</span>
     <script>
-      const text = "ission";
-      const typewriter = document.getElementById("typewriter");
-      const label = document.getElementById("label");
+      function initlabelDeco() {
 
-      function updateTypewriter() {
-        if (!label) return;
-
-        // Get element's position relative to viewport
-        const rect = label.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-
-        const triggerPoint = windowHeight * 0.8;
-
-        // Calculate progress based on element position
-        const progress = Math.min(
-          Math.max(
-            (triggerPoint - rect.top) / (triggerPoint * 0.5), // Adjust 0.5 to control animation length
-            0
-          ),
-          1
-        );
-
-        // Calculate characters to show
-        const charsToShow = Math.floor(progress * text.length);
-
-        if (typewriter) {
-          typewriter.textContent = text.substring(0, charsToShow);
+        const text = "ission";
+        const typewriter = document.getElementById("typewriter");
+        const label = document.getElementById("label");
+  
+        function updateTypewriter() {
+          if (!label) return;
+  
+          // Get element's position relative to viewport
+          const rect = label.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+  
+          const triggerPoint = windowHeight * 0.8;
+  
+          // Calculate progress based on element position
+          const progress = Math.min(
+            Math.max(
+              (triggerPoint - rect.top) / (triggerPoint * 0.5), // Adjust 0.5 to control animation length
+              0
+            ),
+            1
+          );
+  
+          // Calculate characters to show
+          const charsToShow = Math.floor(progress * text.length);
+  
+          if (typewriter) {
+            typewriter.textContent = text.substring(0, charsToShow);
+          }
         }
+  
+        updateTypewriter();
+        window.addEventListener("scroll", updateTypewriter);
       }
+      initlabelDeco();
 
-      updateTypewriter();
-      window.addEventListener("scroll", updateTypewriter);
+      document.addEventListener("astro:after-swap", () => {
+        initlabelDeco();
+      });
     </script>
   </div>
   <style>

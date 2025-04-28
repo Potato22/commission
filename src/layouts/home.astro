@@ -1,7 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import pottoCeramic from "../assets/Pottoceramic.png";
-
 ---
 
 <!doctype html>
@@ -38,11 +37,6 @@ import pottoCeramic from "../assets/Pottoceramic.png";
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_circle_right,arrow_downward,dark_mode,light_mode"
     />
-
-    <script
-      src="https://kit.fontawesome.com/14f5f92fc3.js"
-      crossorigin="anonymous"></script>
-
     <title>Potto Commissions</title>
     <ClientRouter />
   </head>
@@ -72,6 +66,21 @@ import pottoCeramic from "../assets/Pottoceramic.png";
   </body>
 </html>
 
+<script
+src="https://kit.fontawesome.com/14f5f92fc3.js"
+crossorigin="anonymous"
+>
+document.addEventListener("astro:after-swap", () => {
+  if (
+    window.FontAwesome &&
+    window.FontAwesome.dom &&
+    window.FontAwesome.dom.i2svg
+  ) {
+    window.FontAwesome.dom.i2svg();
+  }
+});
+// does not work
+</script>
 <style>
   .endOfPage {
     display: flex;
