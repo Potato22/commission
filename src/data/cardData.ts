@@ -1,7 +1,11 @@
 export interface CardData {
     title: string;
     description: string;
-    images: { src: string; alt?: string }[];
+    images: {
+        src: string;
+        alt?: string;
+        style?: string; //lazy fuck solution
+    }[];
     price: string;
     tags: string[];
 }

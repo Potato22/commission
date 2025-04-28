@@ -19,18 +19,43 @@ function getTagClass(tag: string) {
 ---
 
 <Configurator>
-  <PersistentWindow />
-  <div class="cardBody">
+  <PersistentWindow ignoreScrollCheck />
+  <div class="cardBody" id={cardId}>
     <div class="imgGrid">
-      {
-        (
-          <div class="imgContainer">
-            <img src={noImgPlchldr.src} class="img" />
-          </div>
-        )
-      }
+      <div class="imgContainer">
+        <img
+          src={cardData.images[0].src}
+          alt={cardData.images[0].alt}
+          class="img"
+          style={cardData.images[0].style}
+        />
+      </div>
+      <div class="imgContainer">
+        <img
+          src={cardData.images[1].src}
+          alt={cardData.images[1].alt}
+          class="img"
+          style={cardData.images[1].style}
+        />
+      </div>
+      <div class="imgContainer">
+        <img
+          src={cardData.images[2].src}
+          alt={cardData.images[2].alt}
+          class="img"
+          style={cardData.images[2].style}
+        />
+      </div>
+      <div class="imgContainer">
+        <img
+          src={cardData.images[3].src}
+          alt={cardData.images[3].alt}
+          class="img"
+          style={cardData.images[3].style}
+        />
+      </div>
     </div>
-    <!-- <div class="infobox">
+    <div class="infobox">
       <div class="infocel1">
         <div class="typeTitle">{cardData.title}</div>
         <div class="description" set:html={cardData.description} />
@@ -48,12 +73,12 @@ function getTagClass(tag: string) {
           <div class="price">€{cardData.price}</div>
         </div>
       </div>
-    </div> -->
-  </div>
-  <div class="configWindow">
-    <!-- //todo: form components -->
+    </div>
   </div>
 </Configurator>
+<div class="configWindow">
+  <!-- //todo: form components -->
+</div>
 
 <script>
   //document.documentElement.setAttribute('data-theme', 'light');
@@ -133,7 +158,7 @@ function getTagClass(tag: string) {
     &.tag-btype {
       border: 1px solid var(--primSecondary);
       background: transparent;
-      color: var(--prim);
+      color: var(--accent);
     }
   }
 
@@ -172,7 +197,7 @@ function getTagClass(tag: string) {
   }
 
   .imgGrid {
-    display: flex;
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5em;
   }

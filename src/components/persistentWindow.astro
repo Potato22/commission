@@ -1,6 +1,13 @@
+---
+interface Props {
+  ignoreScrollCheck?: boolean;
+}
+const { ignoreScrollCheck } = Astro.props as Props;
+---
+
 <div id="persistentWindow">
   <div class="horizontalAlign">
-    <div id="togglecont" title="Change to Light Mode">
+    <div id="themeSwitch" class="" title="Change to Light Mode">
       <label class="checkboxtrig">
         <input type="checkbox" id="ttoggle" />
         <div class="material-symbols-rounded" id="theme-icon">light_mode</div>
@@ -23,7 +30,7 @@
     align-items: flex-end;
     user-select: none;
     opacity: 1;
-    transition: all .5s var(--sleek);
+    transition: all 0.5s var(--sleek);
     padding: 1em;
 
     opacity: 0;
@@ -39,7 +46,7 @@
     display: none;
   }
 
-  #togglecont {
+  #themeSwitch {
     --size: 60px;
     --borderwidth: 1px;
     --rounding: 20px;
@@ -69,8 +76,11 @@
       z-index: -1;
       border-radius: var(--rounding);
       border: 0px solid var(--fore);
-
-      animation: splash 1s infinite;
+    }
+    &.poked {
+      &::before {
+        animation: splash 1s;
+      }
     }
 
     &:hover {
@@ -160,25 +170,35 @@
   }
 </style>
 
-<script>
+<script define:vars={{ ignoreScrollCheck }} lang="ts">
   const persistentWindowWrap = document.getElementById("persistentWindow");
-  const toggleSwitch: Element | null = document.getElementById("ttoggle");
-  const currentTheme: string | null = localStorage.getItem("theme");
-  const tticcon = document.getElementById("theme-icon") as HTMLElement;
+  const toggleSwitch /*: Element | null*/ = document.getElementById("ttoggle");
+  const currentTheme /*: string | null*/ = localStorage.getItem("theme");
+  const tticcon = document.getElementById("theme-icon"); /*as HTMLElement;*/
+  const themeSwitch /*: Element | null*/ =
+    document.getElementById("themeSwitch");
 
-  window.addEventListener("scroll", () => {
-    if (persistentWindowWrap) {
-      const halfViewportHeight = window.innerHeight / 2;
-      if (window.scrollY > halfViewportHeight) {
-
-        persistentWindowWrap.classList.add("active");
-        persistentWindowWrap.style.pointerEvents = "auto";
-      } else {
-        persistentWindowWrap.classList.remove("active");
-        persistentWindowWrap.style.pointerEvents = "none";
+  if (!ignoreScrollCheck) {
+    // Add scroll event listener only if ignoreScrollCheck is false
+    window.addEventListener("scroll", () => {
+      if (persistentWindowWrap) {
+        const halfViewportHeight = window.innerHeight / 2;
+        if (window.scrollY > halfViewportHeight) {
+          persistentWindowWrap.classList.add("active");
+          persistentWindowWrap.style.pointerEvents = "auto";
+        } else {
+          persistentWindowWrap.classList.remove("active");
+          persistentWindowWrap.style.pointerEvents = "none";
+        }
       }
+    });
+  } else {
+    // Directly display the persistentWindowWrap if ignoreScrollCheck is true
+    if (persistentWindowWrap) {
+      persistentWindowWrap.classList.add("active");
+      persistentWindowWrap.style.pointerEvents = "auto";
     }
-  });
+  }
 
   if (currentTheme) {
     document.documentElement.setAttribute("data-theme", currentTheme);
@@ -196,22 +216,39 @@
     }
   }
 
-  function switchTheme(e: Event) {
-    if (e instanceof Event) {
-      const target = e.target as HTMLInputElement;
-      if (target.checked) {
-        document.documentElement.setAttribute("data-theme", "light");
-        localStorage.setItem("theme", "light");
-        console.log('addMem "light"');
-        tticcon.innerHTML = "dark_mode";
-      } else {
-        document.documentElement.setAttribute("data-theme", "dark");
-        localStorage.setItem("theme", "dark");
-        console.log('addMem "dark"');
-        tticcon.innerHTML = "light_mode";
-      }
-    } else return;
-  }
+  function debounce(func/*: Function*/, delay/*: number*/) {
+  let timeout/*: number | undefined;*/
+  return function (...args/*: any[]*/) {
+    clearTimeout(timeout);
+    timeout = window.setTimeout(() => func.apply(this, args), delay);
+  };
+}
 
-  toggleSwitch?.addEventListener("change", switchTheme, false);
+function switchTheme(e /*: Event*/) {
+  if (e instanceof Event) {
+    const target = e.target; /*as HTMLInputElement;*/
+    if (target.checked) {
+      document.documentElement.setAttribute("data-theme", "light");
+      localStorage.setItem("theme", "light");
+      console.log('addMem "light"');
+      tticcon.innerHTML = "dark_mode";
+      themeSwitch.classList.add("poked");
+      resetAnimation();
+    } else {
+      document.documentElement.setAttribute("data-theme", "dark");
+      localStorage.setItem("theme", "dark");
+      console.log('addMem "dark"');
+      tticcon.innerHTML = "light_mode";
+      themeSwitch.classList.add("poked");
+      resetAnimation();
+    }
+  } else return;
+}
+
+// Debounced function to reset the animation
+const resetAnimation = debounce(() => {
+  themeSwitch?.classList.remove("poked");
+}, 1000); // Adjust the delay to match your animation duration
+
+toggleSwitch?.addEventListener("change", switchTheme, false);
 </script>
