@@ -1,11 +1,12 @@
 ---
 import noImgPlchldr from "../assets/noImg.svg";
+import { bodyTypes } from "../data/cardData";
 interface Props {
   typeTitle: string;
   description: string;
   images: {
     src: string;
-    alt: string;
+    alt?: string;
     style?: string; //lazy fuck solution
   }[];
   price: string;
@@ -24,35 +25,35 @@ const {
 } = Astro.props;
 
 if (images.length > 4) {
-  throw new Error("Card can only hold 4 images.");
-} else if (images.length <= 4) {
-  images.push({
-    src: noImgPlchldr.src,
-    alt: "",
-    style: "filter: var(--inverto)",
-  });
-  images.push({
-    src: noImgPlchldr.src,
-    alt: "",
-    style: "filter: var(--inverto)",
-  });
-  images.push({
-    src: noImgPlchldr.src,
-    alt: "",
-    style: "filter: var(--inverto)",
-  });
-  images.push({
-    src: noImgPlchldr.src,
-    alt: "",
-    style: "filter: var(--inverto)",
-  });
+  throw new Error(
+    "Card can only hold 4 images." + ` parsed images: ${images.length}`
+  );
+} else {
+  while (images.length < 4) {
+    images.push({
+      src: noImgPlchldr.src,
+      alt: "Failed to load.",
+      style: "filter: var(--inverto)",
+    });
+  }
 }
+//console.log("Received images:", images, images.length);
+//console.log("Image array length:", images.length);
+//console.log("Raw props:", Astro.props);
 
 const cardId = typeTitle.toLowerCase().replace(/\s+/g, "-");
 
 const disabled = isDisabled && !isExpanded ? "disabled" : "";
 const configButtonText = isDisabled ? "Not available" : "Configure";
 const priceState = isDisabled ? "*na" : "€" + price;
+
+//const bodyTypes = ["pony", "semi-anthro", "anthro"];
+function getTagClass(tag: string) {
+  const tagString = tag.toLowerCase();
+  if (tagString === "best selling") return "tag-bs";
+  if (bodyTypes.includes(tagString)) return "tag-btype";
+  return "";
+}
 ---
 
 <div class="cardBody" data-typeCard>
@@ -93,9 +94,13 @@ const priceState = isDisabled ? "*na" : "€" + price;
   <div class="infobox">
     <div class="infocel1">
       <div class="typeTitle">{typeTitle}</div>
-      <div class="description">{description}</div>
+      <div class="description" set:html={description} />
       <div class="tags">
-        {tags.map((tag) => <span class="tag">{tag}</span>)}
+        {
+          tags.map((tag) => (
+            <span class={`tag ${getTagClass(tag)}`}>{tag}</span>
+          ))
+        }
       </div>
     </div>
     <div class="infocel2">
@@ -111,6 +116,8 @@ const priceState = isDisabled ? "*na" : "€" + price;
 </div>
 
 <script>
+  import { navigate } from "astro:transitions/client";
+
   // Define the elements we need to toggle
   const togglables = [
     ".imgGrid",
@@ -174,27 +181,45 @@ const priceState = isDisabled ? "*na" : "€" + price;
     toggleElementClasses(card, "expanded");
   }
 
-  // Add click handlers
-  document.querySelectorAll("[data-typeCard]").forEach((card) => {
-    if (card instanceof HTMLElement) {
-      card.addEventListener("click", () => handleCardClick(card));
-    }
-  });
+  // Define and run the click handler initializer
+  function initCardClickHandlers() {
+    document.querySelectorAll("[data-typeCard]").forEach((card) => {
+      if (card instanceof HTMLElement) {
+        card.addEventListener("click", () => handleCardClick(card));
+      }
+    });
+  }
+  initCardClickHandlers();
 
   // Handle configure button click
-  document.querySelectorAll(".configureButton").forEach((button) => {
-    if (button instanceof HTMLElement) {
-      button.addEventListener("click", (e) => {
-        const cardId = button.id;
-        const card = document.getElementById(cardId);
-        if (card) {
-          e.stopPropagation();
-          //openConfig(button.id);
-          alert(`Configure ${cardId}`);
-          //good ol alert debugger
-        }
-      });
-    }
+  function initConfigureButtonClickHandlers() {
+    document.querySelectorAll(".configureButton").forEach((button) => {
+      if (button instanceof HTMLElement) {
+        button.addEventListener("click", (e) => {
+          const cardId = button.id;
+          const card = document.getElementById(cardId);
+          if (card) {
+            e.stopPropagation();
+            //openConfig(button.id);
+            //alert(`Configure ${cardId}`);
+            //good ol alert debugger
+            navigate(`/config/${cardId}`, {
+              state: {
+                cardId: cardId,
+                // Add any other state you want to pass
+              },
+            });
+          }
+        });
+      }
+    });
+  }
+  initConfigureButtonClickHandlers();
+
+  // rehydrater
+  document.addEventListener("astro:after-swap", () => {
+    initCardClickHandlers();
+    initConfigureButtonClickHandlers();
   });
 </script>
 
@@ -208,13 +233,30 @@ const priceState = isDisabled ? "*na" : "€" + price;
     background-color: var(--accentSecondary);
     padding: 1rem;
     //border: 2px solid var(--fore);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: width var(--animDur) var(--sleek);
     border-radius: var(--cardRounding);
 
     &.expanded {
       width: 70%;
       cursor: auto;
+
+      & .tag-btype {
+        display: block;
+        animation: trivialTags var(--animDur) var(--sleek) forwards;
+      }
+    }
+  }
+
+  @keyframes trivialTags {
+    0% {
+      opacity: 0;
+      transform: translateY(0.5em);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
@@ -234,22 +276,26 @@ const priceState = isDisabled ? "*na" : "€" + price;
     align-items: flex-start;
     max-width: 80%;
   }
+
   .typeTitle {
     font-size: 3em;
     font-family: var(--doto);
     font-weight: 900;
   }
+
   .description {
     font-size: 1.5em;
     font-family: var(--content);
     font-weight: 300;
   }
+
   .tags {
     display: flex;
     margin-top: 1em;
     gap: 0.5em;
     flex-wrap: wrap;
   }
+
   .tag {
     font-family: var(--doto);
     font-weight: 900;
@@ -257,6 +303,19 @@ const priceState = isDisabled ? "*na" : "€" + price;
     color: var(--fore);
     padding: 0.2em 0.8em;
     border-radius: 20px;
+    box-sizing: border-box;
+
+    &.tag-best {
+      background: gold;
+      color: black;
+    }
+
+    &.tag-btype {
+      border: 1px solid var(--primSecondary);
+      background: transparent;
+      color: var(--prim);
+      display: none;
+    }
   }
 
   .infocel2 {
@@ -269,16 +328,19 @@ const priceState = isDisabled ? "*na" : "€" + price;
     margin-right: 1em;
     right: 0;
   }
+
   .priceBox {
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
     font-size: 3em;
     transition: all var(--animDur) var(--sleek);
+
     &.expanded {
       font-size: 5em;
     }
   }
+
   .startsFrom {
     font-family: var(--content);
     font-weight: 400;
@@ -286,12 +348,14 @@ const priceState = isDisabled ? "*na" : "€" + price;
     color: var(--foreSecondary);
     transform: translateY(-0.5em);
   }
+
   .price {
     font-family: var(--content);
     font-weight: 900;
     font-size: 1em;
     color: var(--fore);
   }
+
   .configureButton {
     position: relative;
     font-family: var(--content);
@@ -306,6 +370,7 @@ const priceState = isDisabled ? "*na" : "€" + price;
     transition: all var(--animDur) var(--sleek);
     pointer-events: none;
     opacity: 0;
+    font-weight: 700;
 
     &.expanded {
       margin-top: 1em;
@@ -320,9 +385,10 @@ const priceState = isDisabled ? "*na" : "€" + price;
         font-weight: 900;
 
         color: transparent;
-        transition: all var(--animDur) var(--sleek);
+        transition: none;
         position: absolute;
-        right: 1em; /* adjust as needed */
+        right: 2em;
+        /* adjust as needed */
         top: 50%;
         transform: translateY(-45%);
         pointer-events: none;
@@ -335,6 +401,7 @@ const priceState = isDisabled ? "*na" : "€" + price;
         transform: scale(1.05);
 
         &::after {
+          transition: all var(--animDur) var(--sleek);
           color: var(--fore);
           right: 0.5em;
         }
@@ -346,6 +413,7 @@ const priceState = isDisabled ? "*na" : "€" + price;
         border: 2px solid var(--viscueDisabled);
         color: var(--viscueDisabled);
         pointer-events: none;
+
         &:hover {
           background: rgba(0, 0, 0, 0);
           color: var(--viscueDisabled);
@@ -359,6 +427,7 @@ const priceState = isDisabled ? "*na" : "€" + price;
   .imgGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+
     /* transition: all var(--animDur) var(--sleek); */
     /* gap does not support animation (yet) */
     &.expanded {
@@ -373,24 +442,30 @@ const priceState = isDisabled ? "*na" : "€" + price;
     position: relative;
     overflow: hidden;
     transition: all var(--animDur) var(--sleek);
+
     &.expanded {
       --imgSize: 300px;
     }
+
     --imgGridRounding: calc(var(--cardRounding) / 1.5);
 
     &.expanded {
       border-radius: var(--cardRounding / 2) !important;
     }
   }
+
   .imgContainer:nth-child(1) {
     border-radius: var(--imgGridRounding) 0 0 0;
   }
+
   .imgContainer:nth-child(2) {
     border-radius: 0 var(--imgGridRounding) 0 0;
   }
+
   .imgContainer:nth-child(3) {
     border-radius: 0 0 0 var(--imgGridRounding);
   }
+
   .imgContainer:nth-child(4) {
     border-radius: 0 0 var(--imgGridRounding) 0;
   }

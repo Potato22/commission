@@ -1,18 +1,19 @@
 ---
 const heroImages = [
-  "/imgs/grow.jpg",
-  "/imgs/izzy.jpg",
-  "/imgs/road.jpg",
-  "/imgs/warmsnow.jpg",
-  "/imgs/trainstation.jpg",
+  { url: "/imgs/warm_snow.jpg", pos: "50% 20%" },
+  { url: "/imgs/old_station.jpg", pos: "center" },
+  { url: "/imgs/just.jpg", pos: "50% 25%" },
+  { url: "/imgs/prod_sb.jpg", pos: "center" },
+  { url: "/imgs/trainstation.jpg", pos: "center" },
 ];
+// MAX 5
 ---
 
 <div id="hello">
   <div class="heroimage" id="heroSlideshow">
     {
       heroImages.map((image) => (
-        <div style={`background-image:url(${image})`} />
+        <div style={`background-image:url(${image.url}); background-position:${image.pos}`} />
       ))
     }
   </div>
@@ -95,7 +96,7 @@ const heroImages = [
         0.01,
         0.01,
         1
-      ); // anchorhead
+      ); // fast
     }
     50% {
       transform: translateY(0px);
@@ -133,6 +134,13 @@ const heroImages = [
     heroElm?.style.setProperty("transform", `scale(${heroScale})`);
     heroSlideshow?.style.setProperty("opacity", `${slideshowOpacity}`);
     arrow?.style.setProperty("opacity", `${arrowOpacity}`);
+    
+
+    if (slideshowOpacity <= 0) {
+      heroSlideshow?.style.setProperty("display", "none");
+    } else {
+      heroSlideshow?.style.setProperty("display", "flex");
+    }
   }
 
   window.addEventListener("scroll", updateRounding);

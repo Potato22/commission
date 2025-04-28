@@ -1,5 +1,6 @@
 ---
 import Type from "../TypeCards.astro";
+import { cardList } from "../../data/cardData";
 ---
 
 <div class="mainSelections" id="menu">
@@ -20,12 +21,11 @@ import Type from "../TypeCards.astro";
         const rect = label.getBoundingClientRect();
         const windowHeight = window.innerHeight;
 
-        const triggerPoint = windowHeight * .8;
+        const triggerPoint = windowHeight * 0.8;
 
         // Calculate progress based on element position
         const progress = Math.min(
-
-        Math.max(
+          Math.max(
             (triggerPoint - rect.top) / (triggerPoint * 0.5), // Adjust 0.5 to control animation length
             0
           ),
@@ -63,53 +63,53 @@ import Type from "../TypeCards.astro";
     .labelSecondary {
       font-family: var(--doto);
       font-size: 1em;
-      margin-top: .5em;
+      margin-top: 0.5em;
       color: var(--accent);
       font-weight: bold;
     }
   </style>
 
-
   <Type
-    typeTitle="Sketch Book"
-    description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    images={[
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-    ]}
-    price="10"
-    tags={["Stackable", "No Backgrounds", "Simple Backgrounds"]}
+    typeTitle={cardList.sketchbook.title}
+    description={cardList.sketchbook.description}
+    images={cardList.sketchbook.images}
+    price={cardList.sketchbook.price}
+    tags={cardList.sketchbook.tags}
   />
   <Type
-    typeTitle="Headshot"
-    description="im kill"
-    images={[
-    ]}
-    price="73922"
-    tags={["best selling", "fuckoff"]}
+    typeTitle={cardList.headshot.title}
+    description={cardList.headshot.description}
+    images={cardList.headshot.images}
+    price={cardList.headshot.price}
+    tags={cardList.headshot.tags}
   />
   <Type
-    typeTitle="Fullbody"
-    description="one"
-    images={[
-      { src: "/imgs/trainstation.jpg", alt: "grow" },
-    ]}
-    price="1"
-    tags={["1", "one", "èèn"]}
+    typeTitle={cardList.fullbody.title}
+    description={cardList.fullbody.description}
+    images={cardList.fullbody.images}
+    price={cardList.fullbody.price}
+    tags={cardList.fullbody.tags}
   />
-
-
+  <Type
+    typeTitle="b��"
+    description="?"
+    images={[{ src: "", alt: "" }]}
+    price="0�"
+    tags={["none"]}
+    isDisabled
+  />
 </div>
 
 <style>
-  .mainSelections {
-    background: var(--base);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-    user-select: none;
-  }
+.mainSelections {
+  background: var(--base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  user-select: none;
+}
+
 </style>
 
 <div id="configModal" class="modal" style="display:none;">

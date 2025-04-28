@@ -1,22 +1,25 @@
 ---
-import "../styles/root.scss"
-import Home from '../layouts/home.astro';
-import GhostSpacer from '../components/sections/GhostSpacer.astro';
-import Hero from '../components/sections/Hero.astro'
-import MainMenu from '../components/sections/MainMenu.astro';
-import ConfigModal from '../components/configurator.astro';
+import "../styles/root.scss";
+import Home from "../layouts/home.astro";
+import GhostSpacer from "../components/sections/GhostSpacer.astro";
+import Hero from "../components/sections/Hero.astro";
+import MainMenu from "../components/sections/MainMenu.astro";
+//import ConfigModal from "../components/configurator.astro";
+import ImageZoom from "../components/imageZoom.astro";
+import ThemeToggle from "../components/themeHanlder.astro"
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Home>
-	<ConfigModal />
-	<Hero />
-	<GhostSpacer />
-	<MainMenu />
+  <ImageZoom />
+  <ThemeToggle />
+  <Hero />
+  <GhostSpacer />
+  <MainMenu />
 </Home>
 
 <script>
-	//document.documentElement.setAttribute('data-theme', 'light');
+  //document.documentElement.setAttribute('data-theme', 'light');
 </script>

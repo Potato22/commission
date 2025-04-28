@@ -1,4 +1,6 @@
 ---
+import { ClientRouter } from "astro:transitions";
+
 
 ---
 
@@ -41,6 +43,7 @@
       crossorigin="anonymous"></script>
 
     <title>Potto Commissions</title>
+    <ClientRouter />
   </head>
   <body>
     <div class="themetogglecont">
@@ -57,7 +60,9 @@
       </a>
     </div>
 
-    <slot />
+    <div transition:animate="fade">
+      <slot />
+    </div>
 
     <div class="endOfPage">
       <hr class="end" />

@@ -1,0 +1,218 @@
+---
+import "../../styles/root.scss";
+import Configurator from "../../layouts/configurator.astro";
+import ThemeToggle from "../../components/themeHanlder.astro";
+import { cardList } from "../../data/cardData";
+import { bodyTypes } from "../../data/cardData";
+
+import noImgPlchldr from "../../assets/noImg.svg";
+
+const cardId = "fullbody";
+const cardData = cardList[cardId];
+
+function getTagClass(tag: string) {
+  const tagString = tag.toLowerCase();
+  if (tagString === "best selling") return "tag-bs";
+  if (bodyTypes.includes(tagString)) return "tag-btype";
+  return "";
+}
+---
+
+<Configurator>
+  <ThemeToggle />
+  <div class="cardBody">
+    <div class="imgGrid">
+      {
+        (
+          <div class="imgContainer">
+            <img src={noImgPlchldr.src} class="img" />
+          </div>
+        )
+      }
+    </div>
+    <!-- <div class="infobox">
+      <div class="infocel1">
+        <div class="typeTitle">{cardData.title}</div>
+        <div class="description" set:html={cardData.description} />
+        <div class="tags">
+          {
+            cardData.tags.map((tag) => (
+              <span class={`tag ${getTagClass(tag)}`}>{tag}</span>
+            ))
+          }
+        </div>
+      </div>
+      <div class="infocel2">
+        <div class="priceBox">
+          <span class="startsFrom">Starts from...</span>
+          <div class="price">€{cardData.price}</div>
+        </div>
+      </div>
+    </div> -->
+  </div>
+  <div class="configWindow">
+    <!-- //todo: form components -->
+  </div>
+</Configurator>
+
+<script>
+  //document.documentElement.setAttribute('data-theme', 'light');
+</script>
+
+<style>
+  .cardBody {
+    --cardRounding: 50px;
+    --animDur: 0.3s;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    background-color: var(--base);
+    padding: 1rem;
+    transition: width var(--animDur) var(--sleek);
+    //border-radius: var(--cardRounding);
+    border: 1px solid white;
+  }
+
+  .configWindow {
+    width: 100%;
+    background: rgb(58, 39, 39);
+    overflow-y: scroll;
+  }
+
+  .infobox {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    color: var(--fore);
+    padding: 0 1em;
+    position: relative;
+  }
+
+  .infocel1 {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 80%;
+  }
+
+  .typeTitle {
+    font-size: 3em;
+    font-family: var(--doto);
+    font-weight: 900;
+  }
+
+  .description {
+    font-size: 1.5em;
+    font-family: var(--content);
+    font-weight: 300;
+  }
+
+  .tags {
+    display: flex;
+    margin-top: 1em;
+    gap: 0.5em;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--doto);
+    font-weight: 900;
+    background: var(--primSecondary);
+    color: var(--fore);
+    padding: 0.2em 0.8em;
+    border-radius: 20px;
+    box-sizing: border-box;
+
+    &.tag-best {
+      background: gold;
+      color: black;
+    }
+
+    &.tag-btype {
+      border: 1px solid var(--primSecondary);
+      background: transparent;
+      color: var(--prim);
+    }
+  }
+
+  .infocel2 {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    height: 100%;
+    margin-right: 1em;
+    right: 0;
+  }
+
+  .priceBox {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    font-size: 3em;
+    transition: all var(--animDur) var(--sleek);
+  }
+
+  .startsFrom {
+    font-family: var(--content);
+    font-weight: 400;
+    font-size: 0.3em;
+    color: var(--foreSecondary);
+    transform: translateY(-0.5em);
+  }
+
+  .price {
+    font-family: var(--content);
+    font-weight: 900;
+    font-size: 1em;
+    color: var(--fore);
+  }
+
+  .imgGrid {
+    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5em;
+  }
+
+  .imgContainer {
+    --imgSize: 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--animDur) var(--sleek);
+
+    --imgGridRounding: calc(var(--cardRounding) / 1.5);
+
+    &.expanded {
+      border-radius: var(--cardRounding / 2) !important;
+    }
+  }
+
+  .imgContainer:nth-child(1) {
+    border-radius: var(--imgGridRounding) 0 0 0;
+  }
+
+  .imgContainer:nth-child(2) {
+    border-radius: 0 var(--imgGridRounding) 0 0;
+  }
+
+  .imgContainer:nth-child(3) {
+    border-radius: 0 0 0 var(--imgGridRounding);
+  }
+
+  .imgContainer:nth-child(4) {
+    border-radius: 0 0 var(--imgGridRounding) 0;
+  }
+
+  .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform var(--animDur) ease-in-out;
+  }
+</style>
