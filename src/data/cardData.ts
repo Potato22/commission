@@ -1,14 +1,15 @@
 export interface FormQuestion {
+    subCategory: string;
     id: string;
-    label: string;
-    description: string;
-    type: "text" | "select" | "singleChoice" | "checkbox";
+    type: "textarea" | "flipflop" | "singleChoice" | "checkbox";
     options?: {
         optionName: string;
         optionDescription: string;
         optionPrice: number;
     }[];
     placeholder?: string; // for text
+    questionTitle?: string; // for text
+    questionDescription?: string; // for text
     required?: boolean;
 }
 export interface CardData {
@@ -33,7 +34,7 @@ export const bodyTypes = ["pony", "semi-anthro", "anthro"];
 export const cardList: Record<string, CardData> = {
     sketchbook: {
         title: "Sketch Book",
-        description: "Compile a collection of little <span class=\"b7\">sketches</span> of your character(s) into a single canvas.",
+        description: `Compile a collection of little <span class="b7">sketches</span> of your character(s) into a single canvas.`,
         images: [
             { src: "/imgs/showcase/sb1.jpg" },
             { src: "/imgs/showcase/sb2.jpg" },
@@ -91,10 +92,9 @@ export const cardList: Record<string, CardData> = {
         isDisabled: false,
         configData: [
             {
-                id: "shading",
-                label: "Shading style",
-                description: "Choose between flat or full shading.",
+                subCategory: "chrDetail",
                 type: "singleChoice",
+                id: "character-detail",
                 options: [
                     { optionName: "Sketch", optionDescription: "Loose and rougher look", optionPrice: 25 },
                     { optionName: "Linart", optionDescription: "Cleaner lines", optionPrice: 30 },
@@ -104,30 +104,48 @@ export const cardList: Record<string, CardData> = {
                 required: true,
             },
             {
+                subCategory: "background",
+                type: "singleChoice",
                 id: "background",
-                label: "Background type",
-                description: "Choose between a simple or complex background.",
-                type: "select",
                 options: [
-                        
                         { optionName: "Simple", optionDescription: "Solid, gradient, or even with quirky particles", optionPrice: 0 },
                         { optionName: "Basic", optionDescription: "Basic details, simplified", optionPrice: 35 },
                         { optionName: "Complex", optionDescription: "Complex background", optionPrice: 50 },
                 ],
+                required: true,
             },
             {
+                subCategory: "nsfw",
+                type: "flipflop",
+                id: "nsfw",
+                options: [
+                        { optionName: "No", optionDescription: "Pure as a summer.", optionPrice: 0 },
+                        { optionName: "Yes", optionDescription: "NSFW may require extra effort.", optionPrice: 15 },
+                ],
+            },
+            {
+                type: "textarea",
+                subCategory: "character",
+                questionTitle: "Todo",
+                questionDescription: "lorem",
                 id: "fish",
-                label: "Fish",
-                description: "fish",
-                type: "text",
                 placeholder: "fish",
+                required: true,
             },
             {
+                type: "textarea",
+                subCategory: "character",
+                questionTitle: "Extra details",
                 id: "fish2",
-                label: "Fish",
-                description: "fish",
-                type: "text",
-                placeholder: "fish",
+                placeholder: "fish2",
+            },
+            {
+                type: "textarea",
+                subCategory: "contact",
+                questionTitle: "Give me a way we can chat for us to discuss further!",
+                questionDescription: `Most active chats: <span class="b7">Discord</span>, <span class="b7">Twitter</span>. <br>If you have none of these, you could provide an <span class="b7">email address</span> instead.`,
+                id: "fish2",
+                placeholder: `@yourTag OR your@email.com`,
             }
         ],
     },

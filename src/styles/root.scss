@@ -64,6 +64,7 @@ body {
   --accent: #3dffe5;
   --accentSecondary: hsl(186, 68%, 48%, 5%);
   --viscueDisabled: #3f3f3f65;
+  --err: #ff5c5c;
 
   --display: "Syne";
   --doto: "Doto";
@@ -117,6 +118,21 @@ a {
     'opsz' 24
 }
 
+.formInvalidErr {
+  color: var(--err);
+  margin-bottom: 1rem;
+  font-family: var(--content);
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1em;
+}
+.errBlob {
+  border: 2px solid var(--err);
+  padding: .5em 1em;
+  border-radius: 20px;
+}
 
 .holdon {
   animation: holdon .5s infinite
