@@ -341,7 +341,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
           hasErrors = true;
 
           // Find the textarea title for better error message
-          const textAreaTitle = textarea.previousElementSibling?.textContent;
+          const textAreaTitle = (textarea.parentElement?.querySelector('.textAreaTitle') as HTMLElement)?.textContent;
 
           const errorMsg = document.createElement("div");
           errorMsg.innerHTML = `<span class="b7">${textAreaTitle}</span> is required!`;
