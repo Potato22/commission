@@ -27,7 +27,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   <PersistentWindow ignoreScrollCheck />
 
   <div class="configWrap">
-    <div class="collapsed" id="configStatus">
+    <div class="" id="configStatus">
       <div class="stCell1">
         <div class="stTitle">*{cardData.title}</div>
         <div class="stDesc">{cardData.description}</div>
@@ -141,7 +141,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                         <div class="subCategoryDesc">Fill in the text box.</div>
                       </div>
                     </>
-                )}
+                  )}
                 {config.subCategory === "contact" &&
                   idx ===
                     cardData.configData?.findIndex(
@@ -155,7 +155,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                         <div class="subCategoryDesc">Fill in the text box.</div>
                       </div>
                     </>
-                )}
+                  )}
 
                 {/* Render form fields */}
                 {config.type === "singleChoice" &&
@@ -175,7 +175,9 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                           <div class="optionTitle">{opt.optionName}</div>
                         </div>
                         <div class="optionValue">
-                          {opt.optionPrice == null || opt.optionPrice === 0 ? "" : "+€" + opt.optionPrice}
+                          {opt.optionPrice == null || opt.optionPrice === 0
+                            ? ""
+                            : "+€" + opt.optionPrice}
                         </div>
                       </div>
                       <div class="optionDesc">{opt.optionDescription}</div>
@@ -205,7 +207,10 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                     <div class="textAreaTitle">
                       {config.questionTitle || "Text area component"}
                     </div>
-                    <div class="textAreaDesc" set:html={config.questionDescription || ""}></div>
+                    <div
+                      class="textAreaDesc"
+                      set:html={config.questionDescription || ""}
+                    />
                     <textarea
                       class="formTextInput"
                       id={config.id}
@@ -268,7 +273,6 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     // Create a container for error messages
     const errorContainer = document.createElement("div");
     errorContainer.className = "formInvalidErr";
-
 
     configForm.insertBefore(errorContainer, submitBtn);
 
@@ -343,7 +347,11 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
           hasErrors = true;
 
           // Find the textarea title for better error message
-          const textAreaTitle = (textarea.parentElement?.querySelector('.textAreaTitle') as HTMLElement)?.textContent;
+          const textAreaTitle = (
+            textarea.parentElement?.querySelector(
+              ".textAreaTitle"
+            ) as HTMLElement
+          )?.textContent;
 
           const errorMsg = document.createElement("div");
           errorMsg.innerHTML = `<span class="b7">${textAreaTitle}</span> is required!`;
@@ -453,20 +461,36 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
 
     function configuring(state: Boolean) {
       if (state) {
-        //infoBox.style.display = "none";
-        infoBox.style.display = "none";
-        configWindow.style.display = "block";
-        startButton.classList.add("configGo");
-        cardBody.classList.add("configuring");
-        imgGrid.classList.add("configuring");
-        configStatus.classList.remove("collapsed");
+        infoBox.classList.add("animExit");
+        setTimeout(() => {
+          infoBox.style.display = "none";
+          infoBox.classList.remove("animExit");
+          startButton.classList.add("configGo");
+          cardBody.classList.add("configuring");
+          imgGrid.classList.add("configuring");
+          configStatus.classList.add("active");
+          configWindow.classList.add("animEnter");
+          configWindow.style.display = "block";
+          setTimeout(() => {
+            configWindow.classList.remove("animEnter");
+            infoBox.classList.remove("animExit");
+          }, 1);
+        }, 300);
       } else {
-        infoBox.style.display = "flex";
-        configWindow.style.display = "none";
-        startButton.classList.remove("configGo");
-        cardBody.classList.remove("configuring");
-        imgGrid.classList.remove("configuring");
-        configStatus.classList.add("collapsed");
+        configWindow.classList.add("animExit");
+        setTimeout(() => {
+          configWindow.style.display = "none";
+          startButton.classList.remove("configGo");
+          cardBody.classList.remove("configuring");
+          imgGrid.classList.remove("configuring");
+          configStatus.classList.remove("active");
+          infoBox.classList.add("animEnter");
+          infoBox.style.display = "flex";
+          setTimeout(() => {
+            infoBox.classList.remove("animEnter");
+            configWindow.classList.remove("animExit");
+          }, 1);
+        }, 300);
       }
     }
 
@@ -490,6 +514,24 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
 </script>
 
 <style>
+  .animExit {
+    opacity: 0;
+    transform: translateX(50%);
+    transition:
+      opacity 0.2s,
+      transform 0.2s var(--accel) !important;
+  }
+  .animEnter {
+    animation: fadeIn 0.2s forwards !important;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
   .configWrap {
     display: flex;
     flex-direction: column;
@@ -501,16 +543,18 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     width: 100vw;
     display: flex;
     justify-content: space-between;
-    padding: 1rem;
-    min-height: 60px;
+    max-height: 0;
+    padding: 0;
+    min-height: 0;
+    overflow: hidden;
     border-bottom: 1px solid var(--fore);
     background: var(--base);
     transition: all 0.2s var(--sleek);
 
-    &.collapsed {
-      max-height: 0;
-      padding: 0;
-      min-height: 0;
+    &.active {
+      padding: 1em;
+      max-height: 90px;
+      min-height: 90px;
       overflow: hidden;
     }
   }
@@ -622,7 +666,8 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     display: flex;
     background-color: var(--base);
     padding: 1rem;
-    overflow-y: auto; /* Allow content to scroll if needed */
+    overflow-y: auto;
+    overflow-x: hidden; /* Allow content to scroll if needed */
     transition: width var(--animDur) var(--sleek);
     border-radius: 0px;
     transition:
@@ -807,7 +852,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     & .configIco {
       right: 0.1em;
       position: absolute;
-      font-size: 1.6rem;
+      font-size: 1.6em;
       transform: translateX(-2em);
       opacity: 0;
       transition: none;
