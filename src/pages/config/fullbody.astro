@@ -174,7 +174,9 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                           <span class="customRadio" />
                           <div class="optionTitle">{opt.optionName}</div>
                         </div>
-                        <div class="optionValue">+€{opt.optionPrice}</div>
+                        <div class="optionValue">
+                          {opt.optionPrice == null || opt.optionPrice === 0 ? "" : "+€" + opt.optionPrice}
+                        </div>
                       </div>
                       <div class="optionDesc">{opt.optionDescription}</div>
                     </label>
@@ -441,16 +443,17 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   inibackButton();
 
   function initStartConfig() {
-    const startButton = document.getElementById("startConfig") as HTMLElement;
-    const configStatus = document.getElementById("configStatus") as HTMLElement;
     const infoBox = document.getElementById("infobox") as HTMLElement;
     const configWindow = document.getElementById("configWindow") as HTMLElement;
+    const startButton = document.getElementById("startConfig") as HTMLElement;
+    const configStatus = document.getElementById("configStatus") as HTMLElement;
     const cardBody = document.querySelector(".cardBody") as HTMLElement;
     const imgGrid = document.querySelector(".imgGrid") as HTMLElement;
     const close = document.getElementById("cancel") as HTMLElement;
 
     function configuring(state: Boolean) {
       if (state) {
+        //infoBox.style.display = "none";
         infoBox.style.display = "none";
         configWindow.style.display = "block";
         startButton.classList.add("configGo");
@@ -767,7 +770,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   .startsFrom {
     font-family: var(--content);
     font-weight: 400;
-    font-size: 0.5rem;
+    font-size: 0.5em;
     color: var(--foreSecondary);
     transform: translateY(-0.7em);
     transition: color 0.2s var(--sleek);
@@ -776,7 +779,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   .price {
     font-family: var(--content);
     font-weight: 900;
-    font-size: 2rem;
+    font-size: 2em;
     color: var(--fore);
     transition: color 0.2s var(--sleek);
   }
