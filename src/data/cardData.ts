@@ -2,8 +2,12 @@ export interface FormQuestion {
     id: string;
     label: string;
     description: string;
-    type: "text" | "select" | "radio" | "checkbox";
-    options?: string[]; // for select/radio/checkbox
+    type: "text" | "select" | "singleChoice" | "checkbox";
+    options?: {
+        optionName: string;
+        optionDescription: string;
+        optionPrice: number;
+    }[];
     placeholder?: string; // for text
     required?: boolean;
 }
@@ -90,8 +94,13 @@ export const cardList: Record<string, CardData> = {
                 id: "shading",
                 label: "Shading style",
                 description: "Choose between flat or full shading.",
-                type: "radio",
-                options: ["Flat", "Full shade"],
+                type: "singleChoice",
+                options: [
+                    { optionName: "Sketch", optionDescription: "Loose and rougher look", optionPrice: 25 },
+                    { optionName: "Linart", optionDescription: "Cleaner lines", optionPrice: 30 },
+                    { optionName: "Flat Color", optionDescription: "Cleaner lines & Light render", optionPrice: 45 },
+                    { optionName: "Fully Rendered", optionDescription: "Best render and visual", optionPrice: 60 },
+                ],
                 required: true,
             },
             {
@@ -99,10 +108,22 @@ export const cardList: Record<string, CardData> = {
                 label: "Background type",
                 description: "Choose between a simple or complex background.",
                 type: "select",
-                options: ["None", "Simple", "Complex"],
+                options: [
+                        
+                        { optionName: "Simple", optionDescription: "Solid, gradient, or even with quirky particles", optionPrice: 0 },
+                        { optionName: "Basic", optionDescription: "Basic details, simplified", optionPrice: 35 },
+                        { optionName: "Complex", optionDescription: "Complex background", optionPrice: 50 },
+                ],
             },
             {
                 id: "fish",
+                label: "Fish",
+                description: "fish",
+                type: "text",
+                placeholder: "fish",
+            },
+            {
+                id: "fish2",
                 label: "Fish",
                 description: "fish",
                 type: "text",

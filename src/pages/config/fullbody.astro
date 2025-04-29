@@ -29,22 +29,29 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   <div class="configWrap">
     <div class="collapsed" id="configStatus">
       <div class="stCell1">
-        <div class="stTitle">::{cardData.title}</div>
+        <div class="stTitle">*{cardData.title}</div>
         <div class="stDesc">{cardData.description}</div>
       </div>
       <div class="stCell2">
         <div class="stPricebox">
-          <span class="estSpan">est. Price</span>
+          <span class="estSpan">Est. Price</span>
           <div class="numeros">
             <div id="priceCalc">€{cardData.price}</div>
           </div>
         </div>
         <div
           class="disclaimer"
-          aria-label="Overall request complexity or demand might affect the final price."
+          aria-label="Overall request complexity or demand may affect the final price."
         >
-          <span class="material-symbols-rounded">info</span>
+          <span class="disclaimerIco material-symbols-rounded">info</span>
         </div>
+        <button
+          class="submitButtons"
+          type="button"
+          id="buttonLink"
+          onclick="document.getElementById('submitBtn').click()">Submit</button
+        >
+        <div id="cancel" class="material-symbols-rounded">close</div>
       </div>
     </div>
     <div class="cardBody" id={cardId} transition:name={`cardIMGG-${cardId}`}>
@@ -92,55 +99,35 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       </div>
 
       <div id="configWindow">
-        <form id="configForm">
-          {
-            cardData.configData &&
-              cardData.configData.map(
-                (q) =>
-                  (q.type === "text" && (
-                    <div class="form-group">
-                      <label for={q.id}>{q.label}</label>
-                      <input
-                        type="text"
-                        id={q.id}
-                        name={q.id}
-                        placeholder={q.placeholder || ""}
-                        required={q.required}
-                      />
-                    </div>
-                  )) ||
-                  (q.type === "select" && (
-                    <div class="form-group">
-                      <label for={q.id}>{q.label}</label>
-                      <select id={q.id} name={q.id} required={q.required}>
-                        {q.options &&
-                          q.options.map((opt) => (
-                            <option value={opt}>{opt}</option>
-                          ))}
-                      </select>
-                    </div>
-                  )) ||
-                  (q.type === "radio" && (
-                    <div class="form-group">
-                      <label>{q.label}</label>
-                      {q.options &&
-                        q.options.map((opt) => (
-                          <label>
-                            <input
-                              type="radio"
-                              name={q.id}
-                              value={opt}
-                              required={q.required}
-                            />{" "}
-                            {opt}
-                          </label>
-                        ))}
-                    </div>
-                  ))
-              )
-          }
-          <button type="submit" id="submitBtn">Submit</button>
-        </form>
+        {
+          cardData.configData &&
+            cardData.configData.map(
+              (configForm) =>
+                (configForm.type === "text" && (
+                  <div class="formComponent">
+                    <div class="formTextTitle">{configForm.label}</div>
+                    <input
+                      type="text"
+                      id={configForm.id}
+                      name={configForm.id}
+                      placeholder={configForm.placeholder || ""}
+                      required={configForm.required}
+                    />
+                  </div>
+                )) ||
+                (configForm.type === "singleChoice" && (
+                  <div class="formComponent">
+                    Who would've guessed this is hell
+                  </div>
+                )) ||
+                (configForm.type === "select" && (
+                  <div class="formComponent">TODO</div>
+                ))
+            )
+        }
+        <button class="submitButtons" type="submit" id="submitBtn"
+          >Submit</button
+        >
       </div>
 
       <div id="infobox">
@@ -175,19 +162,68 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   import { cardList } from "../../data/cardData";
   const cardId = "fullbody";
   const cardData = cardList[cardId];
+  const submitButton = document.getElementById(
+    "submitBtn"
+  ) as HTMLButtonElement;
+
+  submitButton.addEventListener("click", async () => {
+    const data: { [key: string]: string } = {};
+    const config = cardData.configData;
+
+    if (config) {
+      for (const field of config) {
+        if (field.type === "text") {
+          const input = document.getElementById(
+            field.id
+          ) as HTMLInputElement | null;
+          if (input) {
+            data[field.id] = input.value;
+          }
+        }
+        // Later: handle select, singleChoice, etc.
+      }
+    }
+
+    console.log("Collected config data:", data);
+  });
 
   let priceAdd: number = 0;
-  for (let i = 1; i <= 999; i++) {
-    setTimeout(() => {
-      priceAdd = i;
-      updatePrice();
-    }, i * 100);
+  // Change price randomly every second, but avoid negative numbers
+  setInterval(() => {
+    priceAdd = Math.floor(Math.random() * 100);
+    updatePrice();
+  }, 1000);
+
+  function animateNumber(
+    elem: HTMLElement,
+    start: number,
+    end: number,
+    duration = 500
+  ) {
+    const startTime = performance.now();
+
+    function update(currentTime: number) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Linear interpolation (lerp)
+      const value = Math.round(start + (end - start) * progress);
+      elem.textContent = `€${value.toFixed(2)}`;
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+    requestAnimationFrame(update);
   }
+
+  let lastPrice = cardData.price;
 
   function updatePrice() {
     const priceElem = document.getElementById("priceCalc");
     if (priceElem) {
-      priceElem.textContent = `€${cardData.price + priceAdd}`;
+      const newPrice = cardData.price + priceAdd;
+      animateNumber(priceElem, lastPrice, newPrice, 400);
+      lastPrice = newPrice;
     }
   }
 
@@ -206,52 +242,41 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     const configStatus = document.getElementById("configStatus") as HTMLElement;
     const infoBox = document.getElementById("infobox") as HTMLElement;
     const configWindow = document.getElementById("configWindow") as HTMLElement;
+    const cardBody = document.querySelector(".cardBody") as HTMLElement;
+    const imgGrid = document.querySelector(".imgGrid") as HTMLElement;
+    const close = document.getElementById("cancel") as HTMLElement;
 
-    function startConfig() {
-      startButton.addEventListener("click", () => {
+    //skip
+    //infoBox.style.display = "none";
+    //configWindow.style.display = "block";
+    //startButton.classList.add("configGo");
+    //configStatus.classList.remove("collapsed");
+    function configuring(state: Boolean) {
+      if (state) {
         infoBox.style.display = "none";
         configWindow.style.display = "block";
         startButton.classList.add("configGo");
+        cardBody.classList.add("configuring");
+        imgGrid.classList.add("configuring");
         configStatus.classList.remove("collapsed");
-      });
+      } else {
+        infoBox.style.display = "flex";
+        configWindow.style.display = "none";
+        startButton.classList.remove("configGo");
+        cardBody.classList.remove("configuring");
+        imgGrid.classList.remove("configuring");
+        configStatus.classList.add("collapsed");
+      }
     }
-    startConfig();
+
+    startButton.addEventListener("click", () => {
+      configuring(true);
+    });
+    close.addEventListener("click", () => {
+      configuring(false);
+    })
   }
   initStartConfig();
-
-    // Add this to handle form submission
-    document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("configForm") as HTMLFormElement;
-    if (form) {
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        const data: Record<string, FormDataEntryValue> = {};
-        formData.forEach((value, key) => {
-          data[key] = value;
-        });
-
-        // Send to your Cloudflare Worker endpoint
-        try {
-          const res = await fetch(/*"https://your-worker-url.workers.dev/api/submit"*/ "", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              cardType: cardId,
-              ...data
-            }),
-          });
-          if (res.ok) {
-            alert("Submitted! WARN: NO URL");
-          } else {
-            alert("Submission failed.");
-          }
-        } catch (err) {
-          alert("Network error.");
-        }
-      });
-    }
-  });
 
   document.addEventListener("astro:after-swap", () => {
     initStartConfig();
@@ -274,30 +299,115 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     padding: 1rem;
     min-height: 60px;
     border-bottom: 1px solid var(--fore);
-    overflow: hidden;
+    background: var(--base);
     transition: all 0.2s var(--sleek);
+
     &.collapsed {
       max-height: 0;
       padding: 0;
       min-height: 0;
+      overflow: hidden;
     }
   }
 
   .stCell1 {
     display: flex;
     flex-direction: column;
+    color: var(--fore);
   }
 
   .stTitle {
     font-size: 2em;
     font-family: var(--doto);
     font-weight: 900;
+    color: var(--accent);
+  }
+  .stDesc {
+    font-size: 1em;
+    font-family: var(--content);
   }
 
   .stCell2 {
     display: flex;
     align-items: center;
+    color: var(--fore);
   }
+
+  .stPricebox {
+    font-family: var(--content);
+    & .estSpan {
+      font-size: 1em;
+      color: var(--foreSecondary);
+    }
+    & .numeros {
+      font-size: 2em;
+      font-weight: 900;
+      font-family: var(--doto);
+    }
+  }
+  .disclaimer {
+    height: 100%;
+    position: relative;
+    display: flex;
+    color: var(--fore);
+    margin-right: 0.3em;
+    user-select: none;
+    text-align: center;
+    line-height: 1.4;
+    align-items: flex-end;
+    margin-right: 5em;
+    margin-left: 1em;
+    font-family: var(--contentSecondary);
+    & .disclaimerIco {
+      font-size: 1.7em;
+      transform: translateY(-0.225em);
+    }
+
+    &.important {
+      color: red;
+
+      &::before {
+        background: #ff2929;
+      }
+    }
+
+    &::before {
+      content: attr(aria-label);
+      position: absolute;
+      background: var(--base);
+      transition: all 0.1s 0.3s;
+      color: var(--fore);
+      font-size: 1em;
+      padding: 0.3em 0.6em;
+      border-radius: 12px;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0;
+      min-width: 1000%;
+      z-index: 1;
+      box-shadow: rgba(36, 36, 40, 0.377) 0 10px 20px;
+      transform: translate(-87%, 100%);
+    }
+
+    &:hover::before {
+      transform: translate(-87%, 120%);
+      transition: all 0.2s;
+      opacity: 1;
+    }
+  }
+
+  #cancel {
+    font-size: 3em;
+    cursor: pointer;
+    color: var(--fore);
+    transition: color 0.2s var(--sleek), transform 0.2s var(--sleek);
+
+    &:hover {
+      color: var(--prim);
+      transform: scale(1.1);
+    }
+  }
+
   .cardBody {
     --cardRounding: 50px;
     --animDur: 0.3s;
@@ -310,14 +420,23 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     border-radius: 0px;
     transition:
       background 0.2s var(--sleek),
-      border 0.2s var(--sleek);
+      border 0.2s var(--sleek),
+      padding 0.2s var(--sleek);
+
+    & .configuring {
+      padding: 0rem;
+    }
   }
 
   .imgGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5em;
+    padding: 0rem;
     min-width: 50%;
+    & .configuring {
+      padding: 1rem;
+    }
   }
 
   .imgContainer {
@@ -515,10 +634,10 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   }
 
   #configWindow {
-    background: red;
     width: 100%;
     height: 100%;
     overflow-y: scroll;
     display: none;
+    margin-left: 1em;
   }
 </style>
