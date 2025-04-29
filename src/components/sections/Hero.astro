@@ -141,14 +141,21 @@ const heroImages = [
   }
 
   window.addEventListener("scroll", heroTransition);
-
-  heroTransition();
-
-  document.querySelector('a[href="#menu"]')?.addEventListener("click", (e) => {
-    e.preventDefault();
-    document.querySelector("#menu")?.scrollIntoView({
-      behavior: "smooth",
+  
+  function forwarder() {
+    document.querySelector('a[href="#menu"]')?.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.querySelector("#menu")?.scrollIntoView({
+        behavior: "smooth",
+      });
     });
+  }
+  
+  heroTransition();
+  forwarder();
+  document.addEventListener("astro:before-swap", () => {
+    heroTransition();
+    forwarder();
   });
 </script>
 

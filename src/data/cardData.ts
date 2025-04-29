@@ -1,3 +1,12 @@
+export interface FormQuestion {
+    id: string;
+    label: string;
+    description: string;
+    type: "text" | "select" | "radio" | "checkbox";
+    options?: string[]; // for select/radio/checkbox
+    placeholder?: string; // for text
+    required?: boolean;
+}
 export interface CardData {
     title: string;
     description: string;
@@ -7,9 +16,12 @@ export interface CardData {
         pos?: string;
         style?: string; //lazy fuck solution
     }[];
-    price: string;
+    price: number;
     tags: string[];
     isDisabled?: boolean;
+    configData?: FormQuestion[];
+    //form questions
+    //includes fomr types: single choices, two options, and text input
 }
 
 export const bodyTypes = ["pony", "semi-anthro", "anthro"];
@@ -24,7 +36,7 @@ export const cardList: Record<string, CardData> = {
             { src: "/imgs/showcase/sb3.jpg" },
             { src: "/imgs/showcase/sb4.jpg" }
         ],
-        price: "10",
+        price: 10,
         tags: [
             "Fixed shading",
             "Stackable",
@@ -32,7 +44,7 @@ export const cardList: Record<string, CardData> = {
             "Pony",
             "Semi-anthro",
             "Anthro"
-        ]
+        ],
     },
     headshot: {
         title: "Headshot",
@@ -43,7 +55,7 @@ export const cardList: Record<string, CardData> = {
             { src: "/imgs/showcase/portrait3.jpg" },
             { src: "/imgs/showcase/portrait4.jpg" }
         ],
-        price: "15",
+        price: 15,
         tags: [
             "Configurable shading",
             "Simple Backgrounds",
@@ -51,7 +63,7 @@ export const cardList: Record<string, CardData> = {
             "Pony",
             "Semi-Anthro",
             "Anthro"
-        ]
+        ],
     },
     fullbody: {
         title: "Fullbody",
@@ -62,7 +74,7 @@ export const cardList: Record<string, CardData> = {
             { src: "/imgs/showcase/fullbod3.jpg" },
             { src: "/imgs/showcase/fullbod4.jpg", pos: "top" },
         ],
-        price: "25",
+        price: 25,
         tags: [
             "Configurable Shading",
             "Full backgrounds",
@@ -71,6 +83,31 @@ export const cardList: Record<string, CardData> = {
             "Pony",
             "Semi-Anthro",
             "Anthro"
-        ]
+        ],
+        isDisabled: false,
+        configData: [
+            {
+                id: "shading",
+                label: "Shading style",
+                description: "Choose between flat or full shading.",
+                type: "radio",
+                options: ["Flat", "Full shade"],
+                required: true,
+            },
+            {
+                id: "background",
+                label: "Background type",
+                description: "Choose between a simple or complex background.",
+                type: "select",
+                options: ["None", "Simple", "Complex"],
+            },
+            {
+                id: "fish",
+                label: "Fish",
+                description: "fish",
+                type: "text",
+                placeholder: "fish",
+            }
+        ],
     },
 };

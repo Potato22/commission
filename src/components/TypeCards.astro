@@ -10,7 +10,7 @@ interface Props {
     pos?: string;
     style?: string; //lazy fuck solution
   }[];
-  price: string;
+  price: number;
   tags: string[];
   isDisabled?: boolean;
 }
@@ -40,11 +40,11 @@ if (images.length > 4) {
 //console.log("Image array length:", images.length);
 //console.log("Raw props:", Astro.props);
 
-const cardId = typeTitle.toLowerCase().replace(/\s+/g, "-");
+const cardId = typeTitle.toLowerCase().replace(/\s+/g, "");
 
 const disabled = isDisabled  ? "disabled" : "";
 const configButtonText = isDisabled ? "Not available" : "Configure";
-const priceState = isDisabled ? "n/a" : "€" + price;
+const priceState = isDisabled ? "n/a" : "€" + price.toFixed(0);
 const interactive = isDisabled ? "false" : "true";
 
 //const bodyTypes = ["pony", "semi-anthro", "anthro"];
@@ -116,9 +116,9 @@ function getTagClass(tag: string) {
         <span class="startsFrom">Starts from...</span>
         <div class="price">{priceState}</div>
       </div>
-      <div class={`configureButton ${disabled}`}>
+      <!-- <div class={`configureButton ${disabled}`}>
         {configButtonText}
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
@@ -154,6 +154,8 @@ function getTagClass(tag: string) {
 <style>
   [data-interactive="false"] {
     filter: grayscale(1) brightness(0.5);
+    pointer-events: none;
+    cursor: not-allowed;
   }
   .cardBody {
     --cardRounding: 50px;
@@ -292,74 +294,6 @@ function getTagClass(tag: string) {
     font-size: 1em;
     color: var(--fore);
     transition: color 0.2s var(--sleek);
-  }
-
-  .configureButton {
-    position: relative;
-    font-family: var(--content);
-    font-size: 1.3em;
-    background: var(--prim);
-    color: var(--fore);
-    border: 1px solid var(--base);
-    padding: 0.2em 5em;
-    border-radius: 25px;
-    margin-top: -1em;
-    margin-bottom: -0.5em;
-    transition: all var(--animDur) var(--sleek);
-    pointer-events: none;
-    opacity: 0;
-    font-weight: 700;
-
-    &.expanded {
-      margin-top: 1em;
-      margin-bottom: 0.5em;
-      pointer-events: all;
-      opacity: 1;
-      cursor: pointer;
-      vertical-align: bottom;
-
-      &::after {
-        content: "↗";
-        font-weight: 900;
-
-        color: transparent;
-        transition: none;
-        position: absolute;
-        right: 2em;
-        /* adjust as needed */
-        top: 50%;
-        transform: translateY(-45%);
-        pointer-events: none;
-      }
-
-      &:hover {
-        background: transparent;
-        color: var(--fore);
-        border: 1px solid var(--prim);
-        transform: scale(1.05);
-
-        &::after {
-          transition: all var(--animDur) var(--sleek);
-          color: var(--fore);
-          right: 0.5em;
-        }
-      }
-
-      &.disabled {
-        background: rgba(0, 0, 0, 0);
-        box-sizing: content-box;
-        border: 2px solid var(--viscueDisabled);
-        color: var(--viscueDisabled);
-        pointer-events: none;
-
-        &:hover {
-          background: rgba(0, 0, 0, 0);
-          color: var(--viscueDisabled);
-          transform: scale(1);
-          cursor: not-allowed !important;
-        }
-      }
-    }
   }
 
   .imgGrid {

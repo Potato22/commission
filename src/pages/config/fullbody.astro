@@ -16,78 +16,183 @@ function getTagClass(tag: string) {
   if (bodyTypes.includes(tagString)) return "tag-btype";
   return "";
 }
+
+const priceState = cardData.isDisabled
+  ? "n/a"
+  : "€" + cardData.price.toFixed(0);
+const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
 ---
 
 <Configurator>
   <PersistentWindow ignoreScrollCheck />
-  <div class="cardBody" id={cardId} transition:name={`cardIMGG-${cardId}`}>
-    <div class="imgGrid">
-      <div class="imgContainer">
-        <img
-          src={cardData.images[0].src}
-          alt={cardData.images[0].alt}
-          class="img"
-          style={cardData.images[0].pos
-            ? `object-position:${cardData.images[0].pos}`
-            : cardData.images[0].style}
-        />
+
+  <div class="configWrap">
+    <div class="collapsed" id="configStatus">
+      <div class="stCell1">
+        <div class="stTitle">::{cardData.title}</div>
+        <div class="stDesc">{cardData.description}</div>
       </div>
-      <div class="imgContainer">
-        <img
-          src={cardData.images[1].src}
-          alt={cardData.images[1].alt}
-          class="img"
-          style={cardData.images[1].pos
-            ? `object-position:${cardData.images[1].pos}`
-            : cardData.images[1].style}
-        />
-      </div>
-      <div class="imgContainer">
-        <img
-          src={cardData.images[2].src}
-          alt={cardData.images[2].alt}
-          class="img"
-          style={cardData.images[2].pos
-            ? `object-position:${cardData.images[2].pos}`
-            : cardData.images[2].style}
-        />
-      </div>
-      <div class="imgContainer">
-        <img
-          src={cardData.images[3].src}
-          alt={cardData.images[3].alt}
-          class="img"
-          style={cardData.images[3].pos
-            ? `object-position:${cardData.images[3].pos}`
-            : cardData.images[3].style}
-        />
+      <div class="stCell2">
+        <div class="stPricebox">
+          <span class="estSpan">est. Price</span>
+          <div class="numeros">
+            <div id="priceCalc">€{cardData.price}</div>
+          </div>
+        </div>
+        <div
+          class="disclaimer"
+          aria-label="Overall request complexity or demand might affect the final price."
+        >
+          <span class="material-symbols-rounded">info</span>
+        </div>
       </div>
     </div>
-    <div class="infobox">
-      <div id="backB" class="material-symbols-rounded">arrow_back</div>
-      <div class="infocell1">
-        <div class="typeTitle">{cardData.title}</div>
-        <div class="description" set:html={cardData.description} />
-        <div class="tags">
-          {
-            cardData.tags.map((tag) => (
-              <span class={`tag ${getTagClass(tag)}`}>{tag}</span>
-            ))
-          }
+    <div class="cardBody" id={cardId} transition:name={`cardIMGG-${cardId}`}>
+      <div class="imgGrid">
+        <div class="imgContainer" id="imageGridDefault">
+          <img
+            src={cardData.images[0].src}
+            alt={cardData.images[0].alt}
+            class="img"
+            style={cardData.images[0].pos
+              ? `object-position:${cardData.images[0].pos}`
+              : cardData.images[0].style}
+          />
         </div>
-        <div class="priceBox">
-          <span class="startsFrom">Starts from...</span>
-          <div class="price">€{cardData.price}</div>
+        <div class="imgContainer">
+          <img
+            src={cardData.images[1].src}
+            alt={cardData.images[1].alt}
+            class="img"
+            style={cardData.images[1].pos
+              ? `object-position:${cardData.images[1].pos}`
+              : cardData.images[1].style}
+          />
+        </div>
+        <div class="imgContainer">
+          <img
+            src={cardData.images[2].src}
+            alt={cardData.images[2].alt}
+            class="img"
+            style={cardData.images[2].pos
+              ? `object-position:${cardData.images[2].pos}`
+              : cardData.images[2].style}
+          />
+        </div>
+        <div class="imgContainer">
+          <img
+            src={cardData.images[3].src}
+            alt={cardData.images[3].alt}
+            class="img"
+            style={cardData.images[3].pos
+              ? `object-position:${cardData.images[3].pos}`
+              : cardData.images[3].style}
+          />
+        </div>
+      </div>
+
+      <div id="configWindow">
+        <form id="configForm">
+          {
+            cardData.configData &&
+              cardData.configData.map(
+                (q) =>
+                  (q.type === "text" && (
+                    <div class="form-group">
+                      <label for={q.id}>{q.label}</label>
+                      <input
+                        type="text"
+                        id={q.id}
+                        name={q.id}
+                        placeholder={q.placeholder || ""}
+                        required={q.required}
+                      />
+                    </div>
+                  )) ||
+                  (q.type === "select" && (
+                    <div class="form-group">
+                      <label for={q.id}>{q.label}</label>
+                      <select id={q.id} name={q.id} required={q.required}>
+                        {q.options &&
+                          q.options.map((opt) => (
+                            <option value={opt}>{opt}</option>
+                          ))}
+                      </select>
+                    </div>
+                  )) ||
+                  (q.type === "radio" && (
+                    <div class="form-group">
+                      <label>{q.label}</label>
+                      {q.options &&
+                        q.options.map((opt) => (
+                          <label>
+                            <input
+                              type="radio"
+                              name={q.id}
+                              value={opt}
+                              required={q.required}
+                            />{" "}
+                            {opt}
+                          </label>
+                        ))}
+                    </div>
+                  ))
+              )
+          }
+          <button type="submit" id="submitBtn">Submit</button>
+        </form>
+      </div>
+
+      <div id="infobox">
+        <div id="backB" class="material-symbols-rounded">arrow_back</div>
+        <div class="infocell1">
+          <div class="typeTitle">{cardData.title}</div>
+          <div class="description" set:html={cardData.description} />
+          <div class="tags">
+            {
+              cardData.tags.map((tag) => (
+                <span class={`tag ${getTagClass(tag)}`}>{tag}</span>
+              ))
+            }
+          </div>
+          <div class="priceBox">
+            <span class="startsFrom">Starts from...</span>
+            <div class="price">{priceState}</div>
+          </div>
+          <div class={cardData.isDisabled ? "disabled" : ""} id="startConfig">
+            {configButtonText}
+            <div class="configIco material-symbols-rounded">
+              arrow_circle_right
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </Configurator>
-<div class="configWindow">
-  <!-- //todo: form components -->
-</div>
 
 <script>
+  import { cardList } from "../../data/cardData";
+  const cardId = "fullbody";
+  const cardData = cardList[cardId];
+
+  let priceAdd: number = 0;
+  for (let i = 1; i <= 999; i++) {
+    setTimeout(() => {
+      priceAdd = i;
+      updatePrice();
+    }, i * 100);
+  }
+
+  function updatePrice() {
+    const priceElem = document.getElementById("priceCalc");
+    if (priceElem) {
+      priceElem.textContent = `€${cardData.price + priceAdd}`;
+    }
+  }
+
+  updatePrice();
+
   function inibackButton() {
     const back = document.getElementById("backB") as HTMLElement;
     back.addEventListener("click", () => {
@@ -95,36 +200,149 @@ function getTagClass(tag: string) {
     });
   }
   inibackButton();
+
+  function initStartConfig() {
+    const startButton = document.getElementById("startConfig") as HTMLElement;
+    const configStatus = document.getElementById("configStatus") as HTMLElement;
+    const infoBox = document.getElementById("infobox") as HTMLElement;
+    const configWindow = document.getElementById("configWindow") as HTMLElement;
+
+    function startConfig() {
+      startButton.addEventListener("click", () => {
+        infoBox.style.display = "none";
+        configWindow.style.display = "block";
+        startButton.classList.add("configGo");
+        configStatus.classList.remove("collapsed");
+      });
+    }
+    startConfig();
+  }
+  initStartConfig();
+
+    // Add this to handle form submission
+    document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("configForm") as HTMLFormElement;
+    if (form) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data: Record<string, FormDataEntryValue> = {};
+        formData.forEach((value, key) => {
+          data[key] = value;
+        });
+
+        // Send to your Cloudflare Worker endpoint
+        try {
+          const res = await fetch(/*"https://your-worker-url.workers.dev/api/submit"*/ "", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              cardType: cardId,
+              ...data
+            }),
+          });
+          if (res.ok) {
+            alert("Submitted! WARN: NO URL");
+          } else {
+            alert("Submission failed.");
+          }
+        } catch (err) {
+          alert("Network error.");
+        }
+      });
+    }
+  });
+
   document.addEventListener("astro:after-swap", () => {
+    initStartConfig();
     inibackButton();
   });
 </script>
 
 <style>
+  .configWrap {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: hidden;
+  }
+  #configStatus {
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    min-height: 60px;
+    border-bottom: 1px solid var(--fore);
+    overflow: hidden;
+    transition: all 0.2s var(--sleek);
+    &.collapsed {
+      max-height: 0;
+      padding: 0;
+      min-height: 0;
+    }
+  }
+
+  .stCell1 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stTitle {
+    font-size: 2em;
+    font-family: var(--doto);
+    font-weight: 900;
+  }
+
+  .stCell2 {
+    display: flex;
+    align-items: center;
+  }
   .cardBody {
     --cardRounding: 50px;
     --animDur: 0.3s;
-    display: flex;
-    width: 100vw;
-    height: 100vh;
+    flex: 1; /* This is the critical part - take all remaining space */
     display: flex;
     background-color: var(--base);
     padding: 1rem;
+    overflow-y: auto; /* Allow content to scroll if needed */
     transition: width var(--animDur) var(--sleek);
     border-radius: 0px;
-    //border: 1px solid white;
     transition:
       background 0.2s var(--sleek),
       border 0.2s var(--sleek);
   }
 
-  .configWindow {
-    width: 100%;
-    background: rgb(58, 39, 39);
-    overflow-y: scroll;
+  .imgGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5em;
+    min-width: 50%;
   }
 
-  .infobox {
+  .imgContainer {
+    --imgSize: 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--animDur) var(--sleek);
+
+    --imgGridRounding: calc(var(--cardRounding) / 1.5);
+  }
+
+  .imgContainer {
+    border-radius: var(--imgGridRounding);
+  }
+
+  .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform var(--animDur) ease-in-out;
+  }
+  #infobox {
     display: flex;
     justify-content: space-between;
     color: var(--fore);
@@ -226,7 +444,7 @@ function getTagClass(tag: string) {
   .startsFrom {
     font-family: var(--content);
     font-weight: 400;
-    font-size: .5em;
+    font-size: 0.5em;
     color: var(--foreSecondary);
     transform: translateY(-0.7em);
     transition: color 0.2s var(--sleek);
@@ -240,32 +458,67 @@ function getTagClass(tag: string) {
     transition: color 0.2s var(--sleek);
   }
 
-  .imgGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5em;
-  }
-
-  .imgContainer {
-    --imgSize: 100%;
-    width: 100%;
-    height: 100%;
+  #startConfig {
     position: relative;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    font-family: var(--content);
+    font-size: 1.3em;
+    background: var(--prim);
+    color: var(--fore);
+    border: 1px solid var(--base);
+    padding: 0.4em 5em;
+    border-radius: 25px;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    pointer-events: all;
+    opacity: 1;
+    cursor: pointer;
+    font-weight: 700;
+    text-align: center;
     transition: all var(--animDur) var(--sleek);
 
-    --imgGridRounding: calc(var(--cardRounding) / 1.5);
+    & .configIco {
+      right: 0.1em;
+      position: absolute;
+      font-size: 1.6em;
+      transform: translateX(-2em);
+      opacity: 0;
+      transition: none;
+    }
+
+    &:hover {
+      background: transparent;
+      color: var(--fore);
+      border: 1px solid var(--prim);
+      transform: scale(1.05);
+
+      & .configIco {
+        opacity: 1;
+        transform: translateX(0);
+        transition: all var(--animDur) var(--sleek);
+      }
+    }
+    &.disabled {
+      background: rgba(0, 0, 0, 0);
+      box-sizing: content-box;
+      border: 2px solid var(--viscueDisabled);
+      color: var(--viscueDisabled);
+      pointer-events: none;
+      font-size: 1.2em;
+    }
+    &.configGo {
+      transition: all var(--animDur) var(--sleek);
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
-  .imgContainer {
-    border-radius: var(--imgGridRounding);
-  }
-
-  .img {
+  #configWindow {
+    background: red;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center;
-    transition: transform var(--animDur) ease-in-out;
+    overflow-y: scroll;
+    display: none;
   }
 </style>
