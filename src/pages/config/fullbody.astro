@@ -449,11 +449,6 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     const imgGrid = document.querySelector(".imgGrid") as HTMLElement;
     const close = document.getElementById("cancel") as HTMLElement;
 
-    //skip
-    //infoBox.style.display = "none";
-    //configWindow.style.display = "block";
-    //startButton.classList.add("configGo");
-    //configStatus.classList.remove("collapsed");
     function configuring(state: Boolean) {
       if (state) {
         infoBox.style.display = "none";
@@ -471,7 +466,9 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
         configStatus.classList.add("collapsed");
       }
     }
-    configuring(true);
+
+    //skip
+    //configuring(true);
 
     startButton.addEventListener("click", () => {
       configuring(true);
@@ -485,6 +482,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   document.addEventListener("astro:after-swap", () => {
     initStartConfig();
     inibackButton();
+    setupFormValidation();
   });
 </script>
 
