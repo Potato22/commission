@@ -58,11 +58,11 @@ body {
 :root {
   --base: #242428;
   --fore: #ffffff;
-  --foreSecondary: rgba(255, 255, 255, 0.774);
+  --foreSecondary: rgba(255, 255, 255, 0.438);
   --prim: #27bdce;
   --primSecondary: #1b525b;
   --accent: #3dffe5;
-  --accentSecondary: hsl(186, 68%, 48%, 5%);
+  --accentSecondary: rgba(39, 189, 206, 0.02);
   --viscueDisabled: #3f3f3f65;
   --err: #ff5c5c;
 
@@ -79,6 +79,7 @@ body {
   --scurve: cubic-bezier(.76,.01,.16,1);
 
   --brightness: brightness(1.2);
+  --faded: brightness(0.5);
   --inverto: invert(1);
 }
 
@@ -90,7 +91,7 @@ body {
   --primSecondary: #ffd4ad;
   --accent: #ff6753;
   --accentSecondary: hsl(29, 100%, 65%, 5%);
-  --viscueDisabled: #00000065;
+  --viscueDisabled: #0000002d;
 
   --brightness: brightness(.8);
   --inverto: invert(0);

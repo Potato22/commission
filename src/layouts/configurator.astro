@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import pottoCeramic from "../assets/Pottoceramic.png";
 ---
 
 <!doctype html>
@@ -7,6 +8,7 @@ import { ClientRouter } from "astro:transitions";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href={pottoCeramic.src} />
 
     <!-- OG -->
     <meta property="og:type" content="website" />
@@ -33,14 +35,14 @@ import { ClientRouter } from "astro:transitions";
 
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back,arrow_circle_right,close,dark_mode,info,light_mode"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back,arrow_circle_right,close,dark_mode,info,light_mode,upload_file"
     />
 
     <script
       src="https://kit.fontawesome.com/14f5f92fc3.js"
       crossorigin="anonymous"></script>
 
-    <title>Potto Commissions: Configurator</title>
+    <title>Configurator</title>
     <ClientRouter />
   </head>
   <body>
