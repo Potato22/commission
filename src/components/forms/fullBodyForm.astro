@@ -1,9 +1,8 @@
 ---
 import "../../styles/root.scss";
-import Configurator from "../../layouts/configurator.astro";
-import PersistentWindow from "../../components/persistentWindow.astro";
 import { cardList } from "../../data/cardData";
 import { bodyTypes } from "../../data/cardData";
+import "../../styles/dzBasic.scss";
 
 import noImgPlchldr from "../../assets/noImg.svg";
 
@@ -23,273 +22,269 @@ const priceState = cardData.isDisabled
 const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
 ---
 
-<Configurator>
-  <div class="configWrap">
-    <div class="" id="configStatus">
-      <div class="stCell1">
-        <div class="stTitle">*{cardData.title}</div>
-        <div class="stDesc">{cardData.description}</div>
+<div class="configWrap">
+  <div class="" id="configStatus">
+    <div class="stCell1">
+      <div class="stTitle">*{cardData.title}</div>
+      <div class="stDesc">{cardData.description}</div>
+    </div>
+    <div class="stCell2">
+      <div class="stPricebox">
+        <span class="estSpan">Est. Price</span>
+        <div class="numeros">
+          <div id="priceCalc">€{cardData.price}</div>
+        </div>
       </div>
-      <div class="stCell2">
-        <div class="stPricebox">
-          <span class="estSpan">Est. Price</span>
-          <div class="numeros">
-            <div id="priceCalc">€{cardData.price}</div>
-          </div>
-        </div>
-        <div
-          class="disclaimer"
-          aria-label="Overall request complexity or demand may affect the final price."
-        >
-          <span class="disclaimerIco material-symbols-rounded">info</span>
-        </div>
-        <button
-          class="submitButtons"
-          type="button"
-          id="buttonLink"
-          onclick="document.getElementById('submitBtn').click()">Submit</button
-        >
-        <div id="cancel" class="material-symbols-rounded">close</div>
+      <div
+        class="disclaimer"
+        aria-label="Overall request complexity or demand may affect the final price."
+      >
+        <span class="disclaimerIco material-symbols-rounded">info</span>
+      </div>
+      <button
+        class="submitButtons"
+        type="button"
+        id="buttonLink"
+        onclick="document.getElementById('submitBtn').click()">Submit</button
+      >
+      <div id="cancel" class="material-symbols-rounded">close</div>
+    </div>
+  </div>
+  <div class="cardBody" id={cardId} transition:name={`cardIMGG-${cardId}`}>
+    <div class="imgGrid">
+      <div class="imgContainer" id="imageGridDefault">
+        <img
+          src={cardData.images[0].src}
+          alt={cardData.images[0].alt}
+          class="img"
+          style={cardData.images[0].pos
+            ? `object-position:${cardData.images[0].pos}`
+            : cardData.images[0].style}
+        />
+      </div>
+      <div class="imgContainer">
+        <img
+          src={cardData.images[1].src}
+          alt={cardData.images[1].alt}
+          class="img"
+          style={cardData.images[1].pos
+            ? `object-position:${cardData.images[1].pos}`
+            : cardData.images[1].style}
+        />
+      </div>
+      <div class="imgContainer">
+        <img
+          src={cardData.images[2].src}
+          alt={cardData.images[2].alt}
+          class="img"
+          style={cardData.images[2].pos
+            ? `object-position:${cardData.images[2].pos}`
+            : cardData.images[2].style}
+        />
+      </div>
+      <div class="imgContainer">
+        <img
+          src={cardData.images[3].src}
+          alt={cardData.images[3].alt}
+          class="img"
+          style={cardData.images[3].pos
+            ? `object-position:${cardData.images[3].pos}`
+            : cardData.images[3].style}
+        />
       </div>
     </div>
-    <div class="cardBody" id={cardId} transition:name={`cardIMGG-${cardId}`}>
-      <div class="imgGrid">
-        <div class="imgContainer" id="imageGridDefault">
-          <img
-            src={cardData.images[0].src}
-            alt={cardData.images[0].alt}
-            class="img"
-            style={cardData.images[0].pos
-              ? `object-position:${cardData.images[0].pos}`
-              : cardData.images[0].style}
-          />
-        </div>
-        <div class="imgContainer">
-          <img
-            src={cardData.images[1].src}
-            alt={cardData.images[1].alt}
-            class="img"
-            style={cardData.images[1].pos
-              ? `object-position:${cardData.images[1].pos}`
-              : cardData.images[1].style}
-          />
-        </div>
-        <div class="imgContainer">
-          <img
-            src={cardData.images[2].src}
-            alt={cardData.images[2].alt}
-            class="img"
-            style={cardData.images[2].pos
-              ? `object-position:${cardData.images[2].pos}`
-              : cardData.images[2].style}
-          />
-        </div>
-        <div class="imgContainer">
-          <img
-            src={cardData.images[3].src}
-            alt={cardData.images[3].alt}
-            class="img"
-            style={cardData.images[3].pos
-              ? `object-position:${cardData.images[3].pos}`
-              : cardData.images[3].style}
-          />
-        </div>
-      </div>
 
-      <form id="configWindow">
-        {
-          cardData.configData &&
-            cardData.configData.map((config, idx) => (
-              <>
-                {/*fragment <> START*/}
-                {/* Category/Section Label */}
-                {idx === 0 && (
+    <form id="configWindow">
+      {
+        cardData.configData &&
+          cardData.configData.map((config, idx) => (
+            <>
+              {/*fragment <> START*/}
+              {/* Category/Section Label */}
+              {idx === 0 && (
+                <>
+                  <div class="categoryLabel">General Configurations</div>
+                  <hr />
+                </>
+              )}
+              {config.subCategory === "chrDetail" && (
+                <div class="subCategoryBox">
+                  <div class="subCategory">Character Detail</div>
+                  <div class="subCategoryDesc">Choose an option.</div>
+                </div>
+              )}
+              {config.subCategory === "bodyForm" && (
+                <div class="subCategoryBox">
+                  <div class="subCategory">Anthro?</div>
+                  <div class="subCategoryDesc">Choose an option.</div>
+                </div>
+              )}
+              {config.subCategory === "background" && (
+                <div class="subCategoryBox">
+                  <div class="subCategory">Background Art</div>
+                  <div class="subCategoryDesc">Choose an option.</div>
+                </div>
+              )}
+              {config.subCategory === "nsfw" && (
+                <div class="subCategoryBox">
+                  <div class="subCategory">NSFW?</div>
+                  <div class="subCategoryDesc">Choose an option.</div>
+                </div>
+              )}
+              {config.subCategory === "character" &&
+                idx ===
+                  cardData.configData?.findIndex(
+                    (c) => c.subCategory === "character"
+                  ) && (
                   <>
-                    <div class="categoryLabel">General Configurations</div>
+                    <div class="categoryLabel">Request Detailing</div>
                     <hr />
+                    <div class="subCategoryBox">
+                      <div class="subCategory">Character(s)</div>
+                      <div class="subCategoryDesc">Fill in the text box.</div>
+                    </div>
                   </>
                 )}
-                {config.subCategory === "chrDetail" && (
-                  <div class="subCategoryBox">
-                    <div class="subCategory">Character Detail</div>
-                    <div class="subCategoryDesc">Choose an option.</div>
-                  </div>
+              {config.subCategory === "contact" &&
+                idx ===
+                  cardData.configData?.findIndex(
+                    (c) => c.subCategory === "contact"
+                  ) && (
+                  <>
+                    <div class="categoryLabel">Contacts</div>
+                    <hr />
+                    <div class="subCategoryBox">
+                      <div class="subCategory">Interaction Endpoints</div>
+                      <div class="subCategoryDesc">Fill in the text box.</div>
+                    </div>
+                  </>
                 )}
-                {config.subCategory === "bodyForm" && (
-                  <div class="subCategoryBox">
-                    <div class="subCategory">Anthro?</div>
-                    <div class="subCategoryDesc">Choose an option.</div>
-                  </div>
-                )}
-                {config.subCategory === "background" && (
-                  <div class="subCategoryBox">
-                    <div class="subCategory">Background Art</div>
-                    <div class="subCategoryDesc">Choose an option.</div>
-                  </div>
-                )}
-                {config.subCategory === "nsfw" && (
-                  <div class="subCategoryBox">
-                    <div class="subCategory">NSFW?</div>
-                    <div class="subCategoryDesc">Choose an option.</div>
-                  </div>
-                )}
-                {config.subCategory === "character" &&
-                  idx ===
-                    cardData.configData?.findIndex(
-                      (c) => c.subCategory === "character"
-                    ) && (
-                    <>
-                      <div class="categoryLabel">Request Detailing</div>
-                      <hr />
-                      <div class="subCategoryBox">
-                        <div class="subCategory">Character(s)</div>
-                        <div class="subCategoryDesc">Fill in the text box.</div>
-                      </div>
-                    </>
-                  )}
-                {config.subCategory === "contact" &&
-                  idx ===
-                    cardData.configData?.findIndex(
-                      (c) => c.subCategory === "contact"
-                    ) && (
-                    <>
-                      <div class="categoryLabel">Contacts</div>
-                      <hr />
-                      <div class="subCategoryBox">
-                        <div class="subCategory">Interaction Endpoints</div>
-                        <div class="subCategoryDesc">Fill in the text box.</div>
-                      </div>
-                    </>
-                  )}
 
-                {/* Render form fields */}
-                {config.type === "singleChoice" &&
-                  config.options &&
-                  config.options.map((opt, optIdx) => (
-                    <label
-                      class={`formComponent${opt.visibleIf ? " conditionalOpt" : ""}`}
-                      data-visible-if={
-                        opt.visibleIf ? JSON.stringify(opt.visibleIf) : ""
-                      }
-                      style={opt.visibleIf ? "display:none;" : ""}
-                      id={`${config.id}_${optIdx}_wrapper`}
-                    >
-                      <div class="ocHeader">
-                        <div class="ocCell1">
-                          <input
-                            type="radio"
-                            name={config.id}
-                            id={`${config.id}_${optIdx}`}
-                            value={opt.optionName}
-                            required={config.required}
-                            checked={!!opt.preChecked}
-                          />
-                          <span class="customRadio" />
+              {/* Render form fields */}
+              {config.type === "singleChoice" &&
+                config.options &&
+                config.options.map((opt, optIdx) => (
+                  <label
+                    class={`formComponent${opt.visibleIf ? " conditionalOpt" : ""}`}
+                    data-visible-if={
+                      opt.visibleIf ? JSON.stringify(opt.visibleIf) : ""
+                    }
+                    style={opt.visibleIf ? "display:none;" : ""}
+                    id={`${config.id}_${optIdx}_wrapper`}
+                  >
+                    <div class="ocHeader">
+                      <div class="ocCell1">
+                        <input
+                          type="radio"
+                          name={config.id}
+                          id={`${config.id}_${optIdx}`}
+                          value={opt.optionName}
+                          required={config.required}
+                          checked={!!opt.preChecked}
+                        />
+                        <span class="customRadio" />
+                        <div class="optionTitle">{opt.optionName}</div>
+                      </div>
+                      <div class="optionValue">
+                        {opt.optionPrice == null || opt.optionPrice === 0
+                          ? "init"
+                          : opt.basePrice //elseif
+                            ? "€" + opt.optionPrice
+                            : "+€" + opt.optionPrice}
+                      </div>
+                    </div>
+                    <div class="optionDesc" set:html={opt.optionDescription} />
+                  </label>
+                ))}
+
+              {config.type === "flipflop" &&
+                config.options &&
+                config.options.length === 2 && (
+                  <div class="flipflopBox">
+                    {config.options.map((opt, optIdx) => (
+                      <label class="formComponent flipflop">
+                        <input
+                          type="radio"
+                          name={config.id}
+                          id={`${config.id}_${optIdx}`}
+                          value={opt.optionName}
+                          checked={!!opt.preChecked}
+                        />
+                        <div class="flipflopHeader">
                           <div class="optionTitle">{opt.optionName}</div>
-                        </div>
-                        <div class="optionValue">
-                          {opt.optionPrice == null || opt.optionPrice === 0
-                            ? "init"
-                            : opt.basePrice //elseif
-                              ? "€" + opt.optionPrice
-                              : "+€" + opt.optionPrice}
-                        </div>
-                      </div>
-                      <div
-                        class="optionDesc"
-                        set:html={opt.optionDescription}
-                      />
-                    </label>
-                  ))}
-
-                {config.type === "flipflop" &&
-                  config.options &&
-                  config.options.length === 2 && (
-                    <div class="flipflopBox">
-                      {config.options.map((opt, optIdx) => (
-                        <label class="formComponent flipflop">
-                          <input
-                            type="radio"
-                            name={config.id}
-                            id={`${config.id}_${optIdx}`}
-                            value={opt.optionName}
-                            checked={!!opt.preChecked}
-                          />
-                          <div class="flipflopHeader">
-                            <div class="optionTitle">{opt.optionName}</div>
-                            <div class="optionValue">
-                              {opt.optionPrice == null || opt.optionPrice === 0
-                                ? ""
-                                : opt.basePrice //elseif
-                                  ? "€" + opt.optionPrice
-                                  : "+€" + opt.optionPrice}
-                            </div>
+                          <div class="optionValue">
+                            {opt.optionPrice == null || opt.optionPrice === 0
+                              ? ""
+                              : opt.basePrice //elseif
+                                ? "€" + opt.optionPrice
+                                : "+€" + opt.optionPrice}
                           </div>
-                          <div class="optionDesc">{opt.optionDescription}</div>
-                        </label>
-                      ))}
-                    </div>
-                  )}
+                        </div>
+                        <div class="optionDesc">{opt.optionDescription}</div>
+                      </label>
+                    ))}
+                  </div>
+                )}
 
-                {config.type === "textarea" && (
-                  <div class="formComponent notLabel">
-                    <div class="textAreaTitle">
-                      {config.questionTitle || "Text area component"}
+              {config.type === "textarea" && (
+                <div class="formComponent notLabel">
+                  <div class="textAreaTitle">
+                    {config.questionTitle || "Text area component"}
+                  </div>
+                  <div
+                    class="textAreaDesc"
+                    set:html={config.questionDescription || ""}
+                  />
+                  <textarea
+                    class="formTextInput"
+                    id={config.id}
+                    name={config.id}
+                    placeholder={config.placeholder || ""}
+                    required={config.required}
+                  />
+                </div>
+              )}
+
+              {config.type === "fileUpload" && (
+                <div class="formComponent notLabel">
+                  <div class="textAreaTitle">
+                    {config.questionTitle || "Text area component"}
+                  </div>
+                  <div
+                    class="textAreaDesc"
+                    set:html={config.questionDescription || ""}
+                  />
+                  <div class="elDropZone" id={`dropZone_${config.id}`}>
+                    <div class="dropIco material-symbols-rounded">
+                      upload_file
                     </div>
-                    <div
-                      class="textAreaDesc"
-                      set:html={config.questionDescription || ""}
-                    />
-                    <textarea
-                      class="formTextInput"
-                      id={config.id}
+                  </div>
+                  <span class="fileNameList" id={`fileName_${config.id}`} />
+                  <label>
+                    <input
+                      type="file"
+                      id={`fileInput_${config.id}`}
                       name={config.id}
-                      placeholder={config.placeholder || ""}
-                      required={config.required}
+                      style="display:none;"
+                      multiple={config.maxFiles !== 1}
                     />
-                  </div>
-                )}
+                  </label>
+                </div>
+              )}
 
-                {config.type === "fileUpload" && (
-                  <div class="formComponent notLabel">
-                    <div class="textAreaTitle">
-                      {config.questionTitle || "Text area component"}
-                    </div>
-                    <div
-                      class="textAreaDesc"
-                      set:html={config.questionDescription || ""}
-                    />
-                    <div class="elDropZone" id={`dropZone_${config.id}`}>
-                      <div class="dropIco material-symbols-rounded">
-                        upload_file
-                      </div>
-                    </div>
-                    <span class="fileNameList" id={`fileName_${config.id}`} />
-                    <label>
-                      <input
-                        type="file"
-                        id={`fileInput_${config.id}`}
-                        name={config.id}
-                        style="display:none;"
-                        multiple={config.maxFiles !== 1}
-                      />
-                    </label>
+              {config.type === "infoCard" && (
+                <div class="formComponent notLabel">
+                  <div class="textAreaTitle">
+                    {config.questionTitle || "Text area component"}
                   </div>
-                )}
+                  <div
+                    class="textAreaDesc"
+                    set:html={config.questionDescription || ""}
+                  />
+                </div>
+              )}
 
-                {config.type === "infoCard" && (
-                  <div class="formComponent notLabel">
-                    <div class="textAreaTitle">
-                      {config.questionTitle || "Text area component"}
-                    </div>
-                    <div
-                      class="textAreaDesc"
-                      set:html={config.questionDescription || ""}
-                    />
-                  </div>
-                )}
-
-                {/* {config.type === "quantityCounter" && (
+              {/* {config.type === "quantityCounter" && (
                   <div class="formComponent notLabel">
                     <div class="textAreaTitle">
                       {config.questionTitle || "Text area component"}
@@ -303,43 +298,43 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                     </div>
                   </div>
                 )} */}
-              </>
-            ))
-        }
-        <button class="submitButtons" type="submit" id="submitBtn">
-          Submit
-        </button>
-      </form>
+            </>
+          ))
+      }
+      <button class="submitButtons" type="submit" id="submitBtn">
+        Submit
+      </button>
+    </form>
 
-      <div id="infobox">
-        <div id="backB" class="material-symbols-rounded">arrow_back</div>
-        <div class="infocell1">
-          <div class="typeTitle">{cardData.title}</div>
-          <div class="description" set:html={cardData.description} />
-          <div class="tags">
-            {
-              cardData.tags.map((tag) => (
-                <span class={`tag ${getTagClass(tag)}`}>{tag}</span>
-              ))
-            }
-          </div>
-          <div class="priceBox">
-            <span class="startsFrom">Starts from...</span>
-            <div class="price">{priceState}</div>
-          </div>
-          <div class={cardData.isDisabled ? "disabled" : ""} id="startConfig">
-            {configButtonText}
-            <div class="configIco material-symbols-rounded">
-              arrow_circle_right
-            </div>
+    <div id="infobox">
+      <div id="backB" class="material-symbols-rounded">arrow_back</div>
+      <div class="infocell1">
+        <div class="typeTitle">{cardData.title}</div>
+        <div class="description" set:html={cardData.description} />
+        <div class="tags">
+          {
+            cardData.tags.map((tag) => (
+              <span class={`tag ${getTagClass(tag)}`}>{tag}</span>
+            ))
+          }
+        </div>
+        <div class="priceBox">
+          <span class="startsFrom">Starts from...</span>
+          <div class="price">{priceState}</div>
+        </div>
+        <div class={cardData.isDisabled ? "disabled" : ""} id="startConfig">
+          {configButtonText}
+          <div class="configIco material-symbols-rounded">
+            arrow_circle_right
           </div>
         </div>
       </div>
     </div>
   </div>
-</Configurator>
+</div>
 
 <script>
+  import Dropzone from "dropzone";
   import { cardList } from "../../data/cardData";
   const cardId = "fullbody";
   const cardData = cardList[cardId];
@@ -609,7 +604,6 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       lastPrice = newPrice;
     }
   }
-  updatePrice();
 
   /**
    * @param { { id: string; options?: { optionName: string; optionPrice: number }[] } } config
@@ -661,7 +655,6 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       window.history.back();
     });
   }
-  initbackButton();
 
   function initStartConfig() {
     const infoBox = document.getElementById("infobox") as HTMLElement;
@@ -717,10 +710,11 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       configuring(false);
     });
   }
-  initStartConfig();
 
-  //document.addEventListener("DOMContentLoaded", setupFormValidation);
   document.addEventListener("DOMContentLoaded", () => {
+    updatePrice();
+    initbackButton();
+    initStartConfig();
     initPriceCalc();
     setupFormValidation();
     updateConditionalOptions();
@@ -730,7 +724,9 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     fileInputDragDrop();
   });
 
+  // rehydrater astro transitions
   document.addEventListener("astro:after-swap", () => {
+    updatePrice();
     initPriceCalc();
     initStartConfig();
     initbackButton();
@@ -1329,7 +1325,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       background: var(--primSecondary);
     }
     .fileNameList {
-      font-size: .3rem;
+      font-size: 0.3rem;
     }
   }
 </style>
