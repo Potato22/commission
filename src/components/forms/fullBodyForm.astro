@@ -263,8 +263,8 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                       <div class="dropIco material-symbols-rounded">
                         upload_file
                       </div>
-                      <span id={`fileName_${config.id}`} />
                     </div>
+                    <span class="fileNameList" id={`fileName_${config.id}`} />
                     <label>
                       <input
                         type="file"
@@ -273,25 +273,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                         style="display:none;"
                         multiple={config.maxFiles !== 1}
                       />
-                      <span class="uploadBtn" id={`uploadBtn_${config.id}`}>
-                        Choose file
-                      </span>
                     </label>
-                  </div>
-                )}
-
-                {config.type === "quantityCounter" && (
-                  <div class="formComponent notLabel">
-                    <div class="textAreaTitle">
-                      {config.questionTitle || "Text area component"}
-                    </div>
-                    <div
-                      class="textAreaDesc"
-                      set:html={config.questionDescription || ""}
-                    />
-                    <div class="quantityBox">
-                      <div class="quantityNumeral">WIP</div>
-                    </div>
                   </div>
                 )}
 
@@ -306,6 +288,21 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                     />
                   </div>
                 )}
+
+                {/* {config.type === "quantityCounter" && (
+                  <div class="formComponent notLabel">
+                    <div class="textAreaTitle">
+                      {config.questionTitle || "Text area component"}
+                    </div>
+                    <div
+                      class="textAreaDesc"
+                      set:html={config.questionDescription || ""}
+                    />
+                    <div class="quantityBox">
+                      <div class="quantityNumeral">WIP</div>
+                    </div>
+                  </div>
+                )} */}
               </>
             ))
         }
@@ -383,7 +380,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
           });
         }
 
-        if (fileInput as HTMLInputElement && fileName) {
+        if ((fileInput as HTMLInputElement) && fileName) {
           fileInput?.addEventListener("change", () => {
             let files = Array.from((fileInput as HTMLInputElement).files || []);
             if (files.length > maxFiles) files = files.slice(0, maxFiles);
@@ -556,14 +553,20 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       configForm.reportValidity();
       return;
     }
-    const data: { [key: string]: string } = {};
+
+    const data: { [key: string]: string | File | File[] } = {};
     const formData = new FormData(configForm);
 
     if (cardData.configData) {
       for (const field of cardData.configData) {
-        const value = formData.get(field.id);
-        if (value !== null) {
-          data[field.id] = value.toString();
+        const value = formData.getAll(field.id);
+        if (value.length > 1) {
+          // Multiple files
+          data[field.id] = value.filter((v) => v instanceof File);
+        } else if (value[0] instanceof File) {
+          data[field.id] = value[0];
+        } else if (value[0] != null) {
+          data[field.id] = value[0].toString();
         }
       }
     }
@@ -1316,15 +1319,17 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     border-radius: 10px;
     display: grid;
     place-items: center;
-    background: var(--primSecondary);
+    background: transparent;
 
     .dropIco {
       color: var(--fore);
     }
-    .dragover {
+    &.dragover {
       border-color: var(--accent);
-      background: var(--prim);
-      opacity: 0.8;
+      background: var(--primSecondary);
+    }
+    .fileNameList {
+      font-size: .3rem;
     }
   }
 </style>
