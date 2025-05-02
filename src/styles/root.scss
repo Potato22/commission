@@ -56,7 +56,7 @@ body {
 @import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@400..800&family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap');
 
 :root {
-  --base: #242428;
+  --base: #10131F;
   --fore: #ffffff;
   --foreSecondary: rgba(255, 255, 255, 0.438);
   --prim: #27bdce;
@@ -64,7 +64,10 @@ body {
   --accent: #3dffe5;
   --accentSecondary: rgba(39, 189, 206, 0.02);
   --viscueDisabled: #3f3f3f65;
-  --err: #ff5c5c;
+
+  //rgb( var(...) , ??)
+  --err: 255, 92, 92;
+  --ok: 47, 255, 47,;
 
   --display: "Syne";
   --doto: "Doto";
@@ -121,7 +124,7 @@ a {
 }
 
 .formInvalidErr {
-  color: var(--err);
+  color: rgb(var(--err));
   margin-bottom: 1rem;
   font-family: var(--content);
   font-size: 1rem;
@@ -131,7 +134,7 @@ a {
   gap: 1em;
 }
 .errBlob {
-  border: 2px solid var(--err);
+  border: 2px solid rgb(var(--err));
   padding: .5em 1em;
   border-radius: 20px;
 }
@@ -144,26 +147,18 @@ a {
   0% {
     transform: translateY(0px);
     opacity: 1;
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ease-out */
   }
 
-  12% {
-    transform: translateY(1px);
-  }
-
-  24% {
-    transform: translateY(6px);
-  }
-
-  36% {
-    transform: translateY(15px);
-    opacity: .5;
+  50% {
+    transform: translateY(-15px);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53); /* ease-in */
   }
 
   100% {
     transform: translateY(0px);
     opacity: 1;
   }
-
 }
 
 @keyframes toolong {

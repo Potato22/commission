@@ -2,7 +2,7 @@
 import "../../styles/root.scss";
 import { cardList } from "../../data/cardData";
 import { bodyTypes } from "../../data/cardData";
-import "../../styles/dzBasic.scss";
+import "../../styles/dz.scss";
 
 import noImgPlchldr from "../../assets/noImg.svg";
 
@@ -55,7 +55,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       <div class="imgContainer" id="imageGridDefault">
         <img
           src={cardData.images[0].src}
-          alt={cardData.images[0].alt}
+          alt={cardData.images[0].alt ?? "Image"}
           class="img"
           style={cardData.images[0].pos
             ? `object-position:${cardData.images[0].pos}`
@@ -65,7 +65,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       <div class="imgContainer">
         <img
           src={cardData.images[1].src}
-          alt={cardData.images[1].alt}
+          alt={cardData.images[1].alt ?? "Image"}
           class="img"
           style={cardData.images[1].pos
             ? `object-position:${cardData.images[1].pos}`
@@ -75,7 +75,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       <div class="imgContainer">
         <img
           src={cardData.images[2].src}
-          alt={cardData.images[2].alt}
+          alt={cardData.images[2].alt ?? "Image"}
           class="img"
           style={cardData.images[2].pos
             ? `object-position:${cardData.images[2].pos}`
@@ -85,7 +85,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       <div class="imgContainer">
         <img
           src={cardData.images[3].src}
-          alt={cardData.images[3].alt}
+          alt={cardData.images[3].alt ?? "Image"}
           class="img"
           style={cardData.images[3].pos
             ? `object-position:${cardData.images[3].pos}`
@@ -109,25 +109,45 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
               )}
               {config.subCategory === "chrDetail" && (
                 <div class="subCategoryBox">
-                  <div class="subCategory">Character Detail</div>
+                  <div class="subCategory">
+                    Character Detail{" "}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
                   <div class="subCategoryDesc">Choose an option.</div>
                 </div>
               )}
               {config.subCategory === "bodyForm" && (
                 <div class="subCategoryBox">
-                  <div class="subCategory">Anthro?</div>
+                  <div class="subCategory">
+                    Anthro?{" "}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
                   <div class="subCategoryDesc">Choose an option.</div>
                 </div>
               )}
               {config.subCategory === "background" && (
                 <div class="subCategoryBox">
-                  <div class="subCategory">Background Art</div>
+                  <div class="subCategory">
+                    Background Art{" "}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
                   <div class="subCategoryDesc">Choose an option.</div>
                 </div>
               )}
               {config.subCategory === "nsfw" && (
                 <div class="subCategoryBox">
-                  <div class="subCategory">NSFW?</div>
+                  <div class="subCategory">
+                    NSFW?{" "}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
                   <div class="subCategoryDesc">Choose an option.</div>
                 </div>
               )}
@@ -137,10 +157,15 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                     (c) => c.subCategory === "character"
                   ) && (
                   <>
-                    <div class="categoryLabel">Request Detailing</div>
+                    <div class="categoryLabel">Request Detailing </div>
                     <hr />
                     <div class="subCategoryBox">
-                      <div class="subCategory">Character(s)</div>
+                      <div class="subCategory">
+                        Character(s){" "}
+                        {config.required && (
+                          <span style="color: var(--accent)">*</span>
+                        )}
+                      </div>
                       <div class="subCategoryDesc">Fill in the text box.</div>
                     </div>
                   </>
@@ -154,7 +179,12 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                     <div class="categoryLabel">Contacts</div>
                     <hr />
                     <div class="subCategoryBox">
-                      <div class="subCategory">Interaction Endpoints</div>
+                      <div class="subCategory">
+                        Interaction Endpoints{" "}
+                        {config.required && (
+                          <span style="color: var(--accent)">*</span>
+                        )}
+                      </div>
                       <div class="subCategoryDesc">Fill in the text box.</div>
                     </div>
                   </>
@@ -254,21 +284,20 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                     class="textAreaDesc"
                     set:html={config.questionDescription || ""}
                   />
-                  <div class="elDropZone" id={`dropZone_${config.id}`}>
-                    <div class="dropIco material-symbols-rounded">
-                      upload_file
-                    </div>
-                  </div>
+                  <div
+                    class="elDropZone dropzone"
+                    id={`dropZone_${config.id}`}
+                    data-config-id={config.id}
+                  />
                   <span class="fileNameList" id={`fileName_${config.id}`} />
-                  <label>
-                    <input
-                      type="file"
-                      id={`fileInput_${config.id}`}
-                      name={config.id}
-                      style="display:none;"
-                      multiple={config.maxFiles !== 1}
-                    />
-                  </label>
+                  <span
+                    class="validFileInfo"
+                    set:html={
+                      `<span class="b7" id="errReason-fileType">(.png, .jpg, .jpeg)</span> && <span class="b7" id="errReason-fileSize">20MB max</span> && <span class="b7" id="errReason-fileCount">Max files: ` +
+                      config.maxFiles +
+                      `</span>`
+                    }
+                  />
                 </div>
               )}
 
@@ -339,64 +368,72 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   const cardId = "fullbody";
   const cardData = cardList[cardId];
 
-  function fileInputDragDrop() {
+  function initDz() {
+    const dzConfigFileSize: number = 19;
+
     cardData.configData?.forEach((config) => {
       if (config.type === "fileUpload") {
-        const fileInput = document.getElementById(`fileInput_${config.id}`);
-        const dropZone = document.getElementById(`dropZone_${config.id}`);
-        const fileName = document.getElementById(`fileName_${config.id}`);
-        const uploadBtn = document.getElementById(`uploadBtn_${config.id}`);
-        const maxFiles = config.maxFiles || Infinity;
+        const dzElem = document.getElementById(`dropZone_${config.id}`);
+        const validityInfo = document.querySelector(".validFileInfo");
+        const fileTypeSpan = document.getElementById("errReason-fileType");
+        const fileSizeSpan = document.getElementById("errReason-fileSize");
+        const fileCountSpan = document.getElementById("errReason-fileCount");
+        if (dzElem) {
+          new Dropzone(dzElem, {
+            url: "dfss",
+            autoProcessQueue: false,
+            maxFiles: config.maxFiles,
+            maxFilesize: dzConfigFileSize, //IT'S FUCKING MEGABYTES NOT "BYTES" WHO WROTE THIS SHIT
+            acceptedFiles: ".png,.jpg,.jpeg",
+            addRemoveLinks: true,
+            dictDefaultMessage: "upload_file",
+            dictRemoveFile: "Remove",
 
-        if (dropZone && fileInput) {
-          dropZone.addEventListener("click", () => fileInput.click());
-          dropZone.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            dropZone.classList.add("dragover");
+            //// Optional: handle events, e.g. to update fileNameList
+            init: function () {
+              this.on("maxfilesexceeded", function (this: Dropzone, file) {
+                this.removeFile(file);
+                dzElem.classList.add("errNudge");
+                fileCountSpan?.classList.add("errCulprit");
+                setTimeout(() => {
+                    dzElem.classList.remove("errNudge");
+                    fileCountSpan?.classList.remove("errCulprit");
+                  }, 500);
+              });
+              this.on("addedfile", function (this: Dropzone, file) {
+                if (file.size > (dzConfigFileSize * 1024 * 1024)) {
+                  this.removeFile(file);
+                  dzElem.classList.add("errNudge");
+                  fileSizeSpan?.classList.add("errCulprit");
+                  setTimeout(() => {
+                    dzElem.classList.remove("errNudge");
+                    fileSizeSpan?.classList.remove("errCulprit");
+                  }, 500);
+                  return;
+                }
+                if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+                  this.removeFile(file);
+                  dzElem.classList.add("errNudge")
+                  fileTypeSpan?.classList.add("errCulprit")
+                  setTimeout(() => {
+                    dzElem.classList.remove("errNudge");
+                    fileTypeSpan?.classList.remove("errCulprit");
+                  }, 500);
+                  return;
+                }
+              });
+              //this.on("error", function (this: Dropzone, file) {
+              //  this.removeFile(file);
+              //  dzElem.classList.add("errNudge");
+              //  fileTypeSpan?.classList.add("errCulprit");
+              //});
+              this.on("addedfile", (file) => {});
+            },
           });
-          dropZone.addEventListener("dragleave", () => {
-            dropZone.classList.remove("dragover");
-          });
-          dropZone.addEventListener("drop", (e) => {
-            e.preventDefault();
-            dropZone.classList.remove("dragover");
-            if (e.dataTransfer) {
-              let files = Array.from(e.dataTransfer.files);
-              if (files.length > maxFiles) files = files.slice(0, maxFiles);
-              // Create a DataTransfer to assign files to input
-              const dataTransfer = new DataTransfer();
-              files.forEach((f) => dataTransfer.items.add(f));
-              (fileInput as HTMLInputElement).files = dataTransfer.files;
-
-              if (fileName) {
-                fileName.textContent = files.map((f) => f.name).join(", ");
-              }
-            }
-          });
-        }
-
-        if ((fileInput as HTMLInputElement) && fileName) {
-          fileInput?.addEventListener("change", () => {
-            let files = Array.from((fileInput as HTMLInputElement).files || []);
-            if (files.length > maxFiles) files = files.slice(0, maxFiles);
-
-            // If user selects too many, trim and update input
-            if (
-              fileInput &&
-              (fileInput as HTMLInputElement).files &&
-              ((fileInput as HTMLInputElement).files?.length ?? 0) > maxFiles
-            ) {
-              const dataTransfer = new DataTransfer();
-              files.forEach((f) => dataTransfer.items.add(f));
-              (fileInput as HTMLInputElement).files = dataTransfer.files;
-            }
-
-            fileName.textContent = files.map((f) => f.name).join(", ");
-          });
-        }
-
-        if (uploadBtn && fileInput) {
-          uploadBtn.addEventListener("click", () => fileInput.click());
+          const injectGoogleIcon = dzElem.querySelector(".dz-button");
+          if (injectGoogleIcon) {
+            injectGoogleIcon.classList.add("material-symbols-rounded");
+          }
         }
       }
     });
@@ -534,6 +571,22 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       if (hasErrors) {
         event.preventDefault();
       }
+      cardData.configData?.forEach((config) => {
+        if (config.type === "fileUpload" && config.required) {
+          const dzElem = document.getElementById(`dropZone_${config.id}`);
+          if (dzElem && dzElem.dropzone) {
+            const dzFiles = dzElem.dropzone.getAcceptedFiles();
+            if (dzFiles.length === 0) {
+              hasErrors = true;
+              const errorMsg = document.createElement("div");
+              errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
+              errorMsg.className = "errBlob";
+              errorContainer.appendChild(errorMsg);
+              dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
+        }
+      });
     });
   }
 
@@ -549,14 +602,16 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       return;
     }
 
-    const data: { [key: string]: string | File | File[] } = {};
+    /** @type {Record<string, string | File | File[]>} */
+
+    const data: Record<string, string | File | File[]> = {};
     const formData = new FormData(configForm);
 
+    // Collect all normal fields
     if (cardData.configData) {
       for (const field of cardData.configData) {
         const value = formData.getAll(field.id);
         if (value.length > 1) {
-          // Multiple files
           data[field.id] = value.filter((v) => v instanceof File);
         } else if (value[0] instanceof File) {
           data[field.id] = value[0];
@@ -566,7 +621,27 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       }
     }
 
+    // Collect files from Dropzone instances
+    cardData.configData?.forEach((config) => {
+      if (config.type === "fileUpload") {
+        const dzElem = document.getElementById(`dropZone_${config.id}`);
+        if (dzElem && dzElem.dropzone) {
+          const dzFiles = dzElem.dropzone.getAcceptedFiles();
+          if (dzFiles.length > 0) {
+            // If you want to add to FormData for upload:
+            dzFiles.forEach((file, idx) => {
+              formData.append(config.id, file, file.name);
+            });
+            // Or, if you want to add to your data object:
+            data[config.id] = dzFiles.length === 1 ? dzFiles[0] : dzFiles;
+          }
+        }
+      }
+    });
+
     console.log("Collected config data:", data);
+    // If you want to send formData (with files) via fetch:
+    // await fetch("/your-endpoint", { method: "POST", body: formData });
   });
 
   let priceAdd: number = 0;
@@ -711,7 +786,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     });
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function initList() {
     updatePrice();
     initbackButton();
     initStartConfig();
@@ -721,21 +796,14 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     document.querySelectorAll('input[type="radio"]').forEach((input) => {
       input.addEventListener("change", updateConditionalOptions);
     });
-    fileInputDragDrop();
+    initDz();
+  }
+  document.addEventListener("DOMContentLoaded", () => {
+    initList();
   });
-
   // rehydrater astro transitions
   document.addEventListener("astro:after-swap", () => {
-    updatePrice();
-    initPriceCalc();
-    initStartConfig();
-    initbackButton();
-    setupFormValidation();
-    updateConditionalOptions();
-    document.querySelectorAll('input[type="radio"]').forEach((input) => {
-      input.addEventListener("change", updateConditionalOptions);
-    });
-    fileInputDragDrop();
+    initList();
   });
 </script>
 
@@ -1306,26 +1374,17 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     border-radius: 10px;
     padding: 1em;
   }
-  .elDropZone {
-    width: 100%;
-    height: 100px;
-    border: 2px solid var(--fore);
-    border-style: dashed;
-    cursor: pointer;
-    border-radius: 10px;
-    display: grid;
-    place-items: center;
-    background: transparent;
+  .validFileInfo {
+    margin-top: 0.5em;
+    font-size: 1rem;
+    color: var(--prim);
+    font-family: var(--contentSecondary);
 
-    .dropIco {
-      color: var(--fore);
-    }
-    &.dragover {
-      border-color: var(--accent);
-      background: var(--primSecondary);
-    }
-    .fileNameList {
-      font-size: 0.3rem;
+    .errNudge {
+      animation: flash 0.2s 3 steps(2);
+      color: rgba(var(--err), 1);
     }
   }
+
+  /* eldropzone is in /styles */
 </style>
