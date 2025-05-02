@@ -57,6 +57,7 @@ body {
 
 :root {
   --base: #10131F;
+  --baseSecondary: #202332;
   --fore: #ffffff;
   --foreSecondary: rgba(255, 255, 255, 0.438);
   --prim: #27bdce;
@@ -88,6 +89,7 @@ body {
 
 [data-theme=light] {
   --base: #f8f4e8;
+  --baseSecondary: #FFFAEB;
   --fore: #000000;
   --foreSecondary: rgba(0, 0, 0, 0.774);
   --prim: #ffa34d;

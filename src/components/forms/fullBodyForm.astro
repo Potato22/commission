@@ -1,9 +1,9 @@
 ---
 import "../../styles/root.scss";
 import { cardList } from "../../data/cardData";
+import type { FormQuestion } from "../../data/cardData";
 import { bodyTypes } from "../../data/cardData";
 import "../../styles/dz.scss";
-import type { FormQuestion } from "../../data/cardData";
 
 import noImgPlchldr from "../../assets/noImg.svg";
 
@@ -23,9 +23,7 @@ const priceState = cardData.isDisabled
 const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
 
 // Group configData by category
-function groupByCategory(
-  configData: FormQuestion[] = []
-): Record<string, FormQuestion[]> {
+function groupByCategory(configData: FormQuestion[] = []): Record<string, FormQuestion[]> {
   if (!configData) return {};
   return configData.reduce(
     (acc, item) => {
@@ -162,7 +160,13 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                       <span style="color: var(--accent)">*</span>
                     )}
                   </div>
-                  <div class="subCategoryDesc">Choose an option.</div>
+                  <div class="subCategoryDesc">
+                    Choose an option.{" "}
+                    <i>
+                      (Some options are hidden depending the selected "Character
+                      Detail")
+                    </i>
+                  </div>
                 </div>
               )}
               {config.subCategory === "nsfw" && (
@@ -269,37 +273,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                 </div>
               )}
 
-              {config.type === "fileUpload" && (
-                <div class="formComponent notLabel">
-                  <div class="textAreaTitle">
-                    {config.questionTitle || "File upload component"}
-                    {config.required && (
-                      <span style="color: var(--accent)">*</span>
-                    )}
-                  </div>
-                  <div
-                    class="textAreaDesc"
-                    set:html={config.questionDescription || ""}
-                  />
-                  <div
-                    class="elDropZone dropzone"
-                    id={`dropZone_${config.id}`}
-                    data-config-id={config.id}
-                  />
-                  <span class="fileNameList" id={`fileName_${config.id}`} />
-                  <span
-                    class="validFileInfo"
-                    set:html={
-                      `<span class="b7" id="errReason-fileType">(.png, .jpg, .jpeg)</span> && <span class="b7" id="errReason-fileSize">20MB max</span>` +
-                      (config.maxFiles
-                        ? ` && <span class="b7" id="errReason-fileCount">Max files: ${config.maxFiles}</span>`
-                        : "")
-                    }
-                  />
-                </div>
-              )}
-
               {/* infocard ommitted  */}
+              {/* uploader ommitted  */}
             </>
           ))
       }
@@ -479,7 +454,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         const fileCountSpan = document.getElementById("errReason-fileCount");
         if (dzElem) {
           new Dropzone(dzElem, {
-            url: "dfss",
+            url: "#",
             autoProcessQueue: false,
             maxFiles: config.maxFiles ? config.maxFiles : 0,
             maxFilesize: dzConfigFileSize, //IT'S FUCKING MEGABYTES NOT "BYTES" WHO WROTE THIS SHIT
@@ -509,10 +484,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                     fileSizeSpan?.classList.remove("errCulprit");
                   }, 500);
                   return;
-                }
-                if (
-                  !["image/png", "image/jpeg", "image/jpg"].includes(file.type)
-                ) {
+                } else if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
                   this.removeFile(file);
                   dzElem.classList.add("errNudge");
                   fileTypeSpan?.classList.add("errCulprit");
@@ -521,6 +493,11 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                     fileTypeSpan?.classList.remove("errCulprit");
                   }, 500);
                   return;
+                } else {
+                  dzElem.classList.add("drop");
+                  setTimeout(() => {
+                    dzElem.classList.remove("drop");
+                  }, 400);
                 }
               });
               //this.on("error", function (this: Dropzone, file) {
@@ -552,7 +529,16 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         const selected = document.querySelector(
           `input[name="${cond.questionId}"]:checked`
         ) as HTMLInputElement;
-        if (selected && selected.value === cond.value) {
+
+        let shouldShow = false;
+        if (selected) {
+          if (Array.isArray(cond.value)) {
+            shouldShow = cond.value.includes(selected.value);
+          } else {
+            shouldShow = selected.value === cond.value;
+          }
+        }
+        if (shouldShow) {
           elAsHTML.style.display = "";
         } else {
           elAsHTML.style.display = "none";
@@ -651,11 +637,11 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           hasErrors = true;
 
           // Find the textarea title for better error message
-          const textAreaTitle = (
+          const textAreaTitle = ((
             textarea.parentElement?.querySelector(
               ".textAreaTitle"
             ) as HTMLElement
-          )?.textContent;
+          )?.textContent)?.replace(" *", "");
 
           const errorMsg = document.createElement("div");
           errorMsg.innerHTML = `<span class="b7">${textAreaTitle}</span> is required!`;
@@ -1484,6 +1470,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     resize: vertical;
     border-radius: 10px;
     padding: 1em;
+    background: var(--baseSecondary);
+    color: var(--fore)
   }
   .validFileInfo {
     margin-top: 0.5em;

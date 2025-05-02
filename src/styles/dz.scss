@@ -17,6 +17,7 @@
 
   transition: all .2s var(--sleek);
 
+
   .dropIco {
     color: var(--fore);
   }
@@ -32,6 +33,10 @@
 
   &.errNudge {
     animation: shake .3s;
+  }
+
+  &.drop {
+    animation: drop .3s;
   }
 
 }
@@ -258,5 +263,14 @@
   80% {
     transform: translateX(1px);
     border-color: var(--fore);
+  }
+}
+
+@keyframes drop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(.98);
   }
 }

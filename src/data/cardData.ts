@@ -11,7 +11,7 @@ export interface FormQuestion {
         preChecked?: boolean;
         visibleIf?: {
             questionId: string;
-            value: string;
+            value: string | string[];
         }
     }[];
     placeholder?: string; // for non radios
@@ -149,12 +149,20 @@ export const cardList: Record<string, CardData> = {
                     {
                         optionName: "None/Simple",
                         optionDescription: "None at all (transparent), Solid, gradient, or even with quirky particles as backgrounds",
-                        optionPrice: 0
+                        optionPrice: 0,
+                        //preChecked: true
+                    },
+                    {
+                        optionName: "Sketches",
+                        optionDescription: "Background is drawn as sketches, little to no color",
+                        optionPrice: 15,
+                        //preChecked: true
                     },
                     {
                         optionName: "Basic",
                         optionDescription: "Basic details, simplified rendering",
-                        optionPrice: 35
+                        optionPrice: 35,
+                        visibleIf: { questionId: "character-detail", value: ["Flat Color", "Fully Rendered"] }
                     },
                     {
                         optionName: "Complex",
@@ -162,12 +170,12 @@ export const cardList: Record<string, CardData> = {
                         optionPrice: 50,
                         visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
                     },
-                    {
-                        optionName: "This is a robbery, fuck you",
-                        optionDescription: `Fuck the wallet, I'm taking the whole bank`,
-                        optionPrice: 7236493,
-                        visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
-                    },
+                    //{
+                    //    optionName: "This is a robbery, fuck you",
+                    //    optionDescription: `Fuck the wallet, I'm taking the whole bank`,
+                    //    optionPrice: 7236493,
+                    //    visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
+                    //},
                 ],
                 required: true,
             },
@@ -186,7 +194,7 @@ export const cardList: Record<string, CardData> = {
                 type: "infoCard",
                 subCategory: "characterAttribute",
                 questionTitle: "Muliple characters?",
-                questionDescription: `Can do! Additional characters will be charged with 80% of your selected "Character detail"`,
+                questionDescription: `Can do! Additional characters will be charged with <span class="b7">80%</span> of your selected <span class="b7">"Character detail"</span>`,
                 id: "character-attributes",
             },
             {
@@ -194,7 +202,7 @@ export const cardList: Record<string, CardData> = {
                 type: "fileUpload",
                 subCategory: "character",
                 questionTitle: "Upload your character(s)",
-                questionDescription: "Upload your character reference (sheet or images) here!",
+                questionDescription: `Upload your <span class="b7">character</span> and (if any) their <span class="b7">accessories</span> references (sheet or images) here!`,
                 id: "character-reference",
                 required: true,
                 maxFiles: 5,
@@ -203,8 +211,8 @@ export const cardList: Record<string, CardData> = {
                 category: "request-detailing",
                 type: "infoCard",
                 subCategory: "characterAttribute",
-                questionTitle: "Any attributes you want to attach?",
-                questionDescription: "If you wish to also upload your character's attribute references whether it is accessories, clothes, etc. Do so above! <br><i>(Leave as is if you'd rather discuss directly!)</i>",
+                questionTitle: `Accessories`,
+                questionDescription: `<span class="b7">Each</span> added accessories will be counted as a minimum of <span class="b7">€5</span>`,
                 id: "character-attributes",
             },
             {
@@ -212,7 +220,7 @@ export const cardList: Record<string, CardData> = {
                 type: "textarea",
                 subCategory: "requestText",
                 questionTitle: "What do you have in mind?",
-                questionDescription: "Briefly elaborate what you want me to draw for you.",
+                questionDescription: "Briefly elaborate what you want me to draw for you",
                 id: "request-text",
                 placeholder: `You can leave this VERY brief and discuss it directly!`,
                 required: true,
@@ -222,7 +230,9 @@ export const cardList: Record<string, CardData> = {
                 type: "textarea",
                 subCategory: "contact",
                 questionTitle: "Give me a way we can chat for us to discuss further!",
-                questionDescription: `Most active chats: <span class="b7">Discord</span>, <span class="b7">Twitter</span>. <br>If you have none of these, you could provide an <span class="b7">email address</span> instead.`,
+                questionDescription: `
+                Most active chats: <span class="b7">Discord</span>, <span class="b7">Twitter</span>, <span class="b7">Bluesky</span>. <br>
+                If you have none of these, you could provide an <span class="b7">email address</span> instead`,
                 id: "contacts",
                 placeholder: `@yourTag OR your@email.com`,
                 required: true,
