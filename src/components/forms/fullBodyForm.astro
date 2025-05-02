@@ -3,6 +3,7 @@ import "../../styles/root.scss";
 import { cardList } from "../../data/cardData";
 import { bodyTypes } from "../../data/cardData";
 import "../../styles/dz.scss";
+import type { FormQuestion } from "../../data/cardData";
 
 import noImgPlchldr from "../../assets/noImg.svg";
 
@@ -20,6 +21,35 @@ const priceState = cardData.isDisabled
   ? "n/a"
   : "€" + cardData.price.toFixed(0);
 const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
+
+// Group configData by category
+function groupByCategory(
+  configData: FormQuestion[] = []
+): Record<string, FormQuestion[]> {
+  if (!configData) return {};
+  return configData.reduce(
+    (acc, item) => {
+      if (!acc[item.category]) acc[item.category] = [];
+      acc[item.category].push(item);
+      return acc;
+    },
+    {} as Record<string, FormQuestion[]>
+  );
+}
+
+function assertSingleFileUpload(configData: FormQuestion[] = []) {
+  const fileUploadCount = configData.filter(
+    (q) => q.type === "fileUpload"
+  ).length;
+  if (fileUploadCount > 1) {
+    throw new Error(
+      `Dropzone only can be instanced >>once<< inside a form. Found: ${fileUploadCount} || This is what you get for using Dropzone`
+    );
+  }
+}
+assertSingleFileUpload(cardData.configData ?? []);
+
+const groupedConfig = groupByCategory(cardData.configData ?? []);
 ---
 
 <div class="configWrap">
@@ -95,19 +125,14 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     </div>
 
     <form id="configWindow">
+      {/* General Configurations */}
+      <div class="categoryLabel">General Configurations</div>
+      <hr />
       {
-        cardData.configData &&
-          cardData.configData.map((config, idx) => (
+        groupedConfig["general-configurations"] &&
+          groupedConfig["general-configurations"].map((config, idx: number) => (
             <>
-              {/*fragment <> START*/}
-              {/* Category/Section Label */}
-              {idx === 0 && (
-                <>
-                  <div class="categoryLabel">General Configurations</div>
-                  <hr />
-                </>
-              )}
-              {config.subCategory === "chrDetail" && (
+              {config.subCategory === "characterRender" && (
                 <div class="subCategoryBox">
                   <div class="subCategory">
                     Character Detail{" "}
@@ -143,7 +168,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
               {config.subCategory === "nsfw" && (
                 <div class="subCategoryBox">
                   <div class="subCategory">
-                    NSFW?{" "}
+                    NSFW?
                     {config.required && (
                       <span style="color: var(--accent)">*</span>
                     )}
@@ -151,44 +176,6 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                   <div class="subCategoryDesc">Choose an option.</div>
                 </div>
               )}
-              {config.subCategory === "character" &&
-                idx ===
-                  cardData.configData?.findIndex(
-                    (c) => c.subCategory === "character"
-                  ) && (
-                  <>
-                    <div class="categoryLabel">Request Detailing </div>
-                    <hr />
-                    <div class="subCategoryBox">
-                      <div class="subCategory">
-                        Character(s){" "}
-                        {config.required && (
-                          <span style="color: var(--accent)">*</span>
-                        )}
-                      </div>
-                      <div class="subCategoryDesc">Fill in the text box.</div>
-                    </div>
-                  </>
-                )}
-              {config.subCategory === "contact" &&
-                idx ===
-                  cardData.configData?.findIndex(
-                    (c) => c.subCategory === "contact"
-                  ) && (
-                  <>
-                    <div class="categoryLabel">Contacts</div>
-                    <hr />
-                    <div class="subCategoryBox">
-                      <div class="subCategory">
-                        Interaction Endpoints{" "}
-                        {config.required && (
-                          <span style="color: var(--accent)">*</span>
-                        )}
-                      </div>
-                      <div class="subCategoryDesc">Fill in the text box.</div>
-                    </div>
-                  </>
-                )}
 
               {/* Render form fields */}
               {config.type === "singleChoice" &&
@@ -213,7 +200,9 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                           checked={!!opt.preChecked}
                         />
                         <span class="customRadio" />
-                        <div class="optionTitle">{opt.optionName}</div>
+                        <div class="optionTitle">
+                          {opt.optionName ? opt.optionName : "?"}
+                        </div>
                       </div>
                       <div class="optionValue">
                         {opt.optionPrice == null || opt.optionPrice === 0
@@ -241,7 +230,9 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                           checked={!!opt.preChecked}
                         />
                         <div class="flipflopHeader">
-                          <div class="optionTitle">{opt.optionName}</div>
+                          <div class="optionTitle">
+                            {opt.optionName ? opt.optionName : "?"}
+                          </div>
                           <div class="optionValue">
                             {opt.optionPrice == null || opt.optionPrice === 0
                               ? ""
@@ -260,6 +251,9 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                 <div class="formComponent notLabel">
                   <div class="textAreaTitle">
                     {config.questionTitle || "Text area component"}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
                   </div>
                   <div
                     class="textAreaDesc"
@@ -278,7 +272,10 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
               {config.type === "fileUpload" && (
                 <div class="formComponent notLabel">
                   <div class="textAreaTitle">
-                    {config.questionTitle || "Text area component"}
+                    {config.questionTitle || "File upload component"}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
                   </div>
                   <div
                     class="textAreaDesc"
@@ -293,40 +290,142 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                   <span
                     class="validFileInfo"
                     set:html={
-                      `<span class="b7" id="errReason-fileType">(.png, .jpg, .jpeg)</span> && <span class="b7" id="errReason-fileSize">20MB max</span> && <span class="b7" id="errReason-fileCount">Max files: ` +
-                      config.maxFiles +
-                      `</span>`
+                      `<span class="b7" id="errReason-fileType">(.png, .jpg, .jpeg)</span> && <span class="b7" id="errReason-fileSize">20MB max</span>` +
+                      (config.maxFiles
+                        ? ` && <span class="b7" id="errReason-fileCount">Max files: ${config.maxFiles}</span>`
+                        : "")
                     }
                   />
                 </div>
               )}
 
+              {/* infocard ommitted  */}
+            </>
+          ))
+      }
+
+      {/* Request Detailing */}
+      <div class="categoryLabel">Request Detailing</div>
+      <hr />
+      <div class="subCategoryBox">
+        <div class="subCategory">Character(s)</div>
+        <div class="subCategoryDesc">Fill in the fields.</div>
+      </div>
+      {
+        groupedConfig["request-detailing"] &&
+          groupedConfig["request-detailing"].map((config, idx) => (
+            <>
+              {/* radios components ommitted */}
+
+              {/* insert subcat on cardConfig id */}
+              {/* do mind this will only put them BEFORE the target id card */}
+              {config.id === "request-text" && (
+                <div class="subCategoryBox">
+                  <div class="subCategory">Request</div>
+                  <div class="subCategoryDesc">Fill in the field.</div>
+                </div>
+              )}
+
+              {config.type === "fileUpload" && (
+                <div class="formComponent notLabel">
+                  <div class="textAreaTitle">
+                    {config.questionTitle || "File upload component"}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
+                  <div
+                    class="textAreaDesc"
+                    set:html={config.questionDescription || ""}
+                  />
+                  <div
+                    class="elDropZone dropzone"
+                    id={`dropZone_${config.id}`}
+                    data-config-id={config.id}
+                  />
+                  <span class="fileNameList" id={`fileName_${config.id}`} />
+                  <span
+                    class="validFileInfo"
+                    set:html={
+                      `<span class="b7" id="errReason-fileType">(.png, .jpg, .jpeg)</span> && <span class="b7" id="errReason-fileSize">20MB max</span>` +
+                      (config.maxFiles
+                        ? ` && <span class="b7" id="errReason-fileCount">Max files: ${config.maxFiles}</span>`
+                        : "")
+                    }
+                  />
+                </div>
+              )}
+              {config.type === "textarea" && (
+                <div class="formComponent notLabel">
+                  <div class="textAreaTitle">
+                    {config.questionTitle || "Text area component"}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
+                  <div
+                    class="textAreaDesc"
+                    set:html={config.questionDescription || ""}
+                  />
+                  <textarea
+                    class="formTextInput"
+                    id={config.id}
+                    name={config.id}
+                    placeholder={config.placeholder || ""}
+                    required={config.required}
+                  />
+                </div>
+              )}
               {config.type === "infoCard" && (
                 <div class="formComponent notLabel">
                   <div class="textAreaTitle">
                     {config.questionTitle || "Text area component"}
                   </div>
                   <div
-                    class="textAreaDesc"
+                    class="textAreaDesc infoCard"
                     set:html={config.questionDescription || ""}
                   />
                 </div>
               )}
+            </>
+          ))
+      }
 
-              {/* {config.type === "quantityCounter" && (
-                  <div class="formComponent notLabel">
-                    <div class="textAreaTitle">
-                      {config.questionTitle || "Text area component"}
-                    </div>
-                    <div
-                      class="textAreaDesc"
-                      set:html={config.questionDescription || ""}
-                    />
-                    <div class="quantityBox">
-                      <div class="quantityNumeral">WIP</div>
-                    </div>
+      {/* Contacts */}
+      <div class="categoryLabel">Contacts</div>
+      <hr />
+      <div class="subCategoryBox">
+        <div class="subCategory">Interaction Endpoints</div>
+        <div class="subCategoryDesc">Fill in the fields.</div>
+      </div>
+      {
+        groupedConfig["contacts"] &&
+          groupedConfig["contacts"].map((config, idx) => (
+            <>
+              {/* radios components ommitted */}
+              {/* fileUpload components ommitted */}
+
+              {config.type === "textarea" && (
+                <div class="formComponent notLabel">
+                  <div class="textAreaTitle">
+                    {config.questionTitle || "Text area component"}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
                   </div>
-                )} */}
+                  <div
+                    class="textAreaDesc"
+                    set:html={config.questionDescription || ""}
+                  />
+                  <textarea
+                    class="formTextInput"
+                    id={config.id}
+                    name={config.id}
+                    placeholder={config.placeholder || ""}
+                    required={config.required}
+                  />
+                </div>
+              )}
             </>
           ))
       }
@@ -382,7 +481,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
           new Dropzone(dzElem, {
             url: "dfss",
             autoProcessQueue: false,
-            maxFiles: config.maxFiles,
+            maxFiles: config.maxFiles ? config.maxFiles : 0,
             maxFilesize: dzConfigFileSize, //IT'S FUCKING MEGABYTES NOT "BYTES" WHO WROTE THIS SHIT
             acceptedFiles: ".png,.jpg,.jpeg",
             addRemoveLinks: true,
@@ -396,12 +495,12 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                 dzElem.classList.add("errNudge");
                 fileCountSpan?.classList.add("errCulprit");
                 setTimeout(() => {
-                    dzElem.classList.remove("errNudge");
-                    fileCountSpan?.classList.remove("errCulprit");
-                  }, 500);
+                  dzElem.classList.remove("errNudge");
+                  fileCountSpan?.classList.remove("errCulprit");
+                }, 500);
               });
               this.on("addedfile", function (this: Dropzone, file) {
-                if (file.size > (dzConfigFileSize * 1024 * 1024)) {
+                if (file.size > dzConfigFileSize * 1024 * 1024) {
                   this.removeFile(file);
                   dzElem.classList.add("errNudge");
                   fileSizeSpan?.classList.add("errCulprit");
@@ -411,10 +510,12 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
                   }, 500);
                   return;
                 }
-                if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+                if (
+                  !["image/png", "image/jpeg", "image/jpg"].includes(file.type)
+                ) {
                   this.removeFile(file);
-                  dzElem.classList.add("errNudge")
-                  fileTypeSpan?.classList.add("errCulprit")
+                  dzElem.classList.add("errNudge");
+                  fileTypeSpan?.classList.add("errCulprit");
                   setTimeout(() => {
                     dzElem.classList.remove("errNudge");
                     fileTypeSpan?.classList.remove("errCulprit");
@@ -604,7 +705,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
 
     /** @type {Record<string, string | File | File[]>} */
 
-    const data: Record<string, string | File | File[]> = {};
+    const data: Record<string, string | number | File | File[]> = {};
     const formData = new FormData(configForm);
 
     // Collect all normal fields
@@ -638,6 +739,9 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
         }
       }
     });
+
+    data.calculatedPrice = cardData.price + priceAdd;
+    formData.append("estPrice", (cardData.price + priceAdd).toString());
 
     console.log("Collected config data:", data);
     // If you want to send formData (with files) via fetch:
@@ -776,7 +880,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     }
 
     //skip
-    configuring(true);
+    //configuring(true);
 
     startButton.addEventListener("click", () => {
       configuring(true);
@@ -844,12 +948,14 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     border-bottom: 1px solid var(--fore);
     background: var(--base);
     transition: all 0.2s var(--sleek);
+    z-index: 2;
+    /* fucking hell */
 
     &.active {
       padding: 0 1em 1em 1em;
       max-height: 90px;
       min-height: 90px;
-      overflow: hidden;
+      overflow: visible;
     }
   }
 
@@ -893,7 +999,6 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     height: 100%;
     position: relative;
     display: flex;
-    color: var(--fore);
     margin-right: 0.3em;
     user-select: none;
     text-align: center;
@@ -901,6 +1006,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     align-items: flex-end;
     margin-right: 5em;
     margin-left: 1em;
+    color: var(--fore);
     font-family: var(--contentSecondary);
     & .disclaimerIco {
       font-size: 1.7rem;
@@ -927,8 +1033,8 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
       pointer-events: none;
       user-select: none;
       opacity: 0;
-      min-width: 1000%;
-      z-index: 1;
+      min-width: 200px;
+      z-index: 0;
       box-shadow: rgba(36, 36, 40, 0.377) 0 10px 20px;
       transform: translate(-87%, 100%);
     }
@@ -1332,6 +1438,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
   .optionDesc {
     padding: 1em 0;
     font-size: 1rem;
+    line-height: 1.5rem;
   }
   .optionTitle {
     font-weight: 700;
@@ -1353,7 +1460,7 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     height: 150px;
     padding: 0.5em 0;
     margin-top: 2em;
-    margin-bottom: 1em;
+    margin-bottom: 2em;
   }
 
   .textAreaTitle {
@@ -1367,9 +1474,13 @@ const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
     font-size: 1rem;
     color: var(--foreSecondary);
     margin-bottom: 0.5em;
+    line-height: 1.5em;
+    &.infoCard {
+      margin-top: 0.5em;
+    }
   }
   .formTextInput {
-    height: 70px;
+    height: 150px;
     resize: vertical;
     border-radius: 10px;
     padding: 1em;

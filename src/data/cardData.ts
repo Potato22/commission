@@ -1,4 +1,5 @@
 export interface FormQuestion {
+    category: string;
     subCategory: string;
     id: string;
     type: "textarea" | "flipflop" | "singleChoice" | "fileUpload" | "infoCard" | "quantityCounter";
@@ -10,7 +11,7 @@ export interface FormQuestion {
         preChecked?: boolean;
         visibleIf?: {
             questionId: string;
-            value: "Fully Rendered"
+            value: string;
         }
     }[];
     placeholder?: string; // for non radios
@@ -98,103 +99,126 @@ export const cardList: Record<string, CardData> = {
         ],
         isDisabled: false,
         configData: [
-            //{
-            //    subCategory: "chrDetail",
-            //    type: "singleChoice",
-            //    id: "character-detail",
-            //    options: [
-            //        {
-            //            optionName: "Sketch",
-            //            optionDescription: `Loose and feels more "Freestyle" <br>Freestyle coloring can be requested, naturally adds a little extra fee. <span style="font-family: var(--contentSecondary)">(Est. price addition: 5 ish)</span>`,
-            //            optionPrice: 25,
-            //            basePrice: true,
-            //            preChecked: true
-            //        },
-            //        {
-            //            optionName: "Linart",
-            //            optionDescription: "Cleaner lines",
-            //            optionPrice: 30
-            //        },
-            //        {
-            //            optionName: "Flat Color",
-            //            optionDescription: "Cleaner lines & Light render",
-            //            optionPrice: 45
-            //        },
-            //        {
-            //            optionName: "Fully Rendered",
-            //            optionDescription: "Best render and visual",
-            //            optionPrice: 60
-            //        },
-            //    ],
-            //    required: true,
-            //},
-            //{
-            //    subCategory: "bodyForm",
-            //    type: "flipflop",
-            //    id: "anthro",
-            //    options: [
-            //        { optionName: "No", optionDescription: `"I like me some lil quadruped creatur"`, optionPrice: 0, preChecked: true },
-            //        { optionName: "Yes", optionDescription: "Anthro is significantly more complex than squishy ponies.", optionPrice: 10 },
-            //    ],
-            //},
-            //{
-            //    subCategory: "background",
-            //    type: "singleChoice",
-            //    id: "background",
-            //    options: [
-            //        {
-            //            optionName: "None/Simple",
-            //            optionDescription: "None at all (transparent), Solid, gradient, or even with quirky particles as backgrounds",
-            //            optionPrice: 0
-            //        },
-            //        {
-            //            optionName: "Basic",
-            //            optionDescription: "Basic details, simplified rendering",
-            //            optionPrice: 35
-            //        },
-            //        {
-            //            optionName: "Complex",
-            //            optionDescription: `Complex and well rendered background. <br>(Only available for <span class="b7">Fully Rendered</span> character detail)`,
-            //            optionPrice: 50,
-            //            visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
-            //        },
-            //        {
-            //            optionName: "This is a robbery, fuck you",
-            //            optionDescription: `Fuck the wallet, I'm taking the whole bank`,
-            //            optionPrice: 7236493,
-            //            visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
-            //        },
-            //    ],
-            //    required: true,
-            //},
-            //{
-            //    subCategory: "nsfw",
-            //    type: "flipflop",
-            //    id: "nsfw",
-            //    options: [
-            //        { optionName: "No", optionDescription: "Pure as a summer.", optionPrice: 0, preChecked: true },
-            //        { optionName: "Yes", optionDescription: "NSFW may require extra effort.", optionPrice: 15 },
-            //    ],
-            //},
             {
+                category: "general-configurations",
+                subCategory: "characterRender",
+                type: "singleChoice",
+                id: "character-detail",
+                options: [
+                    {
+                        optionName: "Sketch",
+                        optionDescription: `Loose and feels more "Freestyle" <br>Freestyle coloring can be requested, naturally adds a little extra fee. <span style="font-family: var(--contentSecondary)">(Est. price addition: 5 ish)</span>`,
+                        optionPrice: 25,
+                        basePrice: true,
+                        preChecked: true
+                    },
+                    {
+                        optionName: "Linart",
+                        optionDescription: "Cleaner lines",
+                        optionPrice: 30
+                    },
+                    {
+                        optionName: "Flat Color",
+                        optionDescription: "Cleaner lines & Light render",
+                        optionPrice: 45
+                    },
+                    {
+                        optionName: "Fully Rendered",
+                        optionDescription: "Best render and visual",
+                        optionPrice: 60
+                    },
+                ],
+                required: true,
+            },
+            {
+                category: "general-configurations",
+                subCategory: "bodyForm",
+                type: "flipflop",
+                id: "anthro",
+                options: [
+                    { optionName: "No", optionDescription: `"I like me some lil quadruped creatur"`, optionPrice: 0, preChecked: true },
+                    { optionName: "Yes", optionDescription: "Anthro is significantly more complex than squishy ponies.", optionPrice: 10 },
+                ],
+            },
+            {
+                category: "general-configurations",
+                subCategory: "background",
+                type: "singleChoice",
+                id: "background",
+                options: [
+                    {
+                        optionName: "None/Simple",
+                        optionDescription: "None at all (transparent), Solid, gradient, or even with quirky particles as backgrounds",
+                        optionPrice: 0
+                    },
+                    {
+                        optionName: "Basic",
+                        optionDescription: "Basic details, simplified rendering",
+                        optionPrice: 35
+                    },
+                    {
+                        optionName: "Complex",
+                        optionDescription: `Complex and well rendered background. <br>(Only available for <span class="b7">Fully Rendered</span> character detail)`,
+                        optionPrice: 50,
+                        visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
+                    },
+                    {
+                        optionName: "This is a robbery, fuck you",
+                        optionDescription: `Fuck the wallet, I'm taking the whole bank`,
+                        optionPrice: 7236493,
+                        visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
+                    },
+                ],
+                required: true,
+            },
+            {
+                category: "general-configurations",
+                subCategory: "nsfw",
+                type: "flipflop",
+                id: "nsfw",
+                options: [
+                    { optionName: "No", optionDescription: "Pure as a summer.", optionPrice: 0, preChecked: true },
+                    { optionName: "Yes", optionDescription: "NSFW may require extra effort.", optionPrice: 15 },
+                ],
+            },
+            {
+                category: "request-detailing",
+                type: "infoCard",
+                subCategory: "characterAttribute",
+                questionTitle: "Muliple characters?",
+                questionDescription: `Can do! Additional characters will be charged with 80% of your selected "Character detail"`,
+                id: "character-attributes",
+            },
+            {
+                category: "request-detailing",
                 type: "fileUpload",
                 subCategory: "character",
-                questionTitle: "Upload your character",
+                questionTitle: "Upload your character(s)",
                 questionDescription: "Upload your character reference (sheet or images) here!",
                 id: "character-reference",
                 required: true,
                 maxFiles: 5,
             },
             {
+                category: "request-detailing",
+                type: "infoCard",
+                subCategory: "characterAttribute",
+                questionTitle: "Any attributes you want to attach?",
+                questionDescription: "If you wish to also upload your character's attribute references whether it is accessories, clothes, etc. Do so above! <br><i>(Leave as is if you'd rather discuss directly!)</i>",
+                id: "character-attributes",
+            },
+            {
+                category: "request-detailing",
                 type: "textarea",
-                subCategory: "character",
-                questionTitle: "Todo",
-                questionDescription: "lorem",
-                id: "fish",
-                placeholder: "fish",
+                subCategory: "requestText",
+                questionTitle: "What do you have in mind?",
+                questionDescription: "Briefly elaborate what you want me to draw for you.",
+                id: "request-text",
+                placeholder: `You can leave this VERY brief and discuss it directly!`,
                 required: true,
             },
             {
+                category: "contacts",
                 type: "textarea",
                 subCategory: "contact",
                 questionTitle: "Give me a way we can chat for us to discuss further!",
