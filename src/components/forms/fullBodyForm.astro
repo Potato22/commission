@@ -1,9 +1,9 @@
 ---
 import "../../styles/root.scss";
+import "../../styles/dz.scss";
 import { cardList } from "../../data/cardData";
 import type { FormQuestion } from "../../data/cardData";
 import { bodyTypes } from "../../data/cardData";
-import "../../styles/dz.scss";
 
 import noImgPlchldr from "../../assets/noImg.svg";
 
@@ -23,7 +23,9 @@ const priceState = cardData.isDisabled
 const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
 
 // Group configData by category
-function groupByCategory(configData: FormQuestion[] = []): Record<string, FormQuestion[]> {
+function groupByCategory(
+  configData: FormQuestion[] = []
+): Record<string, FormQuestion[]> {
   if (!configData) return {};
   return configData.reduce(
     (acc, item) => {
@@ -65,7 +67,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       </div>
       <div
         class="disclaimer"
-        aria-label="Overall request complexity or demand may affect the final price."
+        aria-label="Estimation only calculates the >>base<< prices of all available options"
       >
         <span class="disclaimerIco material-symbols-rounded">info</span>
       </div>
@@ -73,8 +75,11 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         class="submitButtons"
         type="button"
         id="buttonLink"
-        onclick="document.getElementById('submitBtn').click()">Submit</button
+        onclick="document.getElementById('proceedBtn').click()"
       >
+        <span class="submitString">Submit</span>
+        <div class="configIco material-symbols-rounded">priority</div>
+      </button>
       <div id="cancel" class="material-symbols-rounded">close</div>
     </div>
   </div>
@@ -181,7 +186,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                 </div>
               )}
 
-              {/* Render form fields */}
+              {/* templates */}
               {config.type === "singleChoice" &&
                 config.options &&
                 config.options.map((opt, optIdx) => (
@@ -301,6 +306,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                 </div>
               )}
 
+              {/* templates */}
+
               {config.type === "fileUpload" && (
                 <div class="formComponent notLabel">
                   <div class="textAreaTitle">
@@ -318,7 +325,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                     id={`dropZone_${config.id}`}
                     data-config-id={config.id}
                   />
-                  <span class="fileNameList" id={`fileName_${config.id}`} />
+                  <span class="purge" class={config.id} />
                   <span
                     class="validFileInfo"
                     set:html={
@@ -380,6 +387,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
               {/* radios components ommitted */}
               {/* fileUpload components ommitted */}
 
+              {/* templates */}
+
               {config.type === "textarea" && (
                 <div class="formComponent notLabel">
                   <div class="textAreaTitle">
@@ -404,11 +413,13 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             </>
           ))
       }
-      <button class="submitButtons" type="submit" id="submitBtn">
-        Submit
+      <button class="submitButtons sbBottom" type="button" id="proceedBtn">
+        <span class="submitString">Submit</span>
+        <div class="configIco material-symbols-rounded">priority</div>
       </button>
     </form>
 
+    <!-- Expanded Overview -->
     <div id="infobox">
       <div id="backB" class="material-symbols-rounded">arrow_back</div>
       <div class="infocell1">
@@ -436,6 +447,45 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   </div>
 </div>
 
+<div class="configSummary">
+  <span class="confirmText">Make sure you picked something you want!</span>
+  <div class="pickedConfigGrid">
+    <!-- inject on every surface key in submitted form data -->
+    <!-- just append strings from form data-->
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Character Detail</div>
+        </div>
+      </div>
+      <div class="optionDesc">Sketch</div>
+    </div>
+
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Anthro?</div>
+        </div>
+      </div>
+      <div class="optionDesc">No</div>
+    </div>
+
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Background Art</div>
+        </div>
+      </div>
+      <div class="optionDesc">None/Simple</div>
+    </div>
+  </div>
+
+  <div class="confirmButtons">
+    <div class="cancelConfirm">Go back</div>
+    <div class="proceed">Yes, I'm sure.</div>
+  </div>
+</div>
+
 <script>
   import Dropzone from "dropzone";
   import { cardList } from "../../data/cardData";
@@ -457,7 +507,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             url: "#",
             autoProcessQueue: false,
             maxFiles: config.maxFiles ? config.maxFiles : 0,
-            maxFilesize: dzConfigFileSize, //IT'S FUCKING MEGABYTES NOT "BYTES" WHO WROTE THIS SHIT
+            maxFilesize: dzConfigFileSize, //IT'S FUCKING MEGABYTES NOT "BYTES" WHO WROTE THE FUCKING DOC
             acceptedFiles: ".png,.jpg,.jpeg",
             addRemoveLinks: true,
             dictDefaultMessage: "upload_file",
@@ -484,7 +534,9 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                     fileSizeSpan?.classList.remove("errCulprit");
                   }, 500);
                   return;
-                } else if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+                } else if (
+                  !["image/png", "image/jpeg", "image/jpg"].includes(file.type)
+                ) {
                   this.removeFile(file);
                   dzElem.classList.add("errNudge");
                   fileTypeSpan?.classList.add("errCulprit");
@@ -555,7 +607,9 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     const configForm = document.getElementById(
       "configWindow"
     ) as HTMLFormElement;
-    const submitBtn = document.getElementById("submitBtn") as HTMLButtonElement;
+    const checkPulse = document.getElementById(
+      "proceedBtn"
+    ) as HTMLButtonElement;
 
     // Track already validated fields to avoid duplicate error messages
     const validatedFields = new Set();
@@ -564,9 +618,9 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     const errorContainer = document.createElement("div");
     errorContainer.className = "formInvalidErr";
 
-    configForm.insertBefore(errorContainer, submitBtn);
+    configForm.insertBefore(errorContainer, checkPulse);
 
-    submitBtn.addEventListener("click", function (event) {
+    checkPulse.addEventListener("click", function (event) {
       // Clear previous error messages
       errorContainer.innerHTML = "";
       let hasErrors = false;
@@ -637,11 +691,11 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           hasErrors = true;
 
           // Find the textarea title for better error message
-          const textAreaTitle = ((
+          const textAreaTitle = (
             textarea.parentElement?.querySelector(
               ".textAreaTitle"
             ) as HTMLElement
-          )?.textContent)?.replace(" *", "");
+          )?.textContent?.replace(" *", "");
 
           const errorMsg = document.createElement("div");
           errorMsg.innerHTML = `<span class="b7">${textAreaTitle}</span> is required!`;
@@ -677,14 +731,46 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     });
   }
 
-  const submitButton = document.getElementById(
-    "submitBtn"
-  ) as HTMLButtonElement;
+  // FORM PACKAGING
   const configForm = document.getElementById("configWindow") as HTMLFormElement;
-
   configForm.addEventListener("submit", async (event: Event) => {
+    // dropzone check had to be moved here
+    let dzHasErrors = false;
+    const errorContainer =
+      document.querySelector(".formInvalidErr") ||
+      (() => {
+        const divElem = document.createElement("div");
+        divElem.className = "formInvalidErr";
+        configForm.insertBefore(divElem, document.getElementById("submitBtn"));
+        return divElem;
+      })();
+    errorContainer.innerHTML = "";
+
+    cardData.configData?.forEach((config) => {
+      if (config.type === "fileUpload" && config.required) {
+        const dzElem = document.getElementById(`dropZone_${config.id}`);
+        if (dzElem && dzElem.dropzone) {
+          const dzFiles = dzElem.dropzone.getAcceptedFiles();
+          if (dzFiles.length === 0) {
+            dzHasErrors = true;
+            const errorMsg = document.createElement("div");
+            errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
+            errorMsg.className = "errBlob";
+            errorContainer.appendChild(errorMsg);
+            dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+      }
+    });
+
+    if (dzHasErrors) {
+      event.preventDefault();
+      return;
+    }
+
     event.preventDefault();
     if (!configForm.checkValidity()) {
+      alert("warn");
       configForm.reportValidity();
       return;
     }
@@ -726,8 +812,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       }
     });
 
-    data.calculatedPrice = cardData.price + priceAdd;
-    formData.append("estPrice", (cardData.price + priceAdd).toString());
+    data.calculatedPrice = priceAdd;
+    formData.append("estPrice", priceAdd.toString());
 
     console.log("Collected config data:", data);
     // If you want to send formData (with files) via fetch:
@@ -866,7 +952,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     }
 
     //skip
-    //configuring(true);
+    configuring(true);
 
     startButton.addEventListener("click", () => {
       configuring(true);
@@ -879,7 +965,6 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   function initList() {
     updatePrice();
     initbackButton();
-    initStartConfig();
     initPriceCalc();
     setupFormValidation();
     updateConditionalOptions();
@@ -887,14 +972,12 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       input.addEventListener("change", updateConditionalOptions);
     });
     initDz();
+    initStartConfig();
   }
-  document.addEventListener("DOMContentLoaded", () => {
-    initList();
-  });
-  // rehydrater astro transitions
-  document.addEventListener("astro:after-swap", () => {
-    initList();
-  });
+
+  // rehydraters
+  //document.addEventListener("DOMContentLoaded", initList);
+  document.addEventListener("astro:page-load", initList);
 </script>
 
 <style>
@@ -993,7 +1076,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     margin-right: 5em;
     margin-left: 1em;
     color: var(--fore);
-    font-family: var(--contentSecondary);
+    font-family: var(--content);
     & .disclaimerIco {
       font-size: 1.7rem;
       transform: translateY(-0.225em);
@@ -1022,12 +1105,12 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       min-width: 200px;
       z-index: 0;
       box-shadow: rgba(36, 36, 40, 0.377) 0 10px 20px;
-      transform: translate(-87%, 100%);
+      transform: translate(-80%, 40px);
+      border: 2px solid var(--fore);
     }
 
     &:hover::before {
-      transform: translate(-87%, 120%);
-      transition: all 0.2s;
+      transform: translate(-80%, 90px);
       opacity: 1;
     }
   }
@@ -1036,6 +1119,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     font-size: 3rem;
     cursor: pointer;
     color: var(--fore);
+    margin-left: 3em;
     transition:
       color 0.2s var(--sleek),
       transform 0.2s var(--sleek);
@@ -1471,7 +1555,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     border-radius: 10px;
     padding: 1em;
     background: var(--baseSecondary);
-    color: var(--fore)
+    color: var(--fore);
   }
   .validFileInfo {
     margin-top: 0.5em;
@@ -1484,6 +1568,179 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       color: rgba(var(--err), 1);
     }
   }
+  .submitButtons {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--content);
+    font-size: 1.3rem;
+    background: var(--prim);
+    color: var(--fore);
+    border: 2px solid var(--base);
+    padding: 0.4em 5em;
+    border-radius: 25px;
+    opacity: 1;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s var(--sleek);
 
+    &::before {
+      content: "Prices calculated here are an estimate, overall request complexity may affect the final price!";
+      position: absolute;
+      background: var(--base);
+      color: var(--fore);
+      font-size: 1rem;
+      padding: 0.3em 0.6em;
+      border-radius: 12px;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0;
+      min-width: 200px;
+      z-index: 1;
+      box-shadow: rgba(36, 36, 40, 0.377) 0 10px 20px;
+      transform: translate(00%, 40px);
+      transition: all 0.2s var(--accel);
+      border: 2px solid var(--fore);
+    }
+
+    &.sbBottom::before {
+      transform: translate(00%, -40px);
+    }
+
+    & .configIco {
+      position: absolute;
+      font-size: 1.6em;
+      opacity: 0;
+    }
+    &:hover {
+      background: transparent;
+      border: 2px solid var(--prim);
+
+      & .submitString {
+        opacity: 0;
+      }
+
+      & .configIco {
+        opacity: 1;
+        /* transform: translateX(0); */
+        transition: all 0.2s var(--sleek);
+      }
+      &::before {
+        transform: translate(00%, 80px);
+        opacity: 1;
+        transition-timing-function: var(--sleek);
+        animation: primSpike 1s;
+      }
+
+      &.sbBottom:hover {
+        &::before {
+          transform: translate(00%, -80px);
+          opacity: 1;
+        }
+      }
+    }
+  }
+  @keyframes primSpike {
+    from {
+      background: var(--primSecondary);
+      border-color: var(--accent);
+    }
+    to {
+      background: var(--base);
+      border-color: var(--fore);
+    }
+  }
+
+  .configSummary {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    backdrop-filter: grayscale(1) blur(12px);
+    background: rgba(var(--baseRGB), 0.9);
+    //display: none;
+  }
+
+  .confirmText {
+    font-size: 3rem;
+    font-family: var(--display);
+    font-weight: 700;
+    margin-bottom: 1em;
+  }
+
+  .configSummary .formComponent {
+    background: var(--base);
+    min-width: 300px;
+    margin: 0;
+    & .optionTitle {
+      font-size: 1rem;
+      font-weight: 400;
+    }
+    & .optionDesc {
+      font-size: 2rem;
+      font-weight: 900;
+    }
+  }
+
+  .pickedConfigGrid {
+    display: flex;
+    gap: 1em;
+  }
+
+  .confirmButtons {
+    margin-top: 3em;
+    display: flex;
+    gap: 2em;
+    & > * {
+      position: relative;
+      border: 4px solid transparent; /* Inner transparent border */
+      border-radius: 20px; /* Optional: for rounded corners */
+      z-index: 1;
+      font-size: 1.5rem;
+      font-family: var(--content);
+      font-weight: 700;
+      color: var(--base);
+      padding: 1em 1.5em;
+      border-radius: 99px;
+      background: var(--fore);
+      user-select: none;
+      cursor: pointer;
+      box-shadow: 0 0 0 2px transparent inset;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 4px solid var(--base);
+        border-radius: 99px;
+        pointer-events: none;
+        z-index: 2;
+        transition: all 0.2s var(--accel);
+        transform: scale(1.1);
+        opacity: 0;
+      }
+
+      &:hover {
+        &::before {
+          transition-timing-function: var(--sleek);
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      &:active {
+        &::before {
+          transition-timing-function: var(--sleek);
+          transform: scale(.9);
+          opacity: 1;
+        }
+      }
+    }
+  }
   /* eldropzone is in /styles */
 </style>

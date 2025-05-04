@@ -205,7 +205,7 @@ export const cardList: Record<string, CardData> = {
                 questionDescription: `Upload your <span class="b7">character</span> and (if any) their <span class="b7">accessories</span> references (sheet or images) here!`,
                 id: "character-reference",
                 required: true,
-                maxFiles: 5,
+                maxFiles: 10,
             },
             {
                 category: "request-detailing",
