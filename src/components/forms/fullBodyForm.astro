@@ -1,6 +1,7 @@
 ---
 import "../../styles/root.scss";
 import "../../styles/dz.scss";
+import "../../styles/formComponent.scss";
 import { cardList } from "../../data/cardData";
 import type { FormQuestion } from "../../data/cardData";
 import { bodyTypes } from "../../data/cardData";
@@ -447,48 +448,51 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   </div>
 </div>
 
-<div class="configSummary">
-  <span class="confirmText">Make sure you picked something you want!</span>
-  <div class="pickedConfigGrid">
+<div id="configSummary">
+  <span id="confirmText">Make sure you picked something you want!</span>
+
+  <div id="pickedConfigGrid">
     <!-- inject on every surface key in submitted form data -->
     <!-- just append strings from form data-->
-    <div class="formComponent">
-      <div class="ocHeader">
-        <div class="ocCell1">
-          <div class="optionTitle">Character Detail</div>
-        </div>
-      </div>
-      <div class="optionDesc">Sketch</div>
-    </div>
 
+    <!-- template -->
     <div class="formComponent">
       <div class="ocHeader">
         <div class="ocCell1">
-          <div class="optionTitle">Anthro?</div>
+          <div class="optionTitle">Empty</div>
         </div>
       </div>
-      <div class="optionDesc">No</div>
+      <div class="optionDesc">Empty</div>
     </div>
-
     <div class="formComponent">
       <div class="ocHeader">
         <div class="ocCell1">
-          <div class="optionTitle">Background Art</div>
+          <div class="optionTitle longTextTitle">Empty</div>
         </div>
       </div>
-      <div class="optionDesc">None/Simple</div>
+      <div class="optionDesc longText">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis eos
+        hic nostrum!
+      </div>
     </div>
   </div>
 
-  <div class="confirmButtons">
-    <div class="cancelConfirm">Go back</div>
-    <div class="proceed">Yes, I'm sure.</div>
+  <div id="confirmButtons">
+    <div id="summary-cancelConfirm">Go back</div>
+    <div id="summary-proceed">Yes, I'm sure.</div>
+  </div>
+
+  <div id="loadAnim">
+    <div class="gradOverflow">
+      <div class="gradbar"></div>
+    </div>
   </div>
 </div>
 
 <script>
   import Dropzone from "dropzone";
   import { cardList } from "../../data/cardData";
+  import { navigate } from "astro:transitions/client";
   const cardId = "fullbody";
   const cardData = cardList[cardId];
 
@@ -620,165 +624,140 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
 
     configForm.insertBefore(errorContainer, checkPulse);
 
-    checkPulse.addEventListener("click", function (event) {
-      // Clear previous error messages
-      errorContainer.innerHTML = "";
-      let hasErrors = false;
+    return {
+      validate: (event: Event) => {
+        // Clear previous error messages
+        errorContainer.innerHTML = "";
+        let hasErrors = false;
 
-      // Find all required radio button groups
-      const radioGroups: Record<string, HTMLInputElement[]> = {};
-      configForm
-        .querySelectorAll('input[type="radio"][required]')
-        .forEach((radio) => {
-          const name = (radio as HTMLInputElement).getAttribute(
-            "name"
-          ) as string;
-          if (!radioGroups[name]) {
-            radioGroups[name] = [];
-          }
-          radioGroups[name].push(radio as HTMLInputElement);
-        });
-
-      // Check each radio group
-      Object.entries(radioGroups).forEach(([name, radios]) => {
-        // Check if any radio in this group is checked
-        const isChecked = radios.some((radio) => radio.checked);
-
-        if (!isChecked) {
-          hasErrors = true;
-
-          // Find section name for better error message
-          let sectionName: string = name;
-          const formComponent = radios[0].closest(".formComponent");
-          const parentElement = formComponent
-            ? formComponent.parentElement
-            : null;
-          const subCategoryEl = parentElement
-            ? parentElement.previousElementSibling
-            : null;
-          if (
-            subCategoryEl &&
-            subCategoryEl.classList.contains("subCategoryBox")
-          ) {
-            const subCatTitle = subCategoryEl.querySelector(".subCategory");
-            if (subCatTitle && subCatTitle.textContent !== null) {
-              sectionName = subCatTitle.textContent;
+        // Find all required radio button groups
+        const radioGroups: Record<string, HTMLInputElement[]> = {};
+        configForm
+          .querySelectorAll('input[type="radio"][required]')
+          .forEach((radio) => {
+            const name = (radio as HTMLInputElement).getAttribute(
+              "name"
+            ) as string;
+            if (!radioGroups[name]) {
+              radioGroups[name] = [];
             }
-          }
+            radioGroups[name].push(radio as HTMLInputElement);
+          });
 
-          // Add error message
-          const errorMsg = document.createElement("div");
-          errorMsg.innerHTML = `Nothing is selected in <span class="b7">${sectionName}</span> !`;
-          errorMsg.className = "errBlob";
-          errorContainer.appendChild(errorMsg);
+        // Check each radio group
+        Object.entries(radioGroups).forEach(([name, radios]) => {
+          // Check if any radio in this group is checked
+          const isChecked = radios.some((radio) => radio.checked);
 
-          // Scroll to the first error
-          if (!validatedFields.has(name)) {
+          if (!isChecked) {
+            hasErrors = true;
+
+            // Find section name for better error message
+            let sectionName: string = name;
             const formComponent = radios[0].closest(".formComponent");
-            formComponent?.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
-            validatedFields.add(name);
-          }
-        }
-      });
-
-      // Check required text areas
-      configForm.querySelectorAll("textarea[required]").forEach((elem) => {
-        const textarea = elem as HTMLTextAreaElement;
-        if (!textarea.value.trim()) {
-          hasErrors = true;
-
-          // Find the textarea title for better error message
-          const textAreaTitle = (
-            textarea.parentElement?.querySelector(
-              ".textAreaTitle"
-            ) as HTMLElement
-          )?.textContent?.replace(" *", "");
-
-          const errorMsg = document.createElement("div");
-          errorMsg.innerHTML = `<span class="b7">${textAreaTitle}</span> is required!`;
-          errorMsg.className = "errBlob";
-          errorContainer.appendChild(errorMsg);
-
-          // Scroll to the first error
-          if (!validatedFields.has(textarea.id)) {
-            textarea.scrollIntoView({ behavior: "smooth", block: "center" });
-            validatedFields.add(textarea.id);
-          }
-        }
-      });
-      if (hasErrors) {
-        event.preventDefault();
-      }
-      cardData.configData?.forEach((config) => {
-        if (config.type === "fileUpload" && config.required) {
-          const dzElem = document.getElementById(`dropZone_${config.id}`);
-          if (dzElem && dzElem.dropzone) {
-            const dzFiles = dzElem.dropzone.getAcceptedFiles();
-            if (dzFiles.length === 0) {
-              hasErrors = true;
-              const errorMsg = document.createElement("div");
-              errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
-              errorMsg.className = "errBlob";
-              errorContainer.appendChild(errorMsg);
-              dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
+            const parentElement = formComponent
+              ? formComponent.parentElement
+              : null;
+            const subCategoryEl = parentElement
+              ? parentElement.previousElementSibling
+              : null;
+            if (
+              subCategoryEl &&
+              subCategoryEl.classList.contains("subCategoryBox")
+            ) {
+              const subCatTitle = subCategoryEl.querySelector(".subCategory");
+              if (subCatTitle && subCatTitle.textContent !== null) {
+                sectionName = subCatTitle.textContent;
+              }
             }
-          }
-        }
-      });
-    });
-  }
 
-  // FORM PACKAGING
-  const configForm = document.getElementById("configWindow") as HTMLFormElement;
-  configForm.addEventListener("submit", async (event: Event) => {
-    // dropzone check had to be moved here
-    let dzHasErrors = false;
-    const errorContainer =
-      document.querySelector(".formInvalidErr") ||
-      (() => {
-        const divElem = document.createElement("div");
-        divElem.className = "formInvalidErr";
-        configForm.insertBefore(divElem, document.getElementById("submitBtn"));
-        return divElem;
-      })();
-    errorContainer.innerHTML = "";
-
-    cardData.configData?.forEach((config) => {
-      if (config.type === "fileUpload" && config.required) {
-        const dzElem = document.getElementById(`dropZone_${config.id}`);
-        if (dzElem && dzElem.dropzone) {
-          const dzFiles = dzElem.dropzone.getAcceptedFiles();
-          if (dzFiles.length === 0) {
-            dzHasErrors = true;
+            // Add error message
             const errorMsg = document.createElement("div");
-            errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
+            errorMsg.innerHTML = `Nothing is selected in <span class="b7">${sectionName}</span> !`;
             errorMsg.className = "errBlob";
             errorContainer.appendChild(errorMsg);
-            dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            // Scroll to the first error
+            if (!validatedFields.has(name)) {
+              const formComponent = radios[0].closest(".formComponent");
+              formComponent?.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+              validatedFields.add(name);
+            }
           }
+        });
+
+        // Check required text areas
+        configForm.querySelectorAll("textarea[required]").forEach((elem) => {
+          const textarea = elem as HTMLTextAreaElement;
+          if (!textarea.value.trim()) {
+            hasErrors = true;
+
+            // Find the textarea title for better error message
+            const textAreaTitle = (
+              textarea.parentElement?.querySelector(
+                ".textAreaTitle"
+              ) as HTMLElement
+            )?.textContent?.replace(" *", "");
+
+            const errorMsg = document.createElement("div");
+            errorMsg.innerHTML = `<span class="b7">${textAreaTitle}</span> is required!`;
+            errorMsg.className = "errBlob";
+            errorContainer.appendChild(errorMsg);
+
+            // Scroll to the first error
+            if (!validatedFields.has(textarea.id)) {
+              textarea.scrollIntoView({ behavior: "smooth", block: "center" });
+              validatedFields.add(textarea.id);
+            }
+          }
+        });
+        if (hasErrors) {
+          event.preventDefault();
         }
-      }
-    });
+        cardData.configData?.forEach((config) => {
+          if (config.type === "fileUpload" && config.required) {
+            const dzElem = document.getElementById(`dropZone_${config.id}`);
+            if (dzElem && dzElem.dropzone) {
+              const dzFiles = dzElem.dropzone.getAcceptedFiles();
+              if (dzFiles.length === 0) {
+                hasErrors = true;
+                const errorMsg = document.createElement("div");
+                errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
+                errorMsg.className = "errBlob";
+                errorContainer.appendChild(errorMsg);
+                dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
+            }
+          }
+        });
 
-    if (dzHasErrors) {
-      event.preventDefault();
-      return;
-    }
+        if (hasErrors) {
+          return { isValid: false };
+        }
 
-    event.preventDefault();
-    if (!configForm.checkValidity()) {
-      alert("warn");
-      configForm.reportValidity();
-      return;
-    }
+        // If we get here, all required fields are valid
+        // Collect data only after successful validation
+        const formData = new FormData(configForm);
 
+        // Return both the processed data object and the form data
+        return { isValid: true, formData };
+      },
+    };
+  }
+
+  function submitter(configFormElem: HTMLFormElement) {
     /** @type {Record<string, string | File | File[]>} */
 
     const data: Record<string, string | number | File | File[]> = {};
-    const formData = new FormData(configForm);
+    const formData = new FormData(configFormElem);
+
+    setupFormValidation();
+
+    // Get cardData from wherever it's defined in your component
+    // For example, it might be passed as a prop or defined in the script
 
     // Collect all normal fields
     if (cardData.configData) {
@@ -801,11 +780,9 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         if (dzElem && dzElem.dropzone) {
           const dzFiles = dzElem.dropzone.getAcceptedFiles();
           if (dzFiles.length > 0) {
-            // If you want to add to FormData for upload:
-            dzFiles.forEach((file, idx) => {
+            dzFiles.forEach((file) => {
               formData.append(config.id, file, file.name);
             });
-            // Or, if you want to add to your data object:
             data[config.id] = dzFiles.length === 1 ? dzFiles[0] : dzFiles;
           }
         }
@@ -815,10 +792,246 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     data.calculatedPrice = priceAdd;
     formData.append("estPrice", priceAdd.toString());
 
-    console.log("Collected config data:", data);
-    // If you want to send formData (with files) via fetch:
-    // await fetch("/your-endpoint", { method: "POST", body: formData });
-  });
+    //console.log("Collected config data:", data);
+
+    // Return both the processed data object and the FormData
+    return { data, formData };
+  }
+
+  function initPseudoSubmit() {
+    // FORM PACKAGING
+    const configForm = document.getElementById(
+      "configWindow"
+    ) as HTMLFormElement;
+    const proceedBtn = document.getElementById(
+      "proceedBtn"
+    ) as HTMLButtonElement;
+
+    //reminder: HI HELLO THE ORIGINAL BUTTON IS NO LONGER SUBMIT TYPE
+    proceedBtn.addEventListener("click", function (event) {
+      //configForm.addEventListener("submit", async (event: Event) => {
+
+      const { validate } = setupFormValidation();
+
+      const result = validate(event);
+
+      if (!result.isValid) {
+        event.preventDefault();
+        return;
+      }
+
+      // Now we can safely collect the data
+      const { data } = submitter(configForm);
+
+      // dropzone check had to be moved here
+      let dzHasErrors = false;
+      const errorContainer =
+        document.querySelector(".formInvalidErr") ||
+        (() => {
+          const divElem = document.createElement("div");
+          divElem.className = "formInvalidErr";
+          configForm.insertBefore(
+            divElem,
+            document.getElementById("submitBtn")
+          );
+          return divElem;
+        })();
+      errorContainer.innerHTML = "";
+
+      cardData.configData?.forEach((config) => {
+        if (config.type === "fileUpload" && config.required) {
+          const dzElem = document.getElementById(`dropZone_${config.id}`);
+          if (dzElem && dzElem.dropzone) {
+            const dzFiles = dzElem.dropzone.getAcceptedFiles();
+            if (dzFiles.length === 0) {
+              dzHasErrors = true;
+              const errorMsg = document.createElement("div");
+              errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
+              errorMsg.className = "errBlob";
+              errorContainer.appendChild(errorMsg);
+              dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
+        }
+      });
+
+      if (dzHasErrors || !configForm.checkValidity()) {
+        event.preventDefault();
+        return;
+      }
+
+      submitter(configForm);
+      summaryDisplayControl("open", data);
+    });
+  }
+  //summaryDisplayControl("open");
+
+  function generateSummary(
+    formData: Record<string, string | number | File | File[]>,
+    targetElement: HTMLElement
+  ) {
+    // Safety check for formData
+    if (!formData || typeof formData !== "object") {
+      console.error("Invalid form data provided to generateSummary");
+      return;
+    }
+    // Clear existing content
+    targetElement.innerHTML = "";
+
+    // Define which keys to display and their display names
+    const keysToDisplay = {
+      "character-detail": "Character Detail",
+      anthro: "Anthro?",
+      background: "Background Art",
+      nsfw: "NSFW?",
+      "request-text": "Request",
+      contacts: "Contact Information",
+    };
+
+    // Generate HTML for each key
+    for (const [key, displayName] of Object.entries(keysToDisplay)) {
+      if (formData[key]) {
+        const fragment = createSummaryFragment(
+          displayName,
+          String(formData[key])
+        );
+        targetElement.appendChild(fragment);
+      }
+    }
+
+    // Add image count if there are character references
+    if (formData["character-reference"]) {
+      let imageCount = 0;
+
+      if (Array.isArray(formData["character-reference"])) {
+        // Multiple images case
+        imageCount = formData["character-reference"].length;
+      } else {
+        // Single image case
+        imageCount = 1;
+      }
+
+      const fragment = createSummaryFragment(
+        "Reference Images",
+        `${imageCount} image${imageCount !== 1 ? "s" : ""}`
+      );
+      targetElement.appendChild(fragment);
+    }
+
+    // Add price if available
+    if (formData["calculatedPrice"]) {
+      const fragment = createSummaryFragment(
+        "Estimated Price",
+        `$${formData["calculatedPrice"]}`
+      );
+      targetElement.appendChild(fragment);
+    }
+  }
+
+  function createSummaryFragment(title: string, value: string) {
+    const template = document.createElement("template");
+    template.innerHTML = `
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle ${title === "Request" ? "longTextTitle" : ""}">${title}</div>
+        </div>
+      </div>
+      <div
+        class="optionDesc ${title === "Request" ? "longText" : ""}"
+        >${value}</div>
+    </div>
+  `;
+    return template.content;
+  }
+
+  function summaryDisplayControl(
+    mode: string | null,
+    appendedFormData: Record<string, string | number | File | File[]> | null
+  ) {
+    console.log("summaryDisplayControl:", mode);
+    console.log("appendedFormData:", appendedFormData);
+
+    const summaryWindow = document.getElementById(
+      "configSummary"
+    ) as HTMLElement;
+    const summaryButtons = document.getElementById(
+      "confirmButtons"
+    ) as HTMLElement;
+    const summaryHeading = document.getElementById(
+      "confirmText"
+    ) as HTMLElement;
+    const summaryGrid = document.getElementById(
+      "pickedConfigGrid"
+    ) as HTMLElement;
+    const loadAnim = document.getElementById("loadAnim") as HTMLElement;
+
+    switch (mode) {
+      case "open":
+        summaryDisplayControl("reset", null);
+        initSummaryButtons();
+
+        // Generate summary content if appendedFormData is provided
+        if (appendedFormData) {
+          generateSummary(appendedFormData, summaryGrid);
+        }
+
+        summaryWindow.style.display = "flex";
+        setTimeout(() => {
+          summaryWindow.classList.add("active");
+        }, 10);
+        break;
+      case "close":
+        summaryButtons.style.opacity = "0";
+        summaryButtons.style.transform = "translateY(2em)";
+        setTimeout(() => {
+          summaryWindow.classList.remove("active");
+          setTimeout(() => {
+            summaryWindow.style.display = "none";
+          }, 300);
+        }, 300);
+        break;
+      case "proceed":
+        summaryHeading.style.opacity = "0";
+        summaryButtons.style.opacity = "0";
+        summaryGrid.style.opacity = "0";
+        summaryButtons.style.transform = "translateY(2em)";
+        setTimeout(() => {
+          loadAnim.style.display = "flex";
+
+          setTimeout(() => {
+            summaryDisplayControl("close", null);
+            setTimeout(() => {
+              // Form submission would happen here
+              alert("Dead end");
+            }, 500);
+          }, 1000);
+        }, 300);
+        break;
+      case "reset":
+        loadAnim.style.display = "none";
+        summaryHeading.style.opacity = "1";
+        summaryButtons.style.opacity = "1";
+        summaryButtons.style.transform = "";
+        summaryGrid.style.opacity = "1";
+        break;
+      default:
+        break;
+    }
+  }
+
+  function initSummaryButtons() {
+    const goBack = document.getElementById(
+      "summary-cancelConfirm"
+    ) as HTMLElement;
+    const iAmSure = document.getElementById("summary-proceed") as HTMLElement;
+    goBack.addEventListener("click", () =>
+      summaryDisplayControl("close", null)
+    );
+    iAmSure.addEventListener("click", () =>
+      summaryDisplayControl("proceed", null)
+    );
+  }
 
   let priceAdd: number = 0;
 
@@ -903,21 +1116,31 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   function initbackButton() {
     const back = document.getElementById("backB") as HTMLElement;
     back.addEventListener("click", () => {
+      //navigate("/");
+      const currentPage = window.location.href;
+
       window.history.back();
+
+      // Give the browser a moment to navigate back
+      setTimeout(() => {
+        // If we're still on the same page after trying to go back
+        if (window.location.href === currentPage) {
+          navigate("/");
+        }
+      }, 100);
     });
   }
 
-  function initStartConfig() {
+  function configDisplayControl(command: boolean) {
     const infoBox = document.getElementById("infobox") as HTMLElement;
     const configWindow = document.getElementById("configWindow") as HTMLElement;
-    const startButton = document.getElementById("startConfig") as HTMLElement;
     const configStatus = document.getElementById("configStatus") as HTMLElement;
     const cardBody = document.querySelector(".cardBody") as HTMLElement;
     const imgGrid = document.querySelector(".imgGrid") as HTMLElement;
-    const close = document.getElementById("cancel") as HTMLElement;
+    const startButton = document.getElementById("startConfig") as HTMLElement;
 
-    function configuring(state: Boolean) {
-      if (state) {
+    switch (command) {
+      case true:
         infoBox.classList.add("animExit");
         setTimeout(() => {
           infoBox.style.display = "none";
@@ -933,7 +1156,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             infoBox.classList.remove("animExit");
           }, 1);
         }, 300);
-      } else {
+        break;
+      case false:
         configWindow.classList.add("animExit");
         setTimeout(() => {
           configWindow.style.display = "none";
@@ -948,17 +1172,21 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             configWindow.classList.remove("animExit");
           }, 1);
         }, 300);
-      }
+        break;
     }
+  }
+  function initConfigControl() {
+    const startButton = document.getElementById("startConfig") as HTMLElement;
+    const close = document.getElementById("cancel") as HTMLElement;
 
     //skip
-    configuring(true);
+    //configuring(true);
 
     startButton.addEventListener("click", () => {
-      configuring(true);
+      configDisplayControl(true);
     });
     close.addEventListener("click", () => {
-      configuring(false);
+      configDisplayControl(false);
     });
   }
 
@@ -972,7 +1200,9 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       input.addEventListener("change", updateConditionalOptions);
     });
     initDz();
-    initStartConfig();
+    initConfigControl();
+    initPseudoSubmit();
+    summaryDisplayControl("", null);
   }
 
   // rehydraters
@@ -1365,209 +1595,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     margin-left: 1em;
     padding: 2em 12em;
   }
-  .formComponent {
-    --componentRounding: 20px;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1em;
-    color: var(--fore);
-    font-family: var(--content);
-    font-size: 1.5rem;
-    border: 2px solid var(--foreSecondary);
-    border-radius: var(--componentRounding);
-    padding: 0.5em 1em;
-    box-sizing: border-box;
-    cursor: pointer;
 
-    &.notLabel {
-      cursor: auto;
-    }
-    &:has(input[type="radio"]:checked) {
-      border-color: var(--prim);
-    }
-    input[type="radio"],
-    input[type="file"] {
-      appearance: none;
-      opacity: 0;
-      position: absolute;
-      width: 0;
-      height: 0;
-      margin: -1px;
-      overflow: hidden;
-      z-index: -1;
-
-      &:checked ~ .customRadio {
-        border-color: var(--prim);
-
-        &:after {
-          display: block;
-        }
-      }
-      &:focus ~ .customRadio {
-        outline: 2px solid var(--accent);
-        outline-offset: 2px;
-      }
-    }
-
-    .customRadio {
-      --radioSize: 1em;
-      --dotSize: calc(var(--radioSize) / 2);
-      top: 0;
-      left: 0;
-      height: var(--radioSize);
-      width: var(--radioSize);
-      border-radius: 50%;
-      border: 2px solid var(--foreSecondary);
-
-      &:after {
-        position: relative;
-        content: "";
-        display: none;
-        width: var(--dotSize);
-        height: var(--dotSize);
-        top: 0.15em;
-        left: 0.15em;
-        border-radius: 50%;
-        background: var(--prim);
-      }
-    }
-    &.flipflop {
-      display: flex;
-      font-family: var(--content);
-      font-size: 1.5rem;
-      color: var(--fore);
-      border: 3px solid var(--foreSecondary);
-      width: 100%;
-      padding-top: 1em;
-      box-sizing: content-box;
-      height: 100%;
-
-      &:nth-of-type(1) {
-        border-radius: var(--componentRounding) 0 0 var(--componentRounding);
-      }
-      &:nth-of-type(2) {
-        border-radius: 0 var(--componentRounding) var(--componentRounding) 0;
-      }
-      &:has(input[type="radio"]:checked) {
-        z-index: 2;
-        border-width: 3px;
-      }
-      & .flipflopHeader {
-        display: flex;
-        align-items: center;
-        .optionValue {
-          margin-left: 0.5em;
-        }
-      }
-      .optionDesc {
-        padding-top: 0.5em;
-      }
-    }
-  }
-  .categoryLabel {
-    font-family: var(--content);
-    font-size: 2rem;
-    font-weight: 900;
-    color: var(--fore);
-    margin-bottom: 0.5em;
-  }
-  .subCategoryBox {
-    display: flex;
-    flex-direction: column;
-    color: var(--fore);
-    font-family: var(--content);
-    font-size: 1.5rem;
-    padding: 0.5em;
-    margin-bottom: 0.5em;
-  }
-  .subCategory {
-    font-family: var(--content);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--fore);
-  }
-  .subCategoryDesc {
-    font-family: var(--content);
-    font-size: 1rem;
-    color: var(--foreSecondary);
-  }
-  .ocHeader {
-    border-bottom: 1px solid var(--foreSecondary);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 2em;
-  }
-  .ocCell1 {
-    display: flex;
-    align-items: center;
-    gap: 0.2em;
-    font-family: var(--content);
-    font-size: 1.3rem;
-  }
-  .optionDesc {
-    padding: 1em 0;
-    font-size: 1rem;
-    line-height: 1.5rem;
-  }
-  .optionTitle {
-    font-weight: 700;
-  }
-  .optionValue {
-    font-family: var(--content);
-    font-size: 1.1rem;
-    font-weight: 300;
-    color: var(--fore);
-    vertical-align: middle;
-  }
-
-  .flipflopBox {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 150px;
-    padding: 0.5em 0;
-    margin-top: 2em;
-    margin-bottom: 2em;
-  }
-
-  .textAreaTitle {
-    font-family: var(--content);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--fore);
-  }
-  .textAreaDesc {
-    font-family: var(--content);
-    font-size: 1rem;
-    color: var(--foreSecondary);
-    margin-bottom: 0.5em;
-    line-height: 1.5em;
-    &.infoCard {
-      margin-top: 0.5em;
-    }
-  }
-  .formTextInput {
-    height: 150px;
-    resize: vertical;
-    border-radius: 10px;
-    padding: 1em;
-    background: var(--baseSecondary);
-    color: var(--fore);
-  }
-  .validFileInfo {
-    margin-top: 0.5em;
-    font-size: 1rem;
-    color: var(--prim);
-    font-family: var(--contentSecondary);
-
-    .errNudge {
-      animation: flash 0.2s 3 steps(2);
-      color: rgba(var(--err), 1);
-    }
-  }
   .submitButtons {
     position: relative;
     display: flex;
@@ -1649,97 +1677,6 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     to {
       background: var(--base);
       border-color: var(--fore);
-    }
-  }
-
-  .configSummary {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    z-index: 2;
-    backdrop-filter: grayscale(1) blur(12px);
-    background: rgba(var(--baseRGB), 0.9);
-    //display: none;
-  }
-
-  .confirmText {
-    font-size: 3rem;
-    font-family: var(--display);
-    font-weight: 700;
-    margin-bottom: 1em;
-  }
-
-  .configSummary .formComponent {
-    background: var(--base);
-    min-width: 300px;
-    margin: 0;
-    & .optionTitle {
-      font-size: 1rem;
-      font-weight: 400;
-    }
-    & .optionDesc {
-      font-size: 2rem;
-      font-weight: 900;
-    }
-  }
-
-  .pickedConfigGrid {
-    display: flex;
-    gap: 1em;
-  }
-
-  .confirmButtons {
-    margin-top: 3em;
-    display: flex;
-    gap: 2em;
-    & > * {
-      position: relative;
-      border: 4px solid transparent; /* Inner transparent border */
-      border-radius: 20px; /* Optional: for rounded corners */
-      z-index: 1;
-      font-size: 1.5rem;
-      font-family: var(--content);
-      font-weight: 700;
-      color: var(--base);
-      padding: 1em 1.5em;
-      border-radius: 99px;
-      background: var(--fore);
-      user-select: none;
-      cursor: pointer;
-      box-shadow: 0 0 0 2px transparent inset;
-
-      &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border: 4px solid var(--base);
-        border-radius: 99px;
-        pointer-events: none;
-        z-index: 2;
-        transition: all 0.2s var(--accel);
-        transform: scale(1.1);
-        opacity: 0;
-      }
-
-      &:hover {
-        &::before {
-          transition-timing-function: var(--sleek);
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-      &:active {
-        &::before {
-          transition-timing-function: var(--sleek);
-          transform: scale(.9);
-          opacity: 1;
-        }
-      }
     }
   }
   /* eldropzone is in /styles */

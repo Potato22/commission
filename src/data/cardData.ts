@@ -113,7 +113,7 @@ export const cardList: Record<string, CardData> = {
                         preChecked: true
                     },
                     {
-                        optionName: "Linart",
+                        optionName: "Lineart",
                         optionDescription: "Cleaner lines",
                         optionPrice: 30
                     },
