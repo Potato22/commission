@@ -33,8 +33,6 @@ export interface CardData {
     tags: string[];
     isDisabled?: boolean;
     configData?: FormQuestion[];
-    //form questions
-    //includes fomr types: single choices, two options, and text input
 }
 
 export const bodyTypes = ["pony", "semi-anthro", "anthro"];
@@ -44,10 +42,10 @@ export const cardList: Record<string, CardData> = {
         title: "Sketch Book",
         description: `Compile a collection of little <span class="b7">sketches</span> of your character(s) into a single canvas.`,
         images: [
-            { src: "/imgs/showcase/sb1.jpg" },
-            { src: "/imgs/showcase/sb2.jpg" },
-            { src: "/imgs/showcase/sb3.jpg" },
-            { src: "/imgs/showcase/sb4.jpg" }
+            { src: "commission/imgs/showcase/sb1.jpg" },
+            { src: "commission/imgs/showcase/sb2.jpg" },
+            { src: "commission/imgs/showcase/sb3.jpg" },
+            { src: "commission/imgs/showcase/sb4.jpg" }
         ],
         price: 10,
         tags: [
@@ -63,10 +61,10 @@ export const cardList: Record<string, CardData> = {
         title: "Headshot",
         description: "Headshot features the character's face and bust.",
         images: [
-            { src: "/imgs/showcase/portrait1.jpg" },
-            { src: "/imgs/showcase/portrait2.jpg" },
-            { src: "/imgs/showcase/portrait3.jpg" },
-            { src: "/imgs/showcase/portrait4.jpg" }
+            { src: "commission/imgs/showcase/portrait1.jpg" },
+            { src: "commission/imgs/showcase/portrait2.jpg" },
+            { src: "commission/imgs/showcase/portrait3.jpg" },
+            { src: "commission/imgs/showcase/portrait4.jpg" }
         ],
         price: 15,
         tags: [
@@ -82,10 +80,10 @@ export const cardList: Record<string, CardData> = {
         title: "Fullbody",
         description: "Display the full body of your character(s) of choice.",
         images: [
-            { src: "/imgs/showcase/fullbod1.jpg" },
-            { src: "/imgs/showcase/fullbod2.jpg" },
-            { src: "/imgs/showcase/fullbod3.jpg" },
-            { src: "/imgs/showcase/fullbod4.jpg", pos: "top" },
+            { src: "commission/imgs/showcase/fullbod1.jpg" },
+            { src: "commission/imgs/showcase/fullbod2.jpg" },
+            { src: "commission/imgs/showcase/fullbod3.jpg" },
+            { src: "commission/imgs/showcase/fullbod4.jpg", pos: "top" },
         ],
         price: 25,
         tags: [
