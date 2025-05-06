@@ -748,7 +748,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     };
   }
 
-  function submitter(configFormElem: HTMLFormElement) {
+  function submitter(configFormElem?: HTMLFormElement) {
     /** @type {Record<string, string | File | File[]>} */
 
     const data: Record<string, string | number | File | File[]> = {};
@@ -860,7 +860,6 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         return;
       }
 
-      submitter(configForm);
       summaryDisplayControl("open", data);
     });
   }
@@ -950,7 +949,6 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     appendedFormData: Record<string, string | number | File | File[]> | null
   ) {
     console.log("summaryDisplayControl:", mode);
-    console.log("appendedFormData:", appendedFormData);
 
     const summaryWindow = document.getElementById(
       "configSummary"
@@ -966,9 +964,16 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     ) as HTMLElement;
     const loadAnim = document.getElementById("loadAnim") as HTMLElement;
 
+
+    const configForm = document.getElementById(
+      "configWindow"
+    ) as HTMLFormElement;
+
+    const { data } = submitter(configForm);
+
     switch (mode) {
       case "open":
-        summaryDisplayControl("reset", null);
+        summaryDisplayControl("reset", {});
         initSummaryButtons();
 
         // Generate summary content if appendedFormData is provided
@@ -1000,12 +1005,15 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           loadAnim.style.display = "flex";
 
           setTimeout(() => {
-            summaryDisplayControl("close", null);
+            summaryDisplayControl("close", {});
             setTimeout(() => {
               // Form submission would happen here
-              alert("Dead end");
+              configDisplayControl(false);
+              console.log("appendedFormData:", data);
+
+              //alert("Dead end");
             }, 500);
-          }, 1000);
+          }, 2000);
         }, 300);
         break;
       case "reset":
@@ -1025,11 +1033,9 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       "summary-cancelConfirm"
     ) as HTMLElement;
     const iAmSure = document.getElementById("summary-proceed") as HTMLElement;
-    goBack.addEventListener("click", () =>
-      summaryDisplayControl("close", null)
-    );
+    goBack.addEventListener("click", () => summaryDisplayControl("close", {}));
     iAmSure.addEventListener("click", () =>
-      summaryDisplayControl("proceed", null)
+      summaryDisplayControl("proceed", {})
     );
   }
 
@@ -1202,7 +1208,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     initDz();
     initConfigControl();
     initPseudoSubmit();
-    summaryDisplayControl("", null);
+    //submitter();
+    summaryDisplayControl("", {});
   }
 
   // rehydraters
