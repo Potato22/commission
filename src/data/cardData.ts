@@ -1,3 +1,17 @@
+export interface CardData {
+    title: string;
+    description: string;
+    images: {
+        src: string;
+        alt?: string;
+        pos?: string;
+        style?: string; //lazy fuck solution
+    }[];
+    price: number;
+    tags: string[];
+    isDisabled?: boolean;
+    configData?: FormQuestion[];
+}
 export interface FormQuestion {
     category: string;
     subCategory: string;
@@ -20,31 +34,18 @@ export interface FormQuestion {
     required?: boolean;
     maxFiles?:number;
 }
-export interface CardData {
-    title: string;
-    description: string;
-    images: {
-        src: string;
-        alt?: string;
-        pos?: string;
-        style?: string; //lazy fuck solution
-    }[];
-    price: number;
-    tags: string[];
-    isDisabled?: boolean;
-    configData?: FormQuestion[];
-}
 
 export const bodyTypes = ["pony", "semi-anthro", "anthro"];
 
 // Use the BASE_URL environment variable directly
-const BASE_URL = import.meta.env.BASE_URL;
+const {BASE_URL} = import.meta.env;
 
 // Helper function for path normalization inside this file
 function getImagePath(path: string): string {
     // Remove leading slash if present
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    return `${BASE_URL}/${cleanPath}`;
+    //return `${BASE_URL}/${cleanPath}`;
+    return `${BASE_URL}${cleanPath}`;
 }
 
 export const cardList: Record<string, CardData> = {
@@ -66,6 +67,7 @@ export const cardList: Record<string, CardData> = {
             "Semi-anthro",
             "Anthro"
         ],
+        isDisabled: true,
     },
     headshot: {
         title: "Headshot",
@@ -85,6 +87,7 @@ export const cardList: Record<string, CardData> = {
             "Semi-Anthro",
             "Anthro"
         ],
+        isDisabled: true,
     },
     fullbody: {
         title: "Fullbody",
@@ -108,10 +111,10 @@ export const cardList: Record<string, CardData> = {
         isDisabled: false,
         configData: [
             {
-                category: "general-configurations",
+                category: "general_configurations",
                 subCategory: "characterRender",
                 type: "singleChoice",
-                id: "character-detail",
+                id: "character_detail",
                 options: [
                     {
                         optionName: "Sketch",
@@ -139,7 +142,7 @@ export const cardList: Record<string, CardData> = {
                 required: true,
             },
             {
-                category: "general-configurations",
+                category: "general_configurations",
                 subCategory: "bodyForm",
                 type: "flipflop",
                 id: "anthro",
@@ -149,7 +152,7 @@ export const cardList: Record<string, CardData> = {
                 ],
             },
             {
-                category: "general-configurations",
+                category: "general_configurations",
                 subCategory: "background",
                 type: "singleChoice",
                 id: "background",
@@ -170,25 +173,25 @@ export const cardList: Record<string, CardData> = {
                         optionName: "Basic",
                         optionDescription: "Basic details, simplified rendering",
                         optionPrice: 35,
-                        visibleIf: { questionId: "character-detail", value: ["Flat Color", "Fully Rendered"] }
+                        visibleIf: { questionId: "character_detail", value: ["Flat Color", "Fully Rendered"] }
                     },
                     {
                         optionName: "Complex",
                         optionDescription: `Complex and well rendered background. <br>(Only available for <span class="b7">Fully Rendered</span> character detail)`,
                         optionPrice: 50,
-                        visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
+                        visibleIf: { questionId: "character_detail", value: "Fully Rendered" }
                     },
                     //{
                     //    optionName: "This is a robbery, fuck you",
                     //    optionDescription: `Fuck the wallet, I'm taking the whole bank`,
                     //    optionPrice: 7236493,
-                    //    visibleIf: { questionId: "character-detail", value: "Fully Rendered" }
+                    //    visibleIf: { questionId: "character_detail", value: "Fully Rendered" }
                     //},
                 ],
                 required: true,
             },
             {
-                category: "general-configurations",
+                category: "general_configurations",
                 subCategory: "nsfw",
                 type: "flipflop",
                 id: "nsfw",
@@ -198,38 +201,38 @@ export const cardList: Record<string, CardData> = {
                 ],
             },
             {
-                category: "request-detailing",
+                category: "request_detailing",
                 type: "infoCard",
                 subCategory: "characterAttribute",
                 questionTitle: "Muliple characters?",
                 questionDescription: `Can do! Additional characters will be charged with <span class="b7">80%</span> of your selected <span class="b7">"Character detail"</span>`,
-                id: "character-attributes",
+                id: "character_attributes",
             },
             {
-                category: "request-detailing",
+                category: "request_detailing",
                 type: "fileUpload",
                 subCategory: "character",
                 questionTitle: "Upload your character(s)",
                 questionDescription: `Upload your <span class="b7">character</span> and (if any) their <span class="b7">accessories</span> references (sheet or images) here!`,
-                id: "character-reference",
+                id: "character_reference",
                 required: true,
                 maxFiles: 10,
             },
             {
-                category: "request-detailing",
+                category: "request_detailing",
                 type: "infoCard",
                 subCategory: "characterAttribute",
                 questionTitle: `Accessories`,
                 questionDescription: `<span class="b7">Each</span> added accessories will be counted as a minimum of <span class="b7">€5</span>`,
-                id: "character-attributes",
+                id: "character_attributes",
             },
             {
-                category: "request-detailing",
+                category: "request_detailing",
                 type: "textarea",
                 subCategory: "requestText",
                 questionTitle: "What do you have in mind?",
                 questionDescription: "Briefly elaborate what you want me to draw for you",
-                id: "request-text",
+                id: "request_text",
                 placeholder: `You can leave this VERY brief and discuss it directly!`,
                 required: true,
             },
@@ -243,6 +246,18 @@ export const cardList: Record<string, CardData> = {
                 If you have none of these, you could provide an <span class="b7">email address</span> instead`,
                 id: "contacts",
                 placeholder: `@yourTag OR your@email.com`,
+                required: true,
+            },
+            {
+                category: "contacts",
+                type: "textarea",
+                subCategory: "nickname",
+                questionTitle: "Give me a nickname",
+                questionDescription: `
+                (This is so just I could track you in the requests database!)
+                `,
+                id: "nickname",
+                placeholder: `Potto, Mary, xXIDrinkBromineXx, etc.`,
                 required: true,
             }
         ],

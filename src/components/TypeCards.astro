@@ -1,6 +1,6 @@
 ---
 import noImgPlchldr from "../assets/noImg.svg";
-import { bodyTypes } from "../data/cardData";
+import { bodyTypes, cardList as allCardsData } from "../data/cardData";
 interface Props {
   typeTitle: string;
   description: string;
@@ -20,8 +20,23 @@ const {
   images,
   price,
   tags,
-  isDisabled = false,
+  //isDisabled = false,
 } = Astro.props;
+
+let internalIsDisabled: boolean;
+
+// Check if the isDisabled prop was explicitly passed
+if (Astro.props.isDisabled !== undefined) {
+  internalIsDisabled = Astro.props.isDisabled;
+} else {
+  // If not passed, try to look it up in allCardsData
+  const cardKey = typeTitle.toLowerCase().replace(/\s+/g, "");
+  const cardDataEntry = allCardsData[cardKey];
+  // Use optional chaining and nullish coalescing.
+  // If cardDataEntry exists and has isDisabled, use that value.
+  // Otherwise, default to false (not disabled).
+  internalIsDisabled = cardDataEntry?.isDisabled ?? false;
+}
 
 if (images.length > 4) {
   throw new Error(
@@ -42,10 +57,10 @@ if (images.length > 4) {
 
 const cardId = typeTitle.toLowerCase().replace(/\s+/g, "");
 
-const disabled = isDisabled  ? "disabled" : "";
-const configButtonText = isDisabled ? "Not available" : "Configure";
-const priceState = isDisabled ? "n/a" : "€" + price.toFixed(0);
-const interactive = isDisabled ? "false" : "true";
+// Use internalIsDisabled for all dependent constants
+//const configButtonText = internalIsDisabled ? "Not available" : "Configure";
+const priceState = internalIsDisabled ? "n/a" : "€" + price.toFixed(0);
+const interactive = internalIsDisabled ? "false" : "true"; // This controls the data-interactive attribute
 
 //const bodyTypes = ["pony", "semi-anthro", "anthro"];
 function getTagClass(tag: string) {

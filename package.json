@@ -9,7 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.7.6"
+    "astro": "^5.7.12"
   },
   "devDependencies": {
     "@types/dropzone": "^5.7.9",

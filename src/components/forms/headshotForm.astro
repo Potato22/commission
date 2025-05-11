@@ -8,7 +8,7 @@ import { bodyTypes } from "../../data/cardData";
 
 import noImgPlchldr from "../../assets/noImg.svg";
 
-const cardId = "fullbody";
+const cardId = "headshot";
 const cardData = cardList[cardId];
 
 function getTagClass(tag: string) {
@@ -133,8 +133,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       <div class="categoryLabel">General Configurations</div>
       <hr />
       {
-        groupedConfig["general_configurations"] &&
-          groupedConfig["general_configurations"].map((config, idx: number) => (
+        groupedConfig["general-configurations"] &&
+          groupedConfig["general-configurations"].map((config, idx: number) => (
             <>
               {config.subCategory === "characterRender" && (
                 <div class="subCategoryBox">
@@ -293,14 +293,14 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         <div class="subCategoryDesc">Fill in the fields.</div>
       </div>
       {
-        groupedConfig["request_detailing"] &&
-          groupedConfig["request_detailing"].map((config, idx) => (
+        groupedConfig["request-detailing"] &&
+          groupedConfig["request-detailing"].map((config, idx) => (
             <>
               {/* radios components ommitted */}
 
               {/* insert subcat on cardConfig id */}
               {/* do mind this will only put them BEFORE the target id card */}
-              {config.id === "request_text" && (
+              {config.id === "request-text" && (
                 <div class="subCategoryBox">
                   <div class="subCategory">Request</div>
                   <div class="subCategoryDesc">Fill in the field.</div>
@@ -493,7 +493,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   import Dropzone from "dropzone";
   import { cardList } from "../../data/cardData";
   import { navigate } from "astro:transitions/client";
-  const cardId = "fullbody";
+  const cardId = "headshot";
   const cardData = cardList[cardId];
 
   function initDz() {
@@ -517,6 +517,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             dictDefaultMessage: "upload_file",
             dictRemoveFile: "Remove",
 
+            //// Optional: handle events, e.g. to update fileNameList
             init: function () {
               this.on("maxfilesexceeded", function (this: Dropzone, file) {
                 this.removeFile(file);
@@ -617,13 +618,11 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     // Track already validated fields to avoid duplicate error messages
     const validatedFields = new Set();
 
-    // Check if an error container already exists, otherwise create one
-    let errorContainer = configForm.querySelector(".formInvalidErr");
-    if (!errorContainer) {
-      errorContainer = document.createElement("div");
-      errorContainer.className = "formInvalidErr";
-      configForm.insertBefore(errorContainer, checkPulse);
-    }
+    // Create a container for error messages
+    const errorContainer = document.createElement("div");
+    errorContainer.className = "formInvalidErr";
+
+    configForm.insertBefore(errorContainer, checkPulse);
 
     return {
       validate: (event: Event) => {
@@ -715,12 +714,9 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             }
           }
         });
-
         if (hasErrors) {
           event.preventDefault();
         }
-
-        // Check file uploads (moved from initPseudoSubmit)
         cardData.configData?.forEach((config) => {
           if (config.type === "fileUpload" && config.required) {
             const dzElem = document.getElementById(`dropZone_${config.id}`);
@@ -842,26 +838,27 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         })();
       errorContainer.innerHTML = "";
 
-      //cardData.configData?.forEach((config) => {
-      //  if (config.type === "fileUpload" && config.required) {
-      //    const dzElem = document.getElementById(`dropZone_${config.id}`);
-      //    if (dzElem && dzElem.dropzone) {
-      //      const dzFiles = dzElem.dropzone.getAcceptedFiles();
-      //      if (dzFiles.length === 0) {
-      //        dzHasErrors = true;
-      //        const errorMsg = document.createElement("div");
-      //        errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
-      //        errorMsg.className = "errBlob";
-      //        errorContainer.appendChild(errorMsg);
-      //        dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
-      //      }
-      //    }
-      //  }
-      //});
-      //if (dzHasErrors || !configForm.checkValidity()) {
-      //  event.preventDefault();
-      //  return;
-      //}
+      cardData.configData?.forEach((config) => {
+        if (config.type === "fileUpload" && config.required) {
+          const dzElem = document.getElementById(`dropZone_${config.id}`);
+          if (dzElem && dzElem.dropzone) {
+            const dzFiles = dzElem.dropzone.getAcceptedFiles();
+            if (dzFiles.length === 0) {
+              dzHasErrors = true;
+              const errorMsg = document.createElement("div");
+              errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
+              errorMsg.className = "errBlob";
+              errorContainer.appendChild(errorMsg);
+              dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
+        }
+      });
+
+      if (dzHasErrors || !configForm.checkValidity()) {
+        event.preventDefault();
+        return;
+      }
 
       summaryDisplayControl("open", data);
     });
@@ -882,11 +879,11 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
 
     // Define which keys to display and their display names
     const keysToDisplay = {
-      character_detail: "Character Detail",
+      "character-detail": "Character Detail",
       anthro: "Anthro?",
       background: "Background Art",
       nsfw: "NSFW?",
-      request_text: "Request",
+      "request-text": "Request",
       contacts: "Contact Information",
     };
 
@@ -902,12 +899,12 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     }
 
     // Add image count if there are character references
-    if (formData["character_reference"]) {
+    if (formData["character-reference"]) {
       let imageCount = 0;
 
-      if (Array.isArray(formData["character_reference"])) {
+      if (Array.isArray(formData["character-reference"])) {
         // Multiple images case
-        imageCount = formData["character_reference"].length;
+        imageCount = formData["character-reference"].length;
       } else {
         // Single image case
         imageCount = 1;
@@ -967,20 +964,17 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     ) as HTMLElement;
     const loadAnim = document.getElementById("loadAnim") as HTMLElement;
 
+
     const configForm = document.getElementById(
       "configWindow"
     ) as HTMLFormElement;
 
-    // Only get formData if we need it
-    let formData: FormData;
-    if (mode === "proceed") {
-      formData = submitter(configForm).formData;
-      //console.log(`Ready as` + formData);
-    }
+    const { data } = submitter(configForm);
 
     switch (mode) {
       case "open":
         summaryDisplayControl("reset", {});
+        initSummaryButtons();
 
         // Generate summary content if appendedFormData is provided
         if (appendedFormData) {
@@ -999,35 +993,27 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           summaryWindow.classList.remove("active");
           setTimeout(() => {
             summaryWindow.style.display = "none";
-          }, 50);
-        }, 100);
+          }, 300);
+        }, 300);
         break;
       case "proceed":
         summaryHeading.style.opacity = "0";
         summaryButtons.style.opacity = "0";
         summaryGrid.style.opacity = "0";
         summaryButtons.style.transform = "translateY(2em)";
-
         setTimeout(() => {
           loadAnim.style.display = "flex";
 
-          // Submit to Cloudflare Worker - use the formData we got above
-          submitFormToWorker(formData).then((success) => {
-            if (success) {
-              summaryDisplayControl("close", {});
-              setTimeout(() => {
-                configDisplayControl(false);
-                alert("ok");
-                // Show success message or redirect
-                //navigate("/thank-you"); // Replace with your success page URL
-              }, 500);
-            } else {
-              // Reset if there was an error
-              alert("fail");
-              summaryDisplayControl("close", {});
-              // Allow the user to try again
-            }
-          });
+          setTimeout(() => {
+            summaryDisplayControl("close", {});
+            setTimeout(() => {
+              // Form submission would happen here
+              configDisplayControl(false);
+              console.log("appendedFormData:", data);
+
+              //alert("Dead end");
+            }, 500);
+          }, 2000);
         }, 300);
         break;
       case "reset":
@@ -1047,64 +1033,10 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       "summary-cancelConfirm"
     ) as HTMLElement;
     const iAmSure = document.getElementById("summary-proceed") as HTMLElement;
-
-    // Remove existing event listeners (if any)
-    const oldGoBack = goBack.cloneNode(true);
-    const oldIAmSure = iAmSure.cloneNode(true);
-
-    if (goBack.parentNode && iAmSure.parentNode) {
-      goBack.parentNode.replaceChild(oldGoBack, goBack);
-      iAmSure.parentNode.replaceChild(oldIAmSure, iAmSure);
-    }
-
-    // Add fresh event listeners
-    (oldGoBack as HTMLElement).addEventListener("click", () =>
-      summaryDisplayControl("close", {})
-    );
-    (oldIAmSure as HTMLElement).addEventListener("click", () =>
+    goBack.addEventListener("click", () => summaryDisplayControl("close", {}));
+    iAmSure.addEventListener("click", () =>
       summaryDisplayControl("proceed", {})
     );
-  }
-
-  async function submitFormToWorker(formData: FormData | null) {
-    const WORKER_URL = "https://pottocomm-collector.pottoart.workers.dev/"; // Replace with your CF Worker URL
-
-    //you aint slick man
-    if (!cardData.isDisabled) {
-      try {
-        // Show loading state
-        const loadAnim = document.getElementById("loadAnim");
-        if (loadAnim) loadAnim.style.display = "flex";
-
-        const response = await fetch(WORKER_URL, {
-          method: "POST",
-          body: formData, // Send FormData directly - contains both text fields and files
-        });
-
-        if (!response.ok) {
-          throw new Error(
-            `Server responded with ${response.status}: ${response.statusText}`
-          );
-        }
-
-        const result = await response.json();
-        console.log("Submission successful:", result);
-
-        // Handle successful submission (e.g., show thank you message)
-        return true;
-      } catch (error: unknown) {
-        console.error("Error submitting form:", error);
-        if (error instanceof Error) {
-        } else {
-          alert("An unknown error occurred");
-        }
-        return false;
-      }
-    } else {
-      alert(
-        "supposedly your submission is already on the way, but this one is not available right now. Appreciate your effort for bruteforcing your way here though."
-      );
-    }
   }
 
   let priceAdd: number = 0;
@@ -1276,8 +1208,6 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     initDz();
     initConfigControl();
     initPseudoSubmit();
-    // Initialize summary buttons only once
-    initSummaryButtons();
     //submitter();
     summaryDisplayControl("", {});
   }
