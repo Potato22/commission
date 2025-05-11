@@ -1067,7 +1067,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   }
 
   async function submitFormToWorker(formData: FormData | null) {
-    const WORKER_URL = "https://pottocomm-collector.pottoart.workers.dev/"; // Replace with your CF Worker URL
+    //const WORKER_URL = "https://pottocomm-collector.pottoart.workers.dev/"; // Replace with your CF Worker URL
+    const WORKER_URL = ""; //disable for now
 
     //you aint slick man
     if (!cardData.isDisabled) {
