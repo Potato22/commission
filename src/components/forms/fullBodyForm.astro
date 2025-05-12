@@ -484,9 +484,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
 
   <div id="loadAnim">
     <div class="gradOverflow">
-      <div id="gradbar"></div>
+      <div class="gradbar"></div>
     </div>
-    <div id="loadStatString">loading nothing..?</div>
   </div>
 </div>
 
@@ -817,14 +816,52 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       //configForm.addEventListener("submit", async (event: Event) => {
 
       const { validate } = setupFormValidation();
+
       const result = validate(event);
+
       if (!result.isValid) {
-       event.preventDefault();
-       return;
+        event.preventDefault();
+        return;
       }
 
       // Now we can safely collect the data
       const { data } = submitter(configForm);
+
+      // dropzone check had to be moved here
+      let dzHasErrors = false;
+      const errorContainer =
+        document.querySelector(".formInvalidErr") ||
+        (() => {
+          const divElem = document.createElement("div");
+          divElem.className = "formInvalidErr";
+          configForm.insertBefore(
+            divElem,
+            document.getElementById("submitBtn")
+          );
+          return divElem;
+        })();
+      errorContainer.innerHTML = "";
+
+      //cardData.configData?.forEach((config) => {
+      //  if (config.type === "fileUpload" && config.required) {
+      //    const dzElem = document.getElementById(`dropZone_${config.id}`);
+      //    if (dzElem && dzElem.dropzone) {
+      //      const dzFiles = dzElem.dropzone.getAcceptedFiles();
+      //      if (dzFiles.length === 0) {
+      //        dzHasErrors = true;
+      //        const errorMsg = document.createElement("div");
+      //        errorMsg.innerHTML = `<span class="b7">${config.questionTitle || config.id}</span> is required!`;
+      //        errorMsg.className = "errBlob";
+      //        errorContainer.appendChild(errorMsg);
+      //        dzElem.scrollIntoView({ behavior: "smooth", block: "center" });
+      //      }
+      //    }
+      //  }
+      //});
+      //if (dzHasErrors || !configForm.checkValidity()) {
+      //  event.preventDefault();
+      //  return;
+      //}
 
       summaryDisplayControl("open", data);
     });
@@ -929,8 +966,6 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       "pickedConfigGrid"
     ) as HTMLElement;
     const loadAnim = document.getElementById("loadAnim") as HTMLElement;
-    const loadBar = document.getElementById("gradbar") as HTMLElement;
-    const loadString = document.getElementById("loadStatString") as HTMLElement;
 
     const configForm = document.getElementById(
       "configWindow"
@@ -964,7 +999,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           summaryWindow.classList.remove("active");
           setTimeout(() => {
             summaryWindow.style.display = "none";
-          }, 300);
+          }, 50);
         }, 100);
         break;
       case "proceed":
@@ -972,23 +1007,25 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         summaryButtons.style.opacity = "0";
         summaryGrid.style.opacity = "0";
         summaryButtons.style.transform = "translateY(2em)";
-        loadString.innerHTML = "Sending...";
-        loadBar.classList.remove("loadOK");
-        loadBar.classList.remove("loadErr");
 
         setTimeout(() => {
           loadAnim.style.display = "flex";
 
           // Submit to Cloudflare Worker - use the formData we got above
-          submitFormToWorker(formData).then(({ success, error }) => {
+          submitFormToWorker(formData).then((success) => {
             if (success) {
-              loadBar.classList.add("loadOK");
-              loadString.innerHTML = `Thank you!`;
-              setTimeout(() => {summaryDisplayControl("close", {}); configDisplayControl(false);}, 2000);
+              summaryDisplayControl("close", {});
+              setTimeout(() => {
+                configDisplayControl(false);
+                alert("ok");
+                // Show success message or redirect
+                //navigate("/thank-you"); // Replace with your success page URL
+              }, 500);
             } else {
-              loadBar.classList.add("loadErr");
-              loadString.innerHTML = `fail: ${error ?? "unknown error"}`;
-              setTimeout(() => summaryDisplayControl("close", {}), 2000);
+              // Reset if there was an error
+              alert("fail");
+              summaryDisplayControl("close", {});
+              // Allow the user to try again
             }
           });
         }, 300);
@@ -1029,46 +1066,45 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     );
   }
 
-  type SubmissionResult = {
-    success: boolean;
-    error?: string;
-  };
-  async function submitFormToWorker(
-    formData: FormData | null
-  ): Promise<SubmissionResult> {
-    //const WORKER_URL = "https://pottocomm-collector.pottoart.workers.dev/";
-    const WORKER_URL = "https://a.pottoart.workers.dev/"; //disable for now
+  async function submitFormToWorker(formData: FormData | null) {
+    //const WORKER_URL = "https://pottocomm-collector.pottoart.workers.dev/"; // Replace with your CF Worker URL
+    const WORKER_URL = ""; //disable for now
 
-    if (cardData.isDisabled) {
-      const disMsg: string =
-        "supposedly your submission is already on the way, but this one is not available right now. Appreciate your effort for bruteforcing your way here though.";
-      alert(disMsg);
-      return {
-        success: false,
-        error: disMsg,
-      };
-    }
+    //you aint slick man
+    if (!cardData.isDisabled) {
+      try {
+        // Show loading state
+        const loadAnim = document.getElementById("loadAnim");
+        if (loadAnim) loadAnim.style.display = "flex";
 
-    try {
-      const response = await fetch(WORKER_URL, {
-        method: "POST",
-        body: formData,
-      });
-      if (!response.ok) {
-        const msg = `Server responded with ${response.status}`;
-        throw new Error(msg);
+        const response = await fetch(WORKER_URL, {
+          method: "POST",
+          body: formData, // Send FormData directly - contains both text fields and files
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Server responded with ${response.status}: ${response.statusText}`
+          );
+        }
+
+        const result = await response.json();
+        console.log("Submission successful:", result);
+
+        // Handle successful submission (e.g., show thank you message)
+        return true;
+      } catch (error: unknown) {
+        console.error("Error submitting form:", error);
+        if (error instanceof Error) {
+        } else {
+          alert("An unknown error occurred");
+        }
+        return false;
       }
-
-      const result = await response.json();
-      console.log("Submission successful:", result);
-      return { success: true };
-
-    } catch (err: unknown) {
-      console.error("failure sending:", err);
-      return {
-        success: false,
-        error: err instanceof Error ? err.message : String(err),
-      };
+    } else {
+      alert(
+        "supposedly your submission is already on the way, but this one is not available right now. Appreciate your effort for bruteforcing your way here though."
+      );
     }
   }
 
@@ -1219,7 +1255,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     const close = document.getElementById("cancel") as HTMLElement;
 
     //skip
-    //configDisplayControl(true);
+    //configuring(true);
 
     startButton.addEventListener("click", () => {
       configDisplayControl(true);
