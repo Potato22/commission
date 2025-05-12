@@ -317,6 +317,7 @@
 
 #pickedConfigGrid {
     display: flex;
+    //display: none;
     flex-wrap: wrap;
     justify-content: center;
     padding: 0 5em;
@@ -385,27 +386,68 @@
     z-index: 2;
     align-items: center;
     display: none;
+    flex-direction: column;
+    align-items: center;
+
+    .gradOverflow {
+        width: 100px;
+        height: 10px;
+        overflow: hidden;
+        border-radius: 20px;
+        filter: blur(2px);
+        box-shadow: 0 0 12px transparent;
+    }
+
+    #gradbar {
+        width: 200%;
+        height: 10px;
+        background: linear-gradient(90deg, transparent 50%, var(--accent));
+        background-repeat: no-repeat;
+        background-position: -100px 0;
+        animation: ps5loadGrad 0.8s infinite;
+
+
+        &.loadOK {
+            animation: loadOK .8s forwards !important;
+        }
+        &.loadErr {
+            animation: loadErr .8s forwards !important;
+        }
+    }
+
+    #loadStatString {
+        position: absolute;
+        width: 300px;
+        top: -30px;
+        font-family: var(--doto);
+        font-weight: 900;
+        text-align: center;
+        color: var(--fore);
+    }
 }
 
-.gradOverflow {
-    width: 100px;
-    height: 10px;
-    overflow: hidden;
-    border-radius: 20px;
-    filter: blur(2px);
-    box-shadow: 0 0 12px transparent;
-    animation: ps5loadGlow 1s 0.15 infinite;
-}
+@keyframes loadOK {
+    0% {
+        background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+        background-position: -200px 0;
+    }
 
-.gradbar {
-    width: 200%;
-    height: 10px;
-    background: linear-gradient(90deg, transparent 50%, var(--accent));
-    background-repeat: no-repeat;
-    background-position: -100px 0;
-    animation: ps5loadGrad 0.8s infinite;
+    100% {
+        background: linear-gradient(90deg, #47ff47 50%, transparent 50%);
+        background-position: 0px;
+    }
 }
+@keyframes loadErr {
+    0% {
+        background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+        background-position: -200px 0;
+    }
 
+    100% {
+        background: linear-gradient(90deg, rgb(var(--err)) 50%, transparent 50%);
+        background-position: 0px;
+    }
+}
 @keyframes ps5loadGrad {
     0% {
         background-position: -200px 0;
