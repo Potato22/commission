@@ -245,6 +245,7 @@
 .numDisp {
     display: flex;
     position: relative;
+    align-items: center;
 
     .qcAdjusters {
         display: flex;
@@ -261,7 +262,7 @@
                 'wght' 400,
                 'GRAD' 200,
                 'opsz' 24;
-            height: 100%;
+            height: 40px;
             background: var(--prim);
             border: 2px solid var(--fore);
             border-left: none;
@@ -294,21 +295,34 @@
     border-bottom: none;
 }
 
-.qcErr {
+#qcErr {
     font-family: var(--content);
     padding: .5em 1em;
     border: 2px solid rgb(var(--err));
     color: rgb(var(--err));
     border-radius: 20px;
     margin: 0;
-    margin-top: -3em;
+    margin-top: -1em;
     pointer-events: none;
+    opacity: 0;
+    transition: all .2s var(--sleek);
 
     &.qcErring {
         margin-bottom: 2em;
         margin-top: -1em;
         opacity: 1;
     }
+}
+
+.qcDispErr {
+    display: none;
+    margin-right: 1em;
+    font-family: var(--doto);
+    color: rgb(var(--err));
+    font-weight: 800;
+    font-size: 1.2rem;
+    text-align: right;
+    animation: flash .2s 3;
 }
 
 

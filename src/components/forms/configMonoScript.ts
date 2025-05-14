@@ -3,7 +3,7 @@ import { navigate } from "astro:transitions/client";
 import { type CardData } from "../../data/cardData";
 
 
-export default function initConfigPageLogic(cardData: CardData) {
+export default function initConfigPageLogic(cardData: CardData, lookupConfigId: string) {
 
     function initDz() {
         const dzConfigFileSize: number = 19.0735;
@@ -261,7 +261,7 @@ export default function initConfigPageLogic(cardData: CardData) {
         };
     }
 
-    function submitter(configFormElem?: HTMLFormElement) {
+    function collector(configFormElem?: HTMLFormElement) {
         /** @type {Record<string, string | File | File[]>} */
 
         const data: Record<string, string | number | File | File[]> = {};
@@ -305,6 +305,10 @@ export default function initConfigPageLogic(cardData: CardData) {
         data.calculatedPrice = priceAdd;
         formData.append("estPrice", priceAdd.toString());
 
+        // Add the card ID to the data and formData
+        data.cardId = lookupConfigId;
+        formData.append("type", lookupConfigId);
+
         //console.log("Collected config data:", data);
 
         // Return both the processed data object and the FormData
@@ -332,7 +336,7 @@ export default function initConfigPageLogic(cardData: CardData) {
             }
 
             // Now we can safely collect the data
-            const { data } = submitter(configForm);
+            const { data } = collector(configForm);
 
             summaryDisplayControl("open", data);
         });
@@ -348,6 +352,7 @@ export default function initConfigPageLogic(cardData: CardData) {
             console.error("Invalid form data provided to generateSummary");
             return;
         }
+        console.log(formData)
         // Clear existing content
         targetElement.innerHTML = "";
 
@@ -357,6 +362,8 @@ export default function initConfigPageLogic(cardData: CardData) {
             anthro: "Anthro?",
             background: "Background Art",
             nsfw: "NSFW?",
+            sketch_quantity: "Sketch Quantity",
+            color_quantity: "Colored Sketch Quantity",
             request_text: "Request",
             contacts: "Contact Information",
         };
@@ -449,7 +456,7 @@ export default function initConfigPageLogic(cardData: CardData) {
         // Only get formData if we need it
         let formData: FormData;
         if (mode === "proceed") {
-            formData = submitter(configForm).formData;
+            formData = collector(configForm).formData;
             //console.log(`Ready as` + formData);
         }
 
@@ -480,6 +487,7 @@ export default function initConfigPageLogic(cardData: CardData) {
             case "proceed":
                 summaryHeading.style.opacity = "0";
                 summaryButtons.style.opacity = "0";
+                summaryButtons.style.pointerEvents = "none"
                 summaryGrid.style.opacity = "0";
                 summaryButtons.style.transform = "translateY(2em)";
                 loadString.innerHTML = "Sending...";
@@ -526,6 +534,7 @@ export default function initConfigPageLogic(cardData: CardData) {
                 summaryButtons.style.opacity = "1";
                 summaryButtons.style.transform = "";
                 summaryGrid.style.opacity = "1";
+                summaryButtons.style.pointerEvents = "auto"
                 break;
             default:
                 break;
@@ -563,8 +572,8 @@ export default function initConfigPageLogic(cardData: CardData) {
     async function submitFormToWorker(
         formData: FormData | null
     ): Promise<SubmissionResult> {
-        //const WORKER_URL = "https://pottocomm-collector.pottoart.workers.dev/";
-        const WORKER_URL = "https://no.pottoart.workers.dev/"; //disable for now
+        const WORKER_URL = "https://pottocomm-collector.pottoart.workers.dev/";
+        //const WORKER_URL = "https://no.pottoart.workers.dev/"; //disable for now
 
         if (cardData.isDisabled) {
             const disMsg: string =
@@ -757,16 +766,21 @@ export default function initConfigPageLogic(cardData: CardData) {
     }
 
     function quantityController() {
-        const customInputs = document.querySelectorAll('.formComponent.qc');
-        const groupValidationMsg = document.getElementById('group-validation');
+        const customInputs: NodeListOf<Element> = document.querySelectorAll('.formComponent.qc');
+        const qcErrGroup = document.getElementById("qcErr") as HTMLElement;
+
+        //simple check if it exists, so it doesn't throw errors all day.
+        if (!customInputs) {
+            return;
+        }
 
         // Function to check if at least one counter in a group has value > 0
-        function checkGroupConstraint(groupName: string) {
-            const groupInputs = document.querySelectorAll(`input[data-group="${groupName}"]`);
-            let hasValueGreaterThanZero = false;
+        function checkGroupConstraint(groupName: string): boolean {
+            const groupInputs: NodeListOf<Element> = document.querySelectorAll(`input[data-group="${groupName}"]`);
+            let hasValueGreaterThanZero: boolean = false;
 
-            groupInputs.forEach(input => {
-                if (parseInt(input.value) > 0) {
+            groupInputs.forEach((input: Element) => {
+                if (parseInt((input as HTMLInputElement).value) > 0) {
                     hasValueGreaterThanZero = true;
                 }
             });
@@ -774,83 +788,108 @@ export default function initConfigPageLogic(cardData: CardData) {
             return hasValueGreaterThanZero;
         }
 
-        // Function to show group validation message
-        function showGroupValidationError() {
-            alert('this aint it bro')
+        // Function to get the sum of all counters in a group
+        function getGroupSum(groupName: string): number {
+            const groupInputs: NodeListOf<Element> = document.querySelectorAll(`input[data-group="${groupName}"]`);
+            let sum: number = 0;
+
+            groupInputs.forEach((input: Element) => {
+                sum += parseInt((input as HTMLInputElement).value) || 0;
+            });
+
+            return sum;
         }
 
-        customInputs.forEach(wrapper => {
+        // Function to check if the group sum exceeds the maximum allowed
+        function checkGroupMaxConstraint(groupName: string, maxSum: number = 5): boolean {
+            return getGroupSum(groupName) <= maxSum;
+        }
+
+        // Function to show group validation message
+        function showGroupValidationError(message?: string) {
+            qcErrGroup.innerHTML = message ?? '';
+            qcErrGroup.classList.add("qcErring")
+        }
+
+        customInputs.forEach((wrapper: Element) => {
             const input = wrapper.querySelector('.formQCounter') as HTMLInputElement;
-            const decrement = wrapper.querySelector('.qcDecrement') as HTMLElement | null;
-            const increment = wrapper.querySelector('.qcIncrement') as HTMLElement | null;
-            const validationMsg = wrapper.querySelector('.validation-message') as HTMLElement | null;
-            const groupName = input.getAttribute('data-group');
+            const decrement = wrapper.querySelector('.qcDecrement') as HTMLElement;
+            const increment = wrapper.querySelector('.qcIncrement') as HTMLElement;
+            const qcDispErr = wrapper.querySelector('.qcDispErr') as HTMLElement;
+            const groupName: string | null = input.getAttribute('data-group');
 
             const min: number = parseInt(input.min) || 0;
             const max: number = parseInt(input.max) || 1;
+            const GROUP_MAX_SUM: number = Number(input.dataset.groupMax); // Maximum allowed sum for the group
 
             // Function to show validation feedback
-            function showValidationError(element: HTMLElement, message: string, buttonElement?: HTMLElement) {
-                alert('nu uh')
-                //element.classList.add('input-error');
-                //if (buttonElement) buttonElement.classList.add('btn-error');
-                //if (validationMsg) {
-                //    validationMsg.textContent = message;
-                //}
-                //validationMsg?.classList.add('show-message');
-                //// Remove the error classes after animation completes
-                //setTimeout(() => {
-                //    element.classList.remove('input-error');
-                //    if (buttonElement) buttonElement.classList.remove('btn-error');
-                //    // Hide the message after a bit longer
-                //    setTimeout(() => {
-                //        validationMsg?.classList.remove('show-message');
-                //    }, 1500);
-                //}, 600);
+            function showValidationError(message?: string, buttonElement?: HTMLElement) {
+                qcDispErr.style.display = "block";
+                qcDispErr.innerHTML = message ?? '';
             }
+
+            // Handle input changes (typed value)
+            input.addEventListener('input', () => {
+                const value: number = parseInt(input.value) || 0;
+
+                if (value < min) {
+                    showValidationError(`MIN: ${min}`);
+                    // Immediately reset to min
+                    input.value = min.toString();
+                } else if (value > max) {
+                    showValidationError(`MAX: ${max}`);
+                    // Immediately reset to max
+                    input.value = max.toString();
+                } else if (groupName) {
+                    // Check if the new value would make the group sum exceed the maximum
+
+                    // Store original value to restore if needed
+                    const originalValue: string = input.value;
+                    // Get the current value before input
+                    const currentValue: number = parseInt(originalValue) || 0;
+
+                    // Calculate group sum with the new value
+                    const currentGroupSum: number = getGroupSum(groupName);
+
+                    // If this would exceed the group max, revert and show error
+                    if (currentGroupSum > GROUP_MAX_SUM) {
+                        // Reset to a value that would make the sum equal to GROUP_MAX_SUM
+                        const allowedValue: number = Math.max(0, value - (currentGroupSum - GROUP_MAX_SUM));
+                        input.value = allowedValue.toString();
+
+                        showGroupValidationError(`Can only do <span class="b7">${GROUP_MAX_SUM}</span> doodles for now... sorry!`);
+                    }
+                }
+            });
 
             // Add a change event listener to handle price recalculation
             input.addEventListener('change', () => {
                 // Call your price recalculation function here
                 recalculatePrice();
-            });
-
-            // Handle input changes (typed value)
-            input.addEventListener('input', () => {
-                const value = parseInt(input.value) || 0;
-
-                if (value < min) {
-                    showValidationError(input, `Value cannot be less than ${min}`);
-                    // Immediately reset to min
-                    input.value = min.toString();
-                } else if (value > max) {
-                    showValidationError(input, `Value cannot be greater than ${max}`);
-                    // Immediately reset to max
-                    input.value = max.toString();
-                }
+                qcErrGroup.classList.remove("qcErring")
+                qcDispErr.style.display = "none";
             });
 
             // Handle decrement button
             decrement?.addEventListener('click', () => {
-                const value = parseInt(input.value) || 0;
+                const value: number = parseInt(input.value) || 0;
 
                 if (value <= min) {
-                    showValidationError(input, `Value cannot be less than ${min}`, decrement);
+                    showValidationError(`MIN: ${min}`);
                 } else {
                     // Special case: If this is the last counter with value > 0, don't allow decrementing to 0
                     if (value === 1 && groupName) {
                         // Create a temporary copy of the current value
-                        const originalValue = input.value;
+                        const originalValue: string = input.value;
                         // Temporarily set to 0 to check if other counters have values > 0
-                        input.value = 0;
+                        input.value = "0";
 
-                        const isGroupValid = checkGroupConstraint(groupName);
+                        const isGroupValid: boolean = checkGroupConstraint(groupName);
 
                         if (!isGroupValid) {
                             // Reset to original value
                             input.value = originalValue;
-                            showValidationError(input, "At least one item must be greater than 0", decrement);
-                            showGroupValidationError();
+                            showGroupValidationError(`I can't really sell <span class="b7">nothing</span>, can I?`);
                             return;
                         } else {
                             // It's safe to decrement
@@ -866,11 +905,21 @@ export default function initConfigPageLogic(cardData: CardData) {
 
             // Handle increment button
             increment?.addEventListener('click', () => {
-                const value = parseInt(input.value) || 0;
+                const value: number = parseInt(input.value) || 0;
 
                 if (value >= max) {
-                    showValidationError(input, `Value cannot be greater than ${max}`, increment);
+                    showValidationError(`MAX: ${max}`);
                 } else {
+                    // Check if incrementing would exceed the group maximum (if this input is part of a group)
+                    if (groupName) {
+                        const currentGroupSum: number = getGroupSum(groupName);
+
+                        if (currentGroupSum >= GROUP_MAX_SUM) {
+                            showGroupValidationError(`Can only do <span class="b7">${GROUP_MAX_SUM} sketches</span> in <span class="b7">total</span> for now... sorry!`);
+                            return;
+                        }
+                    }
+
                     input.value = (value + 1).toString();
                     input.dispatchEvent(new Event('change'));
                 }
@@ -878,8 +927,7 @@ export default function initConfigPageLogic(cardData: CardData) {
 
             // Additional validation on blur (when user clicks away)
             input.addEventListener('blur', () => {
-                recalculatePrice();
-                let value = parseInt(input.value) || 0;
+                let value: number = parseInt(input.value) || 0;
 
                 if (isNaN(value)) {
                     input.value = min.toString();
@@ -887,7 +935,30 @@ export default function initConfigPageLogic(cardData: CardData) {
                     input.value = min.toString();
                 } else if (value > max) {
                     input.value = max.toString();
+                } else if (groupName) {
+                    // Final check for group maximum
+                    const currentGroupSum: number = getGroupSum(groupName);
+
+                    if (currentGroupSum > GROUP_MAX_SUM) {
+                        // Adjust this input to comply with the group maximum
+                        const adjustment: number = currentGroupSum - GROUP_MAX_SUM;
+                        const newValue: number = Math.max(min, value - adjustment);
+                        input.value = newValue.toString();
+
+                        showValidationError(`Value adjusted to meet group maximum of ${GROUP_MAX_SUM}`);
+                        showGroupValidationError(`Group total cannot exceed ${GROUP_MAX_SUM}`);
+                    }
+
+                    // Also check minimum constraint (at least one > 0)
+                    if (value === 0 && currentGroupSum === 0) {
+                        input.value = "1";
+                        showValidationError("At least one item must be greater than 0");
+                        showGroupValidationError("At least one item must be greater than 0");
+                    }
                 }
+
+                // Also trigger price recalculation on blur
+                recalculatePrice();
             });
         });
     }
@@ -906,7 +977,7 @@ export default function initConfigPageLogic(cardData: CardData) {
         initPseudoSubmit();
         // Initialize summary buttons only once
         initSummaryButtons();
-        //submitter();
+        //collector();
         summaryDisplayControl("", {});
         quantityController();
     }

@@ -42,22 +42,31 @@ export interface FormQuestion {
     qMin?: number;
     qMax?: number;
     qVal?: number
-    qGroup?: string;
+    qGroup?: {
+        name: string;
+        gMax?: number;
+    };
     perPrice?: number;
 }
 
+// Use the BASE_URL environment variable directly
+
 export const bodyTypes = ["pony", "semi-anthro", "anthro"];
 
-// Use the BASE_URL environment variable directly
 const {BASE_URL} = import.meta.env;
 
 // Helper function for path normalization inside this file
 function getImagePath(path: string): string {
     // Remove leading slash if present
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    return `${BASE_URL}${cleanPath}`;
     return `${BASE_URL}/${cleanPath}`;
+    return `${BASE_URL}${cleanPath}`;
 }
+const drawQuantityGroup = {
+    name: "drawQuantity",
+    gMax: 5,
+};
+
 
 export const cardList: Record<string, CardData> = {
     sketchbook: {
@@ -92,7 +101,7 @@ export const cardList: Record<string, CardData> = {
                 qMax: 5,
                 qMin: 0,
                 perPrice: 10,
-                qGroup: "drawQuantity",
+                qGroup: drawQuantityGroup,
             },
             {
                 category: "general_configurations",
@@ -106,7 +115,7 @@ export const cardList: Record<string, CardData> = {
                 qMax: 5,
                 qMin: 0,
                 perPrice: 15,
-                qGroup: "drawQuantity",
+                qGroup: drawQuantityGroup,
             },
             {
                 category: "request_detailing",

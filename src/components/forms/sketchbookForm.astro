@@ -216,6 +216,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                     />
                   </div>
                   <div class="numDisp">
+                    <div class="qcDispErr">Max: 1</div>
                     <input
                       type="number"
                       class="formQCounter"
@@ -225,7 +226,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                       max={config.qMax || 99}
                       value={config.qVal || 0}
                       required={config.required}
-                      data-group={config.qGroup}
+                      data-group={config.qGroup && config.qGroup.name}
+                      data-group-max={config.qGroup && config.qGroup.gMax}
                     />
                     <div class="qcAdjusters">
                       <div class="qcAdjuster qcIncrement material-symbols-rounded">
@@ -333,7 +335,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
               {/* uploader ommitted  */}
 
               {config.subCategory === "percolor" && (
-                <div class="qcErr qcErring">I can't really sell <span class="b7">nothing</span>, can I?</div>
+                <div id="qcErr" class=""></div>
               )}
             </>
           ))
@@ -558,5 +560,5 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     throw new Error("Missing or invalid dataset on #configWrap");
   }
 
-  initConfigPageLogic(cardData);
+  initConfigPageLogic(cardData, lookupConfigId);
 </script>
