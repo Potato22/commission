@@ -634,10 +634,6 @@ export default function initConfigPageLogic(cardData: CardData) {
         }
     }
 
-    /**
-     * @param { { id: string; options?: { optionName: string; optionPrice: number }[] } } config
-     * @param {HTMLElement} form
-     */
     function getSelectedOptionPrice(
         config: {
             id: string;
@@ -663,6 +659,11 @@ export default function initConfigPageLogic(cardData: CardData) {
             cardData.configData.forEach((config) => {
                 if (config.type === "singleChoice" || config.type === "flipflop") {
                     totalAdd += getSelectedOptionPrice(config, configForm);
+                }
+                if (config.type === "quantityCounter") {
+                    const input = document.getElementById(config.id) as HTMLInputElement;
+                    const quantity = parseInt(input.value) || 0;
+                    totalAdd += quantity * (config.perPrice || 0);
                 }
             });
         }
@@ -745,13 +746,149 @@ export default function initConfigPageLogic(cardData: CardData) {
         const close = document.getElementById("cancel") as HTMLElement;
 
         //skip
-        //configDisplayControl(true);
+        configDisplayControl(true);
 
         startButton.addEventListener("click", () => {
             configDisplayControl(true);
         });
         close.addEventListener("click", () => {
             configDisplayControl(false);
+        });
+    }
+
+    function quantityController() {
+        const customInputs = document.querySelectorAll('.formComponent.qc');
+        const groupValidationMsg = document.getElementById('group-validation');
+
+        // Function to check if at least one counter in a group has value > 0
+        function checkGroupConstraint(groupName: string) {
+            const groupInputs = document.querySelectorAll(`input[data-group="${groupName}"]`);
+            let hasValueGreaterThanZero = false;
+
+            groupInputs.forEach(input => {
+                if (parseInt(input.value) > 0) {
+                    hasValueGreaterThanZero = true;
+                }
+            });
+
+            return hasValueGreaterThanZero;
+        }
+
+        // Function to show group validation message
+        function showGroupValidationError() {
+            alert('this aint it bro')
+        }
+
+        customInputs.forEach(wrapper => {
+            const input = wrapper.querySelector('.formQCounter') as HTMLInputElement;
+            const decrement = wrapper.querySelector('.qcDecrement') as HTMLElement | null;
+            const increment = wrapper.querySelector('.qcIncrement') as HTMLElement | null;
+            const validationMsg = wrapper.querySelector('.validation-message') as HTMLElement | null;
+            const groupName = input.getAttribute('data-group');
+
+            const min: number = parseInt(input.min) || 0;
+            const max: number = parseInt(input.max) || 1;
+
+            // Function to show validation feedback
+            function showValidationError(element: HTMLElement, message: string, buttonElement?: HTMLElement) {
+                alert('nu uh')
+                //element.classList.add('input-error');
+                //if (buttonElement) buttonElement.classList.add('btn-error');
+                //if (validationMsg) {
+                //    validationMsg.textContent = message;
+                //}
+                //validationMsg?.classList.add('show-message');
+                //// Remove the error classes after animation completes
+                //setTimeout(() => {
+                //    element.classList.remove('input-error');
+                //    if (buttonElement) buttonElement.classList.remove('btn-error');
+                //    // Hide the message after a bit longer
+                //    setTimeout(() => {
+                //        validationMsg?.classList.remove('show-message');
+                //    }, 1500);
+                //}, 600);
+            }
+
+            // Add a change event listener to handle price recalculation
+            input.addEventListener('change', () => {
+                // Call your price recalculation function here
+                recalculatePrice();
+            });
+
+            // Handle input changes (typed value)
+            input.addEventListener('input', () => {
+                const value = parseInt(input.value) || 0;
+
+                if (value < min) {
+                    showValidationError(input, `Value cannot be less than ${min}`);
+                    // Immediately reset to min
+                    input.value = min.toString();
+                } else if (value > max) {
+                    showValidationError(input, `Value cannot be greater than ${max}`);
+                    // Immediately reset to max
+                    input.value = max.toString();
+                }
+            });
+
+            // Handle decrement button
+            decrement?.addEventListener('click', () => {
+                const value = parseInt(input.value) || 0;
+
+                if (value <= min) {
+                    showValidationError(input, `Value cannot be less than ${min}`, decrement);
+                } else {
+                    // Special case: If this is the last counter with value > 0, don't allow decrementing to 0
+                    if (value === 1 && groupName) {
+                        // Create a temporary copy of the current value
+                        const originalValue = input.value;
+                        // Temporarily set to 0 to check if other counters have values > 0
+                        input.value = 0;
+
+                        const isGroupValid = checkGroupConstraint(groupName);
+
+                        if (!isGroupValid) {
+                            // Reset to original value
+                            input.value = originalValue;
+                            showValidationError(input, "At least one item must be greater than 0", decrement);
+                            showGroupValidationError();
+                            return;
+                        } else {
+                            // It's safe to decrement
+                            input.value = (value - 1).toString();
+                        }
+                    } else {
+                        // Normal decrement
+                        input.value = (value - 1).toString();
+                    }
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+
+            // Handle increment button
+            increment?.addEventListener('click', () => {
+                const value = parseInt(input.value) || 0;
+
+                if (value >= max) {
+                    showValidationError(input, `Value cannot be greater than ${max}`, increment);
+                } else {
+                    input.value = (value + 1).toString();
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+
+            // Additional validation on blur (when user clicks away)
+            input.addEventListener('blur', () => {
+                recalculatePrice();
+                let value = parseInt(input.value) || 0;
+
+                if (isNaN(value)) {
+                    input.value = min.toString();
+                } else if (value < min) {
+                    input.value = min.toString();
+                } else if (value > max) {
+                    input.value = max.toString();
+                }
+            });
         });
     }
 
@@ -771,6 +908,7 @@ export default function initConfigPageLogic(cardData: CardData) {
         initSummaryButtons();
         //submitter();
         summaryDisplayControl("", {});
+        quantityController();
     }
 
     // rehydraters

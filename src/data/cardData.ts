@@ -16,8 +16,9 @@ export interface FormQuestion {
     category: string;
     subCategory: string;
     id: string;
-    type: "textarea" | "flipflop" | "singleChoice" | "fileUpload" | "infoCard" | "quantityCounter";
+    type: "textArea" | "flipflop" | "singleChoice" | "fileUpload" | "infoCard" | "quantityCounter";
     options?: {
+        //singleChoice & flipflop
         optionName: string;
         optionDescription: string;
         optionPrice: number;
@@ -28,11 +29,21 @@ export interface FormQuestion {
             value: string | string[];
         }
     }[];
-    placeholder?: string; // for non radios
-    questionTitle?: string; // for non radios
-    questionDescription?: string; // for non radios
+    //textArea & fileUpload
+    placeholder?: string;
+    questionTitle?: string;
+    questionDescription?: string;
     required?: boolean;
-    maxFiles?:number;
+
+    //fileUpload
+    maxFiles?: number;
+
+    //quantityCounter
+    qMin?: number;
+    qMax?: number;
+    qVal?: number
+    qGroup?: string;
+    perPrice?: number;
 }
 
 export const bodyTypes = ["pony", "semi-anthro", "anthro"];
@@ -44,8 +55,8 @@ const {BASE_URL} = import.meta.env;
 function getImagePath(path: string): string {
     // Remove leading slash if present
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    return `${BASE_URL}${cleanPath}`;
     return `${BASE_URL}/${cleanPath}`;
-    //return `${BASE_URL}${cleanPath}`;
 }
 
 export const cardList: Record<string, CardData> = {
@@ -70,20 +81,32 @@ export const cardList: Record<string, CardData> = {
         isDisabled: false,
         configData: [
             {
-                category: "quantities",
+                category: "general_configurations",
                 type: "quantityCounter",
                 subCategory: "persketch",
                 questionTitle: "Sketches",
                 questionDescription: "Amount of sketches",
-                id: "sketch_quantity"
+                id: "sketch_quantity",
+
+                qVal: 1,
+                qMax: 5,
+                qMin: 0,
+                perPrice: 10,
+                qGroup: "drawQuantity",
             },
             {
-                category: "quantities",
+                category: "general_configurations",
                 type: "quantityCounter",
                 subCategory: "percolor",
                 questionTitle: "Colored's",
                 questionDescription: "Amount of colored doodles",
-                id: "color_quantity"
+                id: "color_quantity",
+
+                qVal: 0,
+                qMax: 5,
+                qMin: 0,
+                perPrice: 15,
+                qGroup: "drawQuantity",
             },
             {
                 category: "request_detailing",
@@ -113,7 +136,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "request_detailing",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "requestText",
                 questionTitle: "What do you have in mind?",
                 questionDescription: "Briefly elaborate what you want me to draw for you",
@@ -123,7 +146,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "contacts",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "contact",
                 questionTitle: "Give me a way we can chat for us to discuss further!",
                 questionDescription: `
@@ -135,7 +158,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "contacts",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "nickname",
                 questionTitle: "Give me a nickname",
                 questionDescription: `
@@ -261,7 +284,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "request_detailing",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "requestText",
                 questionTitle: "What do you have in mind?",
                 questionDescription: "Briefly elaborate what you want me to draw for you",
@@ -271,7 +294,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "contacts",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "contact",
                 questionTitle: "Give me a way we can chat for us to discuss further!",
                 questionDescription: `
@@ -283,7 +306,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "contacts",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "nickname",
                 questionTitle: "Give me a nickname",
                 questionDescription: `
@@ -440,7 +463,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "request_detailing",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "requestText",
                 questionTitle: "What do you have in mind?",
                 questionDescription: "Briefly elaborate what you want me to draw for you",
@@ -450,7 +473,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "contacts",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "contact",
                 questionTitle: "Give me a way we can chat for us to discuss further!",
                 questionDescription: `
@@ -462,7 +485,7 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "contacts",
-                type: "textarea",
+                type: "textArea",
                 subCategory: "nickname",
                 questionTitle: "Give me a nickname",
                 questionDescription: `

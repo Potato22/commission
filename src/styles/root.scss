@@ -1,6 +1,7 @@
 html {
   scroll-behavior: smooth;
 }
+
 body {
   margin: 0;
   padding: 0;
@@ -56,20 +57,23 @@ body {
 @import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@400..800&family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap');
 
 :root {
-  --base: #10131F;
-  --baseRGB: 16, 19, 31;
-  --baseSecondary: #202332;
+  --base: #181818;
+  --baseSecondary: #202122;
   --fore: #ffffff;
   --foreSecondary: rgba(255, 255, 255, 0.651);
-  --prim: #27bdce;
+  --prim: #20a5b4;
   --primSecondary: #1b525b;
-  --accent: #3dffe5;
+  --accent: #61dfce;
   --accentSecondary: rgba(39, 189, 206, 0.02);
   --viscueDisabled: #3f3f3f65;
 
-  //rgb( var(...) , ??)
+  //rgba( var(...) , ??)
   --err: 255, 92, 92;
-  --ok: 47, 255, 47,;
+  --ok: 47, 255, 47, ;
+  --baseRGB: 24, 24, 24;
+
+  //hsl( var(...) , ??)
+  --primHS: 186, 68%; //48%
 
   --display: "Syne";
   --doto: "Doto";
@@ -78,10 +82,10 @@ body {
   --contentSecondary: "Ubuntu Sans Mono";
   --sleek: cubic-bezier(0.03, 0.77, 0.34, 1);
   --accel: cubic-bezier(0.72, 0.06, 0.96, 0.57);
-  --fast: cubic-bezier(.05,.32,.01,1);
+  --fast: cubic-bezier(.05, .32, .01, 1);
   --bounce: cubic-bezier(0.57, 0.07, 0.41, 1.95);
-  --spring: cubic-bezier(.13,1.6,.37,.93);
-  --scurve: cubic-bezier(.76,.01,.16,1);
+  --spring: cubic-bezier(.13, 1.6, .37, .93);
+  --scurve: cubic-bezier(.76, .01, .16, 1);
 
   --brightness: brightness(1.2);
   --faded: brightness(0.5);
@@ -95,6 +99,7 @@ body {
   --fore: #000000;
   --foreSecondary: rgba(0, 0, 0, 0.774);
   --prim: #ffa34d;
+  --primHS: 29, 100%; //48%
   --primSecondary: #ffd4ad;
   --accent: #ff6753;
   --accentSecondary: hsl(29, 100%, 65%, 5%);
@@ -115,9 +120,17 @@ a {
   }
 }
 
-.b9 { font-weight: 900; }
-.b8 { font-weight: 800; }
-.b7 { font-weight: 700; }
+.b9 {
+  font-weight: 900;
+}
+
+.b8 {
+  font-weight: 800;
+}
+
+.b7 {
+  font-weight: 700;
+}
 
 .material-symbols-rounded {
   font-variation-settings:
@@ -135,12 +148,14 @@ a {
   0% {
     transform: translateY(0px);
     opacity: 1;
-    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ease-out */
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* ease-out */
   }
 
   50% {
     transform: translateY(-15px);
-    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53); /* ease-in */
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    /* ease-in */
   }
 
   100% {

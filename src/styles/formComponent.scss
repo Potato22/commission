@@ -16,6 +16,12 @@
         cursor: auto;
     }
 
+    &.qc {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     &:has(input[type="radio"]:checked) {
         border-color: var(--prim);
     }
@@ -204,13 +210,117 @@
     }
 }
 
+.quantityCounterInfoCell {
+    .textAreaDesc {
+        margin: 0;
+    }
+}
+
 .formTextInput {
     height: 150px;
     resize: vertical;
     border-radius: 10px;
-    padding: 1em;
+    padding: 0.5em 1em;
     background: var(--baseSecondary);
     color: var(--fore);
+    font-family: var(--doto);
+    font-weight: 900;
+    font-size: 1rem;
+    border: 2px solid var(--fore)
+}
+
+.formQCounter {
+    height: 80px;
+    width: 100px;
+    border-radius: 10px 0 0 10px;
+    text-align: center;
+    background: var(--baseSecondary);
+    color: var(--fore);
+    font-family: var(--doto);
+    font-weight: 900;
+    font-size: 2rem;
+    border: 2px solid var(--fore)
+}
+
+.numDisp {
+    display: flex;
+    position: relative;
+
+    .qcAdjusters {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+
+        .qcAdjuster {
+            width: 40px;
+            display: grid;
+            place-items: center;
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 200,
+                'opsz' 24;
+            height: 100%;
+            background: var(--prim);
+            border: 2px solid var(--fore);
+            border-left: none;
+            transition: all .4s var(--sleek);
+            user-select: none;
+
+            &:hover {
+                cursor: pointer;
+                background: var(--accent);
+                transform: translate(0, -5px);
+                box-shadow: var(--fore) 0 5px 0;
+                transition-timing-function: var(--spring);
+            }
+
+            &:active {
+                transform: translate(0, 0px);
+                box-shadow: var(--fore) 0 0px 0;
+            }
+        }
+    }
+}
+
+.qcDecrement {
+    border-radius: 0 0 10px 0;
+
+}
+
+.qcIncrement {
+    border-radius: 0 10px 0 0;
+    border-bottom: none;
+}
+
+.qcErr {
+    font-family: var(--content);
+    padding: .5em 1em;
+    border: 2px solid rgb(var(--err));
+    color: rgb(var(--err));
+    border-radius: 20px;
+    margin: 0;
+    margin-top: -3em;
+    pointer-events: none;
+
+    &.qcErring {
+        margin-bottom: 2em;
+        margin-top: -1em;
+        opacity: 1;
+    }
+}
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+//can firefox shut up for ONE SECOND
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 .validFileInfo {
@@ -257,6 +367,7 @@
         & .optionTitle {
             font-size: 1rem;
             font-weight: 400;
+
             &.longTextTitle {
                 font-weight: 900;
             }
@@ -267,10 +378,12 @@
             font-size: 2rem;
             font-weight: 900;
             overflow: hidden;
+
             &.longText {
                 font-size: 1rem;
                 font-weight: 500;
                 padding-top: .3em;
+
                 &::before {
                     position: absolute;
                     content: "";
@@ -280,6 +393,7 @@
                 }
             }
         }
+
         & .ocHeader {
             min-height: 40px;
         }
@@ -410,6 +524,7 @@
         &.loadOK {
             animation: loadOK .8s forwards !important;
         }
+
         &.loadErr {
             animation: loadErr .8s forwards !important;
         }
@@ -437,6 +552,7 @@
         background-position: 0px;
     }
 }
+
 @keyframes loadErr {
     0% {
         background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
@@ -448,6 +564,7 @@
         background-position: 0px;
     }
 }
+
 @keyframes ps5loadGrad {
     0% {
         background-position: -200px 0;

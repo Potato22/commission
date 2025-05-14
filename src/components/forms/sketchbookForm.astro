@@ -56,7 +56,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   <div class="" id="configStatus">
     <div class="stCell1">
       <div class="stTitle">*{cardData.title}</div>
-      <div class="stDesc" set:html={cardData.description}></div>
+      <div class="stDesc" set:html={cardData.description} />
     </div>
     <div class="stCell2">
       <div class="stPricebox">
@@ -187,7 +187,57 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                 </div>
               )}
 
+              {/* just put above persketch */}
+              {config.subCategory === "persketch" && (
+                <div class="subCategoryBox">
+                  <div class="subCategory">
+                    Quantity
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
+                  <div class="subCategoryDesc">Adjust the quantity!</div>
+                </div>
+              )}
+
               {/* templates */}
+              {config.type === "quantityCounter" && (
+                <div class="formComponent qc notLabel">
+                  <div class="quantityCounterInfoCell">
+                    <div class="textAreaTitle">
+                      {config.questionTitle || "Text area component"}
+                      {config.required && (
+                        <span style="color: var(--accent)">*</span>
+                      )}
+                    </div>
+                    <div
+                      class="textAreaDesc"
+                      set:html={config.questionDescription || ""}
+                    />
+                  </div>
+                  <div class="numDisp">
+                    <input
+                      type="number"
+                      class="formQCounter"
+                      id={config.id}
+                      name={config.id}
+                      min={config.qMin || 0}
+                      max={config.qMax || 99}
+                      value={config.qVal || 0}
+                      required={config.required}
+                      data-group={config.qGroup}
+                    />
+                    <div class="qcAdjusters">
+                      <div class="qcAdjuster qcIncrement material-symbols-rounded">
+                        add
+                      </div>
+                      <div class="qcAdjuster qcDecrement material-symbols-rounded">
+                        remove
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               {config.type === "singleChoice" &&
                 config.options &&
                 config.options.map((opt, optIdx) => (
@@ -257,7 +307,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                   </div>
                 )}
 
-              {config.type === "textarea" && (
+              {config.type === "textArea" && (
                 <div class="formComponent notLabel">
                   <div class="textAreaTitle">
                     {config.questionTitle || "Text area component"}
@@ -281,6 +331,10 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
 
               {/* infocard ommitted  */}
               {/* uploader ommitted  */}
+
+              {config.subCategory === "percolor" && (
+                <div class="qcErr qcErring">I can't really sell <span class="b7">nothing</span>, can I?</div>
+              )}
             </>
           ))
       }
@@ -338,7 +392,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                   />
                 </div>
               )}
-              {config.type === "textarea" && (
+              {config.type === "textArea" && (
                 <div class="formComponent notLabel">
                   <div class="textAreaTitle">
                     {config.questionTitle || "Text area component"}
@@ -390,7 +444,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
 
               {/* templates */}
 
-              {config.type === "textarea" && (
+              {config.type === "textArea" && (
                 <div class="formComponent notLabel">
                   <div class="textAreaTitle">
                     {config.questionTitle || "Text area component"}
