@@ -1,6 +1,13 @@
+---
+interface Props {
+  ignoreScrollCheck?: boolean;
+}
+const { ignoreScrollCheck } = Astro.props;
+const noHide = ignoreScrollCheck ? "true" : "false";
+---
 
-
-<div id="persistentWindow" transition:persist>
+<!-- <div id="persistentWindow" data-ignore-scroll-check={noHide} transition:persist> -->
+<div id="persistentWindow" data-ignore-scroll-check={noHide}>
   <div class="horizontalAlign">
     <div id="themeSwitch" class="" title="Change to Light Mode">
       <label class="checkboxtrig">
@@ -15,6 +22,99 @@
     </a>
   </div>
 </div>
+
+<script>
+  function initPersistentWindow() {
+    const toggleSwitch: Element | null = document.getElementById("ttoggle");
+    const currentTheme: string | null = localStorage.getItem("theme");
+    const tticcon = document.getElementById("theme-icon") as HTMLElement;
+    const themeSwitch: Element | null = document.getElementById("themeSwitch");
+    const persistentWindowWrap = document.getElementById(
+      "persistentWindow"
+    ) as HTMLElement;
+
+    //alert(persistentWindowWrap.dataset.ignoreScrollCheck == "false")
+
+    if (persistentWindowWrap.dataset.ignoreScrollCheck == "true") {
+      persistentWindowWrap.classList.add("active");
+      persistentWindowWrap.style.pointerEvents = "auto";
+    } else {
+      persistentWindowWrap.classList.remove("active");
+      persistentWindowWrap.style.pointerEvents = "none";
+      window.addEventListener("scroll", () => {
+        if (persistentWindowWrap) {
+          const halfViewportHeight = window.innerHeight / 2;
+          if (window.scrollY > halfViewportHeight) {
+            persistentWindowWrap.classList.add("active");
+            persistentWindowWrap.style.pointerEvents = "auto";
+          } else {
+            persistentWindowWrap.classList.remove("active");
+            persistentWindowWrap.style.pointerEvents = "none";
+          }
+        }
+      });
+    }
+
+    if (currentTheme) {
+      document.documentElement.setAttribute("data-theme", currentTheme);
+      console.log('fromMem "' + currentTheme + '"');
+
+      if (currentTheme === "light") {
+        if (toggleSwitch instanceof HTMLInputElement) {
+          toggleSwitch.checked = true;
+          tticcon.innerHTML = "dark_mode";
+        }
+        console.log('applied "' + currentTheme + '"');
+      } else {
+        console.log('applied "' + currentTheme + '"');
+        tticcon.innerHTML = "light_mode";
+      }
+    }
+
+    function debounce(func: Function, delay: number) {
+      let timeout: number | undefined;
+      return function (this: any, ...args: any[]) {
+        clearTimeout(timeout);
+        timeout = window.setTimeout(() => func.apply(this, args), delay);
+      };
+    }
+
+    function switchTheme(e: Event) {
+      if (e instanceof Event) {
+        const target = e.target as HTMLInputElement;
+        if (target?.checked) {
+          document.documentElement.setAttribute("data-theme", "light");
+          localStorage.setItem("theme", "light");
+          console.log('addMem "light"');
+          tticcon.innerHTML = "dark_mode";
+          themeSwitch?.classList.add("poked");
+          resetAnimation();
+        } else {
+          document.documentElement.setAttribute("data-theme", "dark");
+          localStorage.setItem("theme", "dark");
+          console.log('addMem "dark"');
+          tticcon.innerHTML = "light_mode";
+          themeSwitch?.classList.add("poked");
+          resetAnimation();
+        }
+      } else return;
+    }
+
+    // Debounced function to reset the animation
+    const resetAnimation = debounce(() => {
+      themeSwitch?.classList.remove("poked");
+    }, 1000); // Adjust the delay to match your animation duration
+
+    toggleSwitch?.addEventListener("change", switchTheme, false);
+  }
+
+  initPersistentWindow();
+
+  document.addEventListener("astro:after-swap", () => {
+    initPersistentWindow();
+  });
+</script>
+
 
 <style>
   #persistentWindow {
@@ -165,76 +265,3 @@
     }
   }
 </style>
-
-<script>
-  function initPersistentWindow() {
-    const toggleSwitch : Element | null = document.getElementById("ttoggle");
-    const currentTheme : string | null = localStorage.getItem("theme");
-    const tticcon = document.getElementById("theme-icon") as HTMLElement;
-    const themeSwitch : Element | null = document.getElementById("themeSwitch");
-    const persistentWindowWrap = document.getElementById("persistentWindow") as HTMLElement;
-    
-    
-    if (persistentWindowWrap) {
-      persistentWindowWrap.classList.add("active");
-      persistentWindowWrap.style.pointerEvents = "auto";
-    }
-    if (currentTheme) {
-      document.documentElement.setAttribute("data-theme", currentTheme);
-      console.log('fromMem "' + currentTheme + '"');
-
-      if (currentTheme === "light") {
-        if (toggleSwitch instanceof HTMLInputElement) {
-          toggleSwitch.checked = true;
-          tticcon.innerHTML = "dark_mode";
-        }
-        console.log('applied "' + currentTheme + '"');
-      } else {
-        console.log('applied "' + currentTheme + '"');
-        tticcon.innerHTML = "light_mode";
-      }
-    }
-
-    function debounce(func: Function, delay: number) {
-      let timeout: number | undefined;
-      return function (this: any, ...args : any[]) {
-        clearTimeout(timeout);
-        timeout = window.setTimeout(() => func.apply(this, args), delay);
-      };
-    }
-
-    function switchTheme(e: Event) {
-      if (e instanceof Event) {
-        const target = e.target as HTMLInputElement;
-        if (target?.checked) {
-          document.documentElement.setAttribute("data-theme", "light");
-          localStorage.setItem("theme", "light");
-          console.log('addMem "light"');
-          tticcon.innerHTML = "dark_mode";
-          themeSwitch?.classList.add("poked");
-          resetAnimation();
-        } else {
-          document.documentElement.setAttribute("data-theme", "dark");
-          localStorage.setItem("theme", "dark");
-          console.log('addMem "dark"');
-          tticcon.innerHTML = "light_mode";
-          themeSwitch?.classList.add("poked");
-          resetAnimation();
-        }
-      } else return;
-    }
-
-    // Debounced function to reset the animation
-    const resetAnimation = debounce(() => {
-      themeSwitch?.classList.remove("poked");
-    }, 1000); // Adjust the delay to match your animation duration
-
-    toggleSwitch?.addEventListener("change", switchTheme, false);
-  }
-  
-  initPersistentWindow();
-
-  document.addEventListener("astro:after-swap", () => {
-    initPersistentWindow();
-  });
-</script>
