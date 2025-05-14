@@ -819,14 +819,27 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
             const qcDispErr = wrapper.querySelector('.qcDispErr') as HTMLElement;
             const groupName: string | null = input.getAttribute('data-group');
 
+            const qcController = wrapper.querySelector(".qcController") as HTMLElement;
+
             const min: number = parseInt(input.min) || 0;
             const max: number = parseInt(input.max) || 1;
             const GROUP_MAX_SUM: number = Number(input.dataset.groupMax); // Maximum allowed sum for the group
 
             // Function to show validation feedback
-            function showValidationError(message?: string, buttonElement?: HTMLElement) {
+            function showValidationError(message?: string, direction?: string) {
                 qcDispErr.style.display = "block";
                 qcDispErr.innerHTML = message ?? '';
+                if (direction === "up") {
+                    qcController.classList.add("controllerNudgeUp")
+                    setTimeout(() => {
+                        qcController.classList.remove("controllerNudgeUp")
+                    }, 201);
+                } else if (direction === "down") {
+                    qcController.classList.add("controllerNudgeDown")
+                    setTimeout(() => {
+                        qcController.classList.remove("controllerNudgeDown")
+                    }, 201);
+                }
             }
 
             // Handle input changes (typed value)
@@ -834,11 +847,11 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                 const value: number = parseInt(input.value) || 0;
 
                 if (value < min) {
-                    showValidationError(`MIN: ${min}`);
+                    showValidationError(`MIN: ${min}`, "down");
                     // Immediately reset to min
                     input.value = min.toString();
                 } else if (value > max) {
-                    showValidationError(`MAX: ${max}`);
+                    showValidationError(`MAX: ${max}`, "up");
                     // Immediately reset to max
                     input.value = max.toString();
                 } else if (groupName) {
@@ -859,6 +872,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                         input.value = allowedValue.toString();
 
                         showGroupValidationError(`Can only do <span class="b7">${GROUP_MAX_SUM}</span> doodles for now... sorry!`);
+                        showValidationError(``, "up");
                     }
                 }
             });
@@ -869,6 +883,8 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                 recalculatePrice();
                 qcErrGroup.classList.remove("qcErring")
                 qcDispErr.style.display = "none";
+                qcController.classList.remove("controllerNudgeUp")
+                qcController.classList.remove("controllerNudgeDown")
             });
 
             // Handle decrement button
@@ -876,7 +892,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                 const value: number = parseInt(input.value) || 0;
 
                 if (value <= min) {
-                    showValidationError(`MIN: ${min}`);
+                    showValidationError(`MIN: ${min}`, "down");
                 } else {
                     // Special case: If this is the last counter with value > 0, don't allow decrementing to 0
                     if (value === 1 && groupName) {
@@ -890,6 +906,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                         if (!isGroupValid) {
                             // Reset to original value
                             input.value = originalValue;
+                            showValidationError(``, "down");
                             showGroupValidationError(`I can't really sell <span class="b7">nothing</span>, can I?`);
                             return;
                         } else {
@@ -909,7 +926,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                 const value: number = parseInt(input.value) || 0;
 
                 if (value >= max) {
-                    showValidationError(`MAX: ${max}`);
+                    showValidationError(`MAX: ${max}`, "up");
                 } else {
                     // Check if incrementing would exceed the group maximum (if this input is part of a group)
                     if (groupName) {
@@ -917,6 +934,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
 
                         if (currentGroupSum >= GROUP_MAX_SUM) {
                             showGroupValidationError(`Can only do <span class="b7">${GROUP_MAX_SUM} sketches</span> in <span class="b7">total</span> for now... sorry!`);
+                            showValidationError(``, "up");
                             return;
                         }
                     }
@@ -946,15 +964,16 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                         const newValue: number = Math.max(min, value - adjustment);
                         input.value = newValue.toString();
 
-                        showValidationError(`Value adjusted to meet group maximum of ${GROUP_MAX_SUM}`);
-                        showGroupValidationError(`Group total cannot exceed ${GROUP_MAX_SUM}`);
+                        showValidationError(``, "up");
+                        showGroupValidationError(`Can only do <span class="b7">${GROUP_MAX_SUM} sketches</span> in <span class="b7">total</span> for now... sorry!`);
+
                     }
 
                     // Also check minimum constraint (at least one > 0)
                     if (value === 0 && currentGroupSum === 0) {
                         input.value = "1";
-                        showValidationError("At least one item must be greater than 0");
-                        showGroupValidationError("At least one item must be greater than 0");
+                        showValidationError(``, "down");
+                        showGroupValidationError(`I can't really sell <span class="b7">nothing</span>, can I?`);
                     }
                 }
 

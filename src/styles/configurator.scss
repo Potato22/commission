@@ -130,7 +130,7 @@
           user-select: none;
           opacity: 0;
           min-width: 200px;
-          z-index: 0;
+          z-index: 99;
           box-shadow: rgba(36, 36, 40, 0.377) 0 10px 20px;
           transform: translate(-80%, 40px);
           border: 2px solid var(--fore);

@@ -283,8 +283,31 @@
             }
         }
     }
-    .dispNudge {
-        
+}
+.qcController {
+    display: flex;
+    transform-origin: left;
+    &.controllerNudgeUp {
+        animation: nudgeUp .2s;
+    }
+    &.controllerNudgeDown {
+        animation: nudgeDown .2s;
+    }
+}
+@keyframes nudgeUp {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    30% {
+        transform: translateY(-5px) rotate(3deg);
+    }
+}
+@keyframes nudgeDown {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    30% {
+        transform: translateY(5px) rotate(-3deg);
     }
 }
 
