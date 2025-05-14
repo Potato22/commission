@@ -755,7 +755,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
         const close = document.getElementById("cancel") as HTMLElement;
 
         //skip
-        configDisplayControl(true);
+        //configDisplayControl(true);
 
         startButton.addEventListener("click", () => {
             configDisplayControl(true);
@@ -813,6 +813,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
 
         customInputs.forEach((wrapper: Element) => {
             const input = wrapper.querySelector('.formQCounter') as HTMLInputElement;
+            const numDisp = wrapper.querySelector(".numpDisp") as HTMLElement;
             const decrement = wrapper.querySelector('.qcDecrement') as HTMLElement;
             const increment = wrapper.querySelector('.qcIncrement') as HTMLElement;
             const qcDispErr = wrapper.querySelector('.qcDispErr') as HTMLElement;
