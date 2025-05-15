@@ -59,8 +59,8 @@ const { BASE_URL } = import.meta.env;
 function getImagePath(path: string): string {
     // Remove leading slash if present
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    return `${BASE_URL}/${cleanPath}`;
     return `${BASE_URL}${cleanPath}`;
+    return `${BASE_URL}/${cleanPath}`; //for githubPages
 }
 const drawQuantityGroup = {
     name: "drawQuantity",
