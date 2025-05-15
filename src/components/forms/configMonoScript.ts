@@ -498,7 +498,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
 
                                     setTimeout(() => {
                                         if (window.location.href === currentPage) {
-                                            navigate("commission/");
+                                            navigate("/");
                                         }
                                     }, 100);
                                 }, 500);
@@ -711,7 +711,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
             setTimeout(() => {
                 // If we're still on the same page after trying to go back
                 if (window.location.href === currentPage) {
-                    navigate("commission/");
+                    navigate("/");
                 }
             }, 100);
         });
