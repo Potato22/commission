@@ -121,8 +121,8 @@ export const cardList: Record<string, CardData> = {
                 category: "request_detailing",
                 type: "infoCard",
                 subCategory: "characterAttribute",
-                questionTitle: "Muliple characters?",
-                questionDescription: `Can do! Additional characters will be charged with <span class="b7">80%</span> of your selected <span class="b7">"Character detail"</span>`,
+                questionTitle: "Multiple characters?",
+                questionDescription: `Since you are charged <span class="b7">per drawing</span>, you could just assign each one to a different character. Feel free to discuss!`,
                 id: "character_attributes",
             },
             {
@@ -264,7 +264,7 @@ export const cardList: Record<string, CardData> = {
                         An art blending technique where it involves blending your character into existing photograph or any image.<br>
                         Simply provide me an image I should use!<br>
                         <br>
-                        (Only available for <span class="b7">Fully Rendered</span> & <span class="b7">Flat Color</span> character detail)
+                        (Only available for <span class="b7">Flat Color</span> & <span class="b7">Fully Rendered</span> character detail)
                         `,
                         optionPrice: 10,
                         visibleIf: { questionId: "character_detail", value: ["Flat Color", "Fully Rendered"] }
@@ -409,19 +409,25 @@ export const cardList: Record<string, CardData> = {
                     },
                     {
                         optionName: `"Photobash"`,
-                        optionDescription: "An art blending technique where it involves blending your character into existing photograph or any image. Simply provide me an image I should use!",
+                        optionDescription: `
+                        An art blending technique where it involves blending your character into existing photograph or any image.<br>
+                        Simply provide me an image I should use!<br>
+                        <br>
+                        (Only available for <span class="b7">Flat Color</span> & <span class="b7">Fully Rendered</span> character detail)
+                        `,
                         optionPrice: 25,
+                        visibleIf: { questionId: "character_detail", value: ["Fully Rendered", "Flat Color"] }
                         //preChecked: true
                     },
                     {
                         optionName: "Basic",
-                        optionDescription: "Basic details, simplified rendering",
+                        optionDescription: `Basic details, simplified rendering <br><br>(Only available for <span class="b7">Flat Color</span> & <span class="b7">Fully Rendered</span> character detail)`,
                         optionPrice: 35,
-                        visibleIf: { questionId: "character_detail", value: ["Flat Color", "Fully Rendered"] }
+                        visibleIf: { questionId: "character_detail", value: ["Fully Rendered", "Flat Color"] }
                     },
                     {
                         optionName: "Complex",
-                        optionDescription: `Complex and well rendered background. <br>(Only available for <span class="b7">Fully Rendered</span> character detail)`,
+                        optionDescription: `Complex and well rendered background. <br><br>(Only available for <span class="b7">Fully Rendered</span> character detail)`,
                         optionPrice: 50,
                         visibleIf: { questionId: "character_detail", value: "Fully Rendered" }
                     },
@@ -446,14 +452,6 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "request_detailing",
-                type: "infoCard",
-                subCategory: "characterAttribute",
-                questionTitle: "Muliple characters?",
-                questionDescription: `Can do! Additional characters will be charged with <span class="b7">80%</span> of your selected <span class="b7">"Character detail"</span>`,
-                id: "character_attributes",
-            },
-            {
-                category: "request_detailing",
                 type: "fileUpload",
                 subCategory: "character",
                 questionTitle: "Upload your character(s)",
@@ -461,6 +459,14 @@ export const cardList: Record<string, CardData> = {
                 id: "character_reference",
                 required: true,
                 maxFiles: 10,
+            },
+            {
+                category: "request_detailing",
+                type: "infoCard",
+                subCategory: "characterAttribute",
+                questionTitle: "Multiple characters?",
+                questionDescription: `Can do! Additional characters will be charged with <span class="b7">80%</span> of your selected <span class="b7">"Character detail"</span>`,
+                id: "character_attributes",
             },
             {
                 category: "request_detailing",

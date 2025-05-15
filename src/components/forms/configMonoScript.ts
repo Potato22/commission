@@ -348,6 +348,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
             anthro: "Anthro?",
             background: "Background Art",
             nsfw: "NSFW?",
+            character_count: "Character Count",
             sketch_quantity: "Sketch Quantity",
             color_quantity: "Colored Sketch Quantity",
             request_text: "Request",
@@ -443,7 +444,6 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
         let formData: FormData;
         if (mode === "proceed") {
             formData = collector(configForm).formData;
-            //console.log(`Ready as` + formData);
         }
 
         switch (mode) {
@@ -644,19 +644,23 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
         return found ? found.optionPrice : 0;
     }
 
+
     function recalculatePrice() {
         const configForm = document.getElementById("configWindow");
         let totalAdd = 0;
 
         if (cardData.configData && configForm) {
-
-            //for characterCount
+            // Get all configs first
             const detailConfig = cardData.configData.find(config => config.id === "character_detail");
             const characterDetailPrice = detailConfig ? getSelectedOptionPrice(detailConfig, configForm) : 0;
+            const characterCountConfig = cardData.configData.find(config => config.type === "characterCount");
 
-            //calc
+            // Process each config for price calculation
             cardData.configData.forEach((config) => {
-                if (config.type === "singleChoice" || config.type === "flipflop") {
+                // Only process singleChoice/flipflop if it's NOT the character_detail
+                // This prevents double counting the base price
+                if ((config.type === "singleChoice" || config.type === "flipflop") &&
+                    config.id !== "character_detail") {
                     totalAdd += getSelectedOptionPrice(config, configForm);
                 }
                 else if (config.type === "quantityCounter") {
@@ -664,13 +668,23 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                     const quantity = parseInt(input.value) || 0;
                     totalAdd += quantity * (config.perPrice || 0);
                 }
-                else if (config.type === "characterCount") {
-                    const input = document.getElementById(config.id) as HTMLInputElement;
-                    const count = parseInt(input.value) || 0;
-                    totalAdd += count * (characterDetailPrice * .8) - (totalAdd * .8);
-                    //console.log(`${count.toString()} * ${characterDetailPrice.toString()} = ${count * characterDetailPrice}`)
-                }
             });
+
+            // Handle character_detail and characterCount together to avoid double counting
+            if (characterCountConfig) {
+                const input = document.getElementById(characterCountConfig.id) as HTMLInputElement;
+                const count = parseInt(input.value) || 0;
+
+                // Always add the base character price once
+                totalAdd += characterDetailPrice;
+
+                if (count > 1) {
+                    totalAdd += (count - 1) * (characterDetailPrice * 0.8);
+                }
+            } else {
+                // If there's no characterCount, still add the character_detail price once
+                totalAdd += characterDetailPrice;
+            }
         }
 
         priceAdd = totalAdd;
