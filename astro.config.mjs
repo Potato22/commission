@@ -3,6 +3,6 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://potato22.github.io',
-    base: 'commission' //repo name
+    site: 'https://commission.pottoart.uk',
+    //base: 'commission' //repo name
 });
