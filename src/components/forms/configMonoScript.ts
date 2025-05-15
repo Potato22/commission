@@ -1,6 +1,7 @@
 import Dropzone from "dropzone";
 import { navigate } from "astro:transitions/client";
 import { type CardData } from "../../data/cardData";
+const { BASE_URL } = import.meta.env;
 
 
 export default function initConfigPageLogic(cardData: CardData, lookupConfigId: string) {
@@ -498,7 +499,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
 
                                     setTimeout(() => {
                                         if (window.location.href === currentPage) {
-                                            navigate("/");
+                                            navigate(BASE_URL);
                                         }
                                     }, 100);
                                 }, 500);
@@ -711,7 +712,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
             setTimeout(() => {
                 // If we're still on the same page after trying to go back
                 if (window.location.href === currentPage) {
-                    navigate("/");
+                    navigate(BASE_URL);
                 }
             }, 100);
         });
@@ -770,6 +771,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
 
         startButton.addEventListener("click", () => {
             configDisplayControl(true);
+            updatePrice();
         });
         close.addEventListener("click", () => {
             configDisplayControl(false);
