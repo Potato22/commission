@@ -1105,6 +1105,6 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
     }
 
     // rehydraters
-    //document.addEventListener("DOMContentLoaded", initList);
+    document.addEventListener("DOMContentLoaded", initList);
     document.addEventListener("astro:page-load", initList);
 }
