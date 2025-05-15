@@ -16,7 +16,7 @@ export interface FormQuestion {
     category: string;
     subCategory: string;
     id: string;
-    type: "textArea" | "flipflop" | "singleChoice" | "fileUpload" | "infoCard" | "quantityCounter";
+    type: "textArea" | "flipflop" | "singleChoice" | "fileUpload" | "infoCard" | "quantityCounter" | "characterCount";
     options?: {
         //singleChoice & flipflop
         optionName: string;
@@ -53,7 +53,7 @@ export interface FormQuestion {
 
 export const bodyTypes = ["pony", "semi-anthro", "anthro"];
 
-const {BASE_URL} = import.meta.env;
+const { BASE_URL } = import.meta.env;
 
 // Helper function for path normalization inside this file
 function getImagePath(path: string): string {
@@ -461,6 +461,16 @@ export const cardList: Record<string, CardData> = {
                 id: "character_reference",
                 required: true,
                 maxFiles: 10,
+            },
+            {
+                category: "request_detailing",
+                type: "characterCount",
+                subCategory: "characterCountMultiplier",
+                questionTitle: "Character count",
+                questionDescription: "How many characters did you put?",
+                id: "character_count",
+
+                qMax: 5,
             },
             {
                 category: "request_detailing",

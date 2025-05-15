@@ -56,7 +56,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   <div class="" id="configStatus">
     <div class="stCell1">
       <div class="stTitle">*{cardData.title}</div>
-      <div class="stDesc" set:html={cardData.description}></div>
+      <div class="stDesc" set:html={cardData.description} />
     </div>
     <div class="stCell2">
       <div class="stPricebox">
@@ -337,6 +337,50 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                     }
                   />
                 </div>
+              )}
+              {config.type === "characterCount" && (
+                <div class="formComponent qc notLabel">
+                  <div class="quantityCounterInfoCell">
+                    <div class="textAreaTitle">
+                      {config.questionTitle || "Text area component"}
+                      {config.required && (
+                        <span style="color: var(--accent)">*</span>
+                      )}
+                    </div>
+                    <div
+                      class="textAreaDesc"
+                      set:html={config.questionDescription || ""}
+                    />
+                  </div>
+                  <div class="numDisp">
+                    <div class="qcDispErr" />
+                    <div class="qcController">
+                      <input
+                        type="number"
+                        class="formQCounter"
+                        id={config.id}
+                        name={config.id}
+                        min={config.qMin || 1}
+                        max={config.qMax || 99}
+                        value={config.qVal || 1}
+                        required={config.required}
+                        data-group={config.qGroup && config.qGroup.name}
+                        data-group-max={config.qGroup && config.qGroup.gMax}
+                      />
+                      <div class="qcAdjusters">
+                        <div class="qcAdjuster qcIncrement material-symbols-rounded">
+                          add
+                        </div>
+                        <div class="qcAdjuster qcDecrement material-symbols-rounded">
+                          remove
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {config.subCategory === "characterCountMultiplier" && (
+                <div id="qcErr" class="" />
               )}
               {config.type === "textArea" && (
                 <div class="formComponent notLabel">
