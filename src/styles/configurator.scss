@@ -44,7 +44,7 @@
     border-bottom: 1px solid transparent;
     background: var(--base);
     transition: all 0.2s var(--sleek);
-    z-index: 2;
+    z-index: 10;
     /* fucking hell */
 
     .defaultLayout {
@@ -692,11 +692,11 @@
     }
 
     @include breakpoint(tiny, mobile) {
-        padding: 10em 4em 4em 4em;
+        padding: 10em 2em 4em 2em;
     }
 
     @include breakpoint(tiny) {
-        padding: 2em 0em;
+        padding: 1em 0em;
     }
 }
 
