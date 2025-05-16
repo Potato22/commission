@@ -22,6 +22,12 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+
+        @include breakpoint(tiny, mobile) {
+            justify-content: space-between;
+            flex-direction: column;
+            align-items: flex-start;
+        }
     }
 
     &:has(input[type="radio"]:checked) {
@@ -241,13 +247,22 @@
     font-family: var(--doto);
     font-weight: 900;
     font-size: 2rem;
-    border: 2px solid var(--fore)
+    border: 2px solid var(--fore);
+
+    @include breakpoint(tiny, mobile) {
+        width: 100%;
+    }
 }
 
 .numDisp {
     display: flex;
     position: relative;
     align-items: center;
+
+    @include breakpoint(tiny, mobile) {
+        width: 100%;
+        margin-top: .5em;
+    }
 
     .qcAdjusters {
         display: flex;
@@ -288,8 +303,10 @@
 }
 
 .qcController {
+    position: relative;
     display: flex;
     transform-origin: left;
+    width: 100%;
 
     &.controllerNudgeUp {
         animation: nudgeUp .2s;
@@ -508,7 +525,7 @@ input[type="number"] {
     gap: 1em;
     transition: opacity 0.2s var(--sleek);
     max-height: 100vh;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 #confirmButtons {

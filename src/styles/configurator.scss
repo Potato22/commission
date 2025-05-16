@@ -255,7 +255,7 @@
     display: flex;
     background-color: var(--base);
     padding: 1rem;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     transition: width var(--animDur) var(--sleek);
     border-radius: 0px;
@@ -692,7 +692,7 @@
     }
 
     @include breakpoint(tiny, mobile) {
-        padding: 2em 4em;
+        padding: 10em 4em 4em 4em;
     }
 
     @include breakpoint(tiny) {
@@ -710,6 +710,9 @@
     padding: 1em;
     animation: breathe 4s infinite;
     margin-bottom: 1em;
+    @include breakpoint(desktop) {
+        display: none;
+    }
 }
 
 @keyframes breathe {
