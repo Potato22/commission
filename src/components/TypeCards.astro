@@ -253,7 +253,7 @@ function getTagClass(tag: string) {
       margin-top: 1em;
       max-width: 100%;
       align-items: center;
-      font-size: .8rem;
+      font-size: 0.8rem;
       .typeTitle {
         font-size: 2rem;
       }
@@ -388,6 +388,7 @@ function getTagClass(tag: string) {
   }
 
   .imgContainer {
+    --imgGridRounding: calc(var(--cardRounding) - 1em);
     width: var(--imgSize);
     height: var(--imgSize);
     position: relative;
@@ -402,8 +403,6 @@ function getTagClass(tag: string) {
     &.expanded {
       --imgSize: 300px;
     }
-
-    --imgGridRounding: calc(var(--cardRounding) - 1em);
 
     &.expanded {
       border-radius: var(--cardRounding / 2) !important;

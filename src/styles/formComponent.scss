@@ -286,28 +286,35 @@
         }
     }
 }
+
 .qcController {
     display: flex;
     transform-origin: left;
+
     &.controllerNudgeUp {
         animation: nudgeUp .2s;
     }
+
     &.controllerNudgeDown {
         animation: nudgeDown .2s;
     }
 }
+
 @keyframes nudgeUp {
     0% {
         transform: translateY(0px) rotate(0deg);
     }
+
     30% {
         transform: translateY(-5px) rotate(3deg);
     }
 }
+
 @keyframes nudgeDown {
     0% {
         transform: translateY(0px) rotate(0deg);
     }
+
     30% {
         transform: translateY(5px) rotate(-3deg);
     }
@@ -379,15 +386,14 @@ input[type="number"] {
 }
 
 #configSummary {
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     position: fixed;
-    top: 0;
     width: 100vw;
     height: 100vh;
+    overflow-y: scroll;
     z-index: 2;
     backdrop-filter: grayscale(1) blur(12px);
     background: rgba(var(--baseRGB), 0.9);
@@ -396,7 +402,12 @@ input[type="number"] {
     transition: all 0.2s;
     transition-timing-function: var(--accel);
     pointer-events: none;
+    padding: 0 5em;
     border-radius: 50px;
+
+    //opacity: 1;
+    //transform: none;
+    //pointer-events: all;
 
     .formComponent {
         background: var(--base);
@@ -405,6 +416,12 @@ input[type="number"] {
         height: 165px;
         margin: 0;
         cursor: auto;
+
+        @include breakpoint(tiny, mobile) {
+            width: 100%;
+            max-width: 100%;
+        }
+
         //margin-bottom: 1em;
 
         & .optionTitle {
@@ -413,6 +430,7 @@ input[type="number"] {
 
             &.longTextTitle {
                 font-weight: 900;
+
             }
         }
 
@@ -426,6 +444,10 @@ input[type="number"] {
                 font-size: 1rem;
                 font-weight: 500;
                 padding-top: .3em;
+
+                @include breakpoint(tiny, mobile) {
+                    font-size: 1.2rem;
+                }
 
                 &::before {
                     position: absolute;
@@ -470,6 +492,12 @@ input[type="number"] {
     font-weight: 700;
     margin-bottom: 1em;
     transition: opacity 0.2s var(--sleek);
+    text-align: center;
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 2rem;
+        margin-top: 1em;
+    }
 }
 
 #pickedConfigGrid {
@@ -477,9 +505,10 @@ input[type="number"] {
     //display: none;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 0 5em;
     gap: 1em;
     transition: opacity 0.2s var(--sleek);
+    max-height: 100vh;
+    overflow: scroll;
 }
 
 #confirmButtons {
@@ -488,6 +517,13 @@ input[type="number"] {
     display: flex;
     gap: 2em;
     transition: all 0.2s var(--sleek);
+
+    @include breakpoint(tiny, mobile) {
+        margin: 2em 0;
+        flex-direction: column;
+        width: 100%;
+        gap: 1em;
+    }
 
     &>* {
         position: relative;
@@ -627,6 +663,7 @@ input[type="number"] {
     flex-direction: column;
     align-items: flex-start;
     gap: 1em;
+
     @include breakpoint(tiny, mobile, tablet) {
         align-items: center;
     }

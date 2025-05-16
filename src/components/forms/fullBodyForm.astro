@@ -85,7 +85,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             <div id="priceCalc">€{cardData.price}</div>
           </div>
           <div
-            class="disclaimer"
+            class="disclaimer mobileDisclaimer"
             aria-label="Estimation only calculates the >>base<< prices of all available options"
           >
             <span class="disclaimerIco material-symbols-rounded">info</span>
@@ -511,6 +511,8 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             </>
           ))
       }
+      <div id="errAnchor"></div>
+      <div class="mobileSubmitDisclaimer">Prices calculated here are an estimate, overall request complexity may affect the final price!</div>
       <button class="submitButtons sbBottom" type="button" id="proceedBtn">
         <span class="submitString">Submit</span>
         <div class="configIco material-symbols-rounded">priority</div>
@@ -527,6 +529,54 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     <!-- just append strings from form data-->
 
     <!-- template -->
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Empty</div>
+        </div>
+      </div>
+      <div class="optionDesc">Empty</div>
+    </div>
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Empty</div>
+        </div>
+      </div>
+      <div class="optionDesc">Empty</div>
+    </div>
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Empty</div>
+        </div>
+      </div>
+      <div class="optionDesc">Empty</div>
+    </div>
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Empty</div>
+        </div>
+      </div>
+      <div class="optionDesc">Empty</div>
+    </div>
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Empty</div>
+        </div>
+      </div>
+      <div class="optionDesc">Empty</div>
+    </div>
+    <div class="formComponent">
+      <div class="ocHeader">
+        <div class="ocCell1">
+          <div class="optionTitle">Empty</div>
+        </div>
+      </div>
+      <div class="optionDesc">Empty</div>
+    </div>
     <div class="formComponent">
       <div class="ocHeader">
         <div class="ocCell1">

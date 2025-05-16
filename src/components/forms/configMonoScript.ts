@@ -117,7 +117,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
             "configWindow"
         ) as HTMLFormElement;
         const checkPulse = document.getElementById(
-            "proceedBtn"
+            "errAnchor"
         ) as HTMLButtonElement;
 
         //mini mem for err list
