@@ -66,11 +66,13 @@ body {
   --accent: #61dfce;
   --accentSecondary: rgba(39, 189, 206, 0.02);
   --viscueDisabled: #3f3f3f65;
-
+  
   //rgba( var(...) , ??)
+  --primSecondaryRGB: 27, 82, 91;
+  --baseRGB: 24, 24, 24;
+  --primRGB: 32, 165, 180;
   --err: 255, 92, 92;
   --ok: 47, 255, 47, ;
-  --baseRGB: 24, 24, 24;
 
   //hsl( var(...) , ??)
   --primHS: 186, 68%; //48%
@@ -99,8 +101,10 @@ body {
   --fore: #000000;
   --foreSecondary: rgba(0, 0, 0, 0.774);
   --prim: #ffa34d;
+  --primRGB: 255, 163, 77;
   --primHS: 29, 100%; //48%
   --primSecondary: #ffd4ad;
+  --primSecondaryRGB: 255, 212, 173;
   --accent: #ff6753;
   --accentSecondary: hsl(29, 100%, 65%, 5%);
   --viscueDisabled: #0000002d;
@@ -118,6 +122,10 @@ a {
     text-decoration: none !important;
     color: currentColor;
   }
+}
+
+hr {
+  width: 100%;
 }
 
 .b9 {

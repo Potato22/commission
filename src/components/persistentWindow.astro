@@ -25,6 +25,7 @@ const noHide = ignoreScrollCheck ? "true" : "false";
 
 <script>
   function initPersistentWindow() {
+    const windowWidth = window.innerWidth as number;
     const toggleSwitch: Element | null = document.getElementById("ttoggle");
     const currentTheme: string | null = localStorage.getItem("theme");
     const tticcon = document.getElementById("theme-icon") as HTMLElement;
@@ -35,7 +36,11 @@ const noHide = ignoreScrollCheck ? "true" : "false";
 
     //alert(persistentWindowWrap.dataset.ignoreScrollCheck == "false")
 
-    if (persistentWindowWrap.dataset.ignoreScrollCheck == "true") {
+    if (
+      persistentWindowWrap.dataset.ignoreScrollCheck == "true" ||
+      windowWidth < 767
+      //_mixins mobile preset
+    ) {
       persistentWindowWrap.classList.add("active");
       persistentWindowWrap.style.pointerEvents = "auto";
     } else {
@@ -115,25 +120,30 @@ const noHide = ignoreScrollCheck ? "true" : "false";
   });
 </script>
 
+<style lang="scss">
+  @use "../../src/styles/_mixins" as *;
 
-<style>
   #persistentWindow {
-    height: 100vh;
     position: fixed;
     z-index: 3;
     display: flex;
     align-items: flex-end;
     user-select: none;
-    opacity: 1;
+    opacity: 0;
     transition: all 0.5s var(--sleek);
     padding: 1em;
+    pointer-events: none;
+    bottom: 0;
 
-    opacity: 0;
     transform: translateX(-30px);
 
     &.active {
       opacity: 1;
       transform: translateX(0px);
+      @include breakpoint(tiny) {
+        transform-origin: left center;
+        transform: scale(0.9) translateY(-60px);
+      }
     }
   }
 
@@ -233,6 +243,9 @@ const noHide = ignoreScrollCheck ? "true" : "false";
     justify-content: center;
     align-items: center;
     gap: 1em;
+    @include breakpoint(tiny) {
+      flex-direction: column-reverse;
+    }
   }
   .persistentButtons {
     --borderwidth: 1px;
@@ -252,6 +265,10 @@ const noHide = ignoreScrollCheck ? "true" : "false";
     font-weight: 900;
 
     color: var(--fore);
+
+    @include breakpoint(tiny, mobile) {
+      display: none;
+    }
 
     &:hover {
       background: var(--prim);

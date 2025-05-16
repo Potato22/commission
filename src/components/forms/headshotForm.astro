@@ -52,37 +52,66 @@ assertSingleFileUpload(cardData.configData ?? []);
 const groupedConfig = groupByCategory(cardData.configData ?? []);
 ---
 
+<div class="backBMobile material-symbols-rounded">arrow_back</div>
+<div class="imgGridMobile">
+  <div
+    style={`background-image:url(${cardData.images[0].src}); background-position:${cardData.images[0].pos}`}
+  >
+  </div>
+  <div
+    style={`background-image:url(${cardData.images[1].src}); background-position:${cardData.images[1].pos}`}
+  >
+  </div>
+  <div
+    style={`background-image:url(${cardData.images[2].src}); background-position:${cardData.images[2].pos}`}
+  >
+  </div>
+  <div
+    style={`background-image:url(${cardData.images[3].src}); background-position:${cardData.images[3].pos}`}
+  >
+  </div>
+</div>
 <div id="configWrap" data-configure-id={cardId}>
   <div class="" id="configStatus">
-    <div class="stCell1">
-      <div class="stTitle">*{cardData.title}</div>
-      <div class="stDesc" set:html={cardData.description} />
-    </div>
-    <div class="stCell2">
-      <div class="stPricebox">
-        <span class="estSpan">Est. Price</span>
-        <div class="numeros">
-          <div id="priceCalc">€{cardData.price}</div>
+    <div class="defaultLayout">
+      <div class="stCell1">
+        <div class="stTitle">*{cardData.title}</div>
+        <div class="stDesc" set:html={cardData.description} />
+      </div>
+      <div class="stCell2">
+        <div class="stPricebox">
+          <span class="estSpan">Est. Price</span>
+          <div class="numeros">
+            <div id="priceCalc">€{cardData.price}</div>
+          </div>
+          <div
+            class="disclaimer"
+            aria-label="Estimation only calculates the >>base<< prices of all available options"
+          >
+            <span class="disclaimerIco material-symbols-rounded">info</span>
+          </div>
         </div>
+        <div
+          class="disclaimer defaultDisclaimer"
+          aria-label="Estimation only calculates the >>base<< prices of all available options"
+        >
+          <span class="disclaimerIco material-symbols-rounded">info</span>
+        </div>
+        <button
+          class="submitButtons navBarSubmit"
+          type="button"
+          id="buttonLink"
+          onclick="document.getElementById('proceedBtn').click()"
+        >
+          <span class="submitString">Submit</span>
+          <div class="configIco material-symbols-rounded">priority</div>
+        </button>
+        <div id="cancel" class="material-symbols-rounded">close</div>
       </div>
-      <div
-        class="disclaimer"
-        aria-label="Estimation only calculates the >>base<< prices of all available options"
-      >
-        <span class="disclaimerIco material-symbols-rounded">info</span>
-      </div>
-      <button
-        class="submitButtons"
-        type="button"
-        id="buttonLink"
-        onclick="document.getElementById('proceedBtn').click()"
-      >
-        <span class="submitString">Submit</span>
-        <div class="configIco material-symbols-rounded">priority</div>
-      </button>
-      <div id="cancel" class="material-symbols-rounded">close</div>
     </div>
   </div>
+
+  <!-- Expanded Overview -->
   <div class="cardBody" id={cardId} transition:name={`cardIMGG-${cardId}`}>
     <div class="imgGrid">
       <div class="imgContainer" id="imageGridDefault">
@@ -124,6 +153,30 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             ? `object-position:${cardData.images[3].pos}`
             : cardData.images[3].style}
         />
+      </div>
+    </div>
+    <div id="infobox">
+      <div class="backB material-symbols-rounded">arrow_back</div>
+      <div class="infocell1">
+        <div class="typeTitle">{cardData.title}</div>
+        <div class="description" set:html={cardData.description} />
+        <div class="tags">
+          {
+            cardData.tags.map((tag) => (
+              <span class={`tag ${getTagClass(tag)}`}>{tag}</span>
+            ))
+          }
+        </div>
+        <div class="priceBox">
+          <span class="startsFrom">Starts from...</span>
+          <div class="price">{priceState}</div>
+        </div>
+        <div class={cardData.isDisabled ? "disabled" : ""} id="startConfig">
+          {configButtonText}
+          <div class="configIco material-symbols-rounded">
+            arrow_circle_right
+          </div>
+        </div>
       </div>
     </div>
 
@@ -419,32 +472,6 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
         <div class="configIco material-symbols-rounded">priority</div>
       </button>
     </form>
-
-    <!-- Expanded Overview -->
-    <div id="infobox">
-      <div id="backB" class="material-symbols-rounded">arrow_back</div>
-      <div class="infocell1">
-        <div class="typeTitle">{cardData.title}</div>
-        <div class="description" set:html={cardData.description} />
-        <div class="tags">
-          {
-            cardData.tags.map((tag) => (
-              <span class={`tag ${getTagClass(tag)}`}>{tag}</span>
-            ))
-          }
-        </div>
-        <div class="priceBox">
-          <span class="startsFrom">Starts from...</span>
-          <div class="price">{priceState}</div>
-        </div>
-        <div class={cardData.isDisabled ? "disabled" : ""} id="startConfig">
-          {configButtonText}
-          <div class="configIco material-symbols-rounded">
-            arrow_circle_right
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 

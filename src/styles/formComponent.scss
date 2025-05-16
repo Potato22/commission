@@ -1,3 +1,5 @@
+@use "mixins" as *;
+
 .formComponent {
     --componentRounding: 20px;
     display: flex;
@@ -625,6 +627,9 @@ input[type="number"] {
     flex-direction: column;
     align-items: flex-start;
     gap: 1em;
+    @include breakpoint(tiny, mobile, tablet) {
+        align-items: center;
+    }
 }
 
 .errBlob {

@@ -71,7 +71,12 @@ function getTagClass(tag: string) {
 }
 ---
 
-<div class=`cardBody` id={cardId} data-interactive={interactive} transition:name={`cardIMGG-${cardId}`}>
+<div
+  class=`cardBody`
+  id={cardId}
+  data-interactive={interactive}
+  transition:name={`cardIMGG-${cardId}`}
+>
   <div class="imgGrid">
     <div class="imgContainer">
       <img
@@ -154,11 +159,7 @@ function getTagClass(tag: string) {
           //    // Add any other state you want to pass
           //  },
           //});
-          navigate(`config/${cardIdPage}`, {
-            state: {
-              // Add any other state you want to pass
-            },
-          });
+          navigate(`config/${cardIdPage}`);
         });
       }
     });
@@ -171,10 +172,11 @@ function getTagClass(tag: string) {
   });
 </script>
 
-<style>
+<style lang="scss">
+  @use "../../src/styles/_mixins" as *;
   [data-interactive="false"] {
     filter: grayscale(1);
-    opacity: .3;
+    opacity: 0.3;
     pointer-events: none;
     cursor: not-allowed;
   }
@@ -202,6 +204,17 @@ function getTagClass(tag: string) {
         animation: trivialTags var(--animDur) var(--sleek) forwards;
       }
     }
+    @include breakpoint(tiny, mobile) {
+      width: 95%;
+      flex-direction: column;
+      padding: 0.5rem;
+      text-align: center;
+      align-items: center;
+    }
+    @include breakpoint(tablet) {
+      width: 100%;
+      align-items: center;
+    }
   }
 
   @keyframes trivialTags {
@@ -224,6 +237,10 @@ function getTagClass(tag: string) {
     padding: 0 1em;
     position: relative;
     transition: color 0.2s var(--sleek);
+    @include breakpoint(tiny, mobile) {
+      flex-direction: column;
+      align-items: center;
+    }
   }
 
   .infocell1 {
@@ -232,6 +249,18 @@ function getTagClass(tag: string) {
     flex-direction: column;
     align-items: flex-start;
     max-width: 80%;
+    @include breakpoint(tiny, mobile) {
+      margin-top: 1em;
+      max-width: 100%;
+      align-items: center;
+      font-size: .8rem;
+      .typeTitle {
+        font-size: 2rem;
+      }
+      .description {
+        font-size: 1rem;
+      }
+    }
   }
 
   .typeTitle {
@@ -244,6 +273,9 @@ function getTagClass(tag: string) {
     font-size: 1.5rem;
     font-family: var(--content);
     font-weight: 300;
+    @include breakpoint(tiny, mobile) {
+      margin-top: 0.5em;
+    }
   }
 
   .tags {
@@ -251,6 +283,10 @@ function getTagClass(tag: string) {
     margin-top: 1em;
     gap: 0.5em;
     flex-wrap: wrap;
+    @include breakpoint(tiny, mobile) {
+      justify-content: center;
+      margin-bottom: 2em;
+    }
   }
 
   .tag {
@@ -287,6 +323,10 @@ function getTagClass(tag: string) {
     height: 100%;
     margin-right: 1em;
     right: 0;
+    @include breakpoint(tiny, mobile) {
+      position: relative;
+      margin: 0;
+    }
   }
 
   .priceBox {
@@ -294,6 +334,12 @@ function getTagClass(tag: string) {
     align-items: flex-end;
     justify-content: flex-end;
     font-size: 3rem;
+
+    @include breakpoint(tiny, mobile) {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
     &.expanded {
       font-size: 5rem;
@@ -307,6 +353,9 @@ function getTagClass(tag: string) {
     color: var(--foreSecondary);
     transform: translateY(-0.5em);
     transition: color 0.2s var(--sleek);
+    @include breakpoint(tiny, mobile, tablet) {
+      transform: none;
+    }
   }
 
   .price {
@@ -318,32 +367,51 @@ function getTagClass(tag: string) {
   }
 
   .imgGrid {
+    --imgSize: 100px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    place-items: center;
+    gap: 0;
 
     /* transition: all var(--animDur) var(--sleek); */
     /* gap does not support animation (yet) */
     &.expanded {
       gap: 0.5em;
     }
+    @include breakpoint(tiny, mobile) {
+      --imgSize: 100%;
+    }
+    @include breakpoint(tablet) {
+      max-height: 200px;
+      //max-width: 200px;
+    }
   }
 
   .imgContainer {
-    --imgSize: 100px;
     width: var(--imgSize);
     height: var(--imgSize);
     position: relative;
     overflow: hidden;
     transition: all var(--animDur) var(--sleek);
 
+    @include breakpoint(tiny, mobile) {
+      max-height: 200px;
+      max-width: 200px;
+    }
+
     &.expanded {
       --imgSize: 300px;
     }
 
-    --imgGridRounding: calc(var(--cardRounding) / 1.5);
+    --imgGridRounding: calc(var(--cardRounding) - 1em);
 
     &.expanded {
       border-radius: var(--cardRounding / 2) !important;
+    }
+
+    @include breakpoint(tiny, mobile) {
+      //cardBody on (tiny, mobile) is .5em
+      --imgGridRounding: calc(var(--cardRounding) - 0.5em);
     }
   }
 

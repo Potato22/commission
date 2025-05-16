@@ -111,7 +111,8 @@ import { cardList } from "../../data/cardData";
   />
 </div>
 
-<style>
+<style lang="scss">
+  @use "../../../src/styles/_mixins" as *;
   .mainSelections {
     background: var(--base);
     transition: background 0.2s var(--sleek);
@@ -120,6 +121,9 @@ import { cardList } from "../../data/cardData";
     align-items: center;
     gap: 2rem;
     user-select: none;
+    @include breakpoint(tablet) {
+      padding: 2em;
+    }
   }
 </style>
 

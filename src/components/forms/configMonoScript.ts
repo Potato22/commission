@@ -499,7 +499,11 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
 
                                     setTimeout(() => {
                                         if (window.location.href === currentPage) {
-                                            navigate(BASE_URL);
+                                            if (window.history.state?.index > 0) {
+                                                navigate('/', { history: 'replace' });
+                                            } else {
+                                                navigate('/', { history: 'auto' });
+                                            }
                                         }
                                     }, 100);
                                 }, 500);
@@ -701,20 +705,19 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
     }
 
     function initbackButton() {
-        const back = document.getElementById("backB") as HTMLElement;
-        back.addEventListener("click", () => {
-            //navigate("/");
-            const currentPage = window.location.href;
+        const backBs = document.querySelectorAll(".backB, .backBMobile");
+        backBs.forEach(backElem => {
+            backElem.addEventListener("click", () => {
+                //navigate("/");
 
-            window.history.back();
-
-            // Give the browser a moment to navigate back
-            setTimeout(() => {
-                // If we're still on the same page after trying to go back
-                if (window.location.href === currentPage) {
-                    navigate(BASE_URL);
+                if (window.history.state?.index > 0) {
+                    // Go back if there's history to go back to
+                    navigate('/', { history: 'replace' });
+                } else {
+                    // Otherwise navigate to home explicitly
+                    navigate('/', { history: 'auto' });
                 }
-            }, 1000);
+            });
         });
     }
 
@@ -724,11 +727,18 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
         const configStatus = document.getElementById("configStatus") as HTMLElement;
         const cardBody = document.querySelector(".cardBody") as HTMLElement;
         const imgGrid = document.querySelector(".imgGrid") as HTMLElement;
+        const imgGridMobile = document.querySelector(".imgGridMobile") as HTMLElement;
+        const backBMobile = document.querySelector(".backBMobile") as HTMLElement;
         const startButton = document.getElementById("startConfig") as HTMLElement;
+
+        window.scrollTo(0, 0)
 
         switch (command) {
             case true:
                 infoBox.classList.add("animExit");
+                imgGridMobile.classList.add("configuring");
+                backBMobile.classList.add("configuring")
+
                 setTimeout(() => {
                     infoBox.style.display = "none";
                     infoBox.classList.remove("animExit");
@@ -737,7 +747,8 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                     imgGrid.classList.add("configuring");
                     configStatus.classList.add("active");
                     configWindow.classList.add("animEnter");
-                    configWindow.style.display = "block";
+                    configWindow.style.display = "flex";
+                    imgGridMobile.style.display = "none"
                     setTimeout(() => {
                         configWindow.classList.remove("animEnter");
                         infoBox.classList.remove("animExit");
@@ -745,12 +756,15 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                 }, 300);
                 break;
             case false:
+                imgGridMobile.style.display = ""
                 configWindow.classList.add("animExit");
                 setTimeout(() => {
                     configWindow.style.display = "none";
                     startButton.classList.remove("configGo");
                     cardBody.classList.remove("configuring");
                     imgGrid.classList.remove("configuring");
+                    imgGridMobile.classList.remove("configuring");
+                    backBMobile.classList.remove("configuring");
                     configStatus.classList.remove("active");
                     infoBox.classList.add("animEnter");
                     infoBox.style.display = "flex";
