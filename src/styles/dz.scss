@@ -161,16 +161,20 @@
       font-size: 1rem;
       font-family: var(--doto);
       font-weight: 900;
-      margin: .3em .5em;
+      padding: 0.3em 0.5em;
       bottom: 30px;
       color: var(--fore);
       opacity: 0;
-      transition: opacity .2s var(--sleek);
+      transition: opacity 0.2s var(--sleek);
       z-index: 1;
+      width: 120px;
     }
 
     .dz-filename {
-      font-size: .8rem
+      font-size: .8rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .dz-error-message {
@@ -236,6 +240,7 @@
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(.98);
   }
