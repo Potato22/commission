@@ -306,7 +306,10 @@
     position: relative;
     display: flex;
     transform-origin: left;
-    width: 100%;
+
+    @include breakpoint(tiny, mobile) {
+        width: 100%;
+    }
 
     &.controllerNudgeUp {
         animation: nudgeUp .2s;
