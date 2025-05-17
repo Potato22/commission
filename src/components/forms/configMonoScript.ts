@@ -294,8 +294,8 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
             }
         });
 
-        data.calculatedPrice = priceAdd;
-        formData.append("estPrice", priceAdd.toString());
+        data.est_price = priceAdd;
+        formData.append("est_price", priceAdd.toString());
 
         data.cardId = lookupConfigId;
         formData.append("type", lookupConfigId);
@@ -390,11 +390,11 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
             targetElement.appendChild(fragment);
         }
 
-        //pull estPrice
-        if (formData["calculatedPrice"]) {
+        //pull est_price
+        if (formData["est_price"]) {
             const fragment = createSummaryFragment(
                 "Estimated Price",
-                `€${formData["calculatedPrice"]}`
+                `€${formData["est_price"]}`
             );
             targetElement.appendChild(fragment);
         }
