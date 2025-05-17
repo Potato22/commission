@@ -159,7 +159,7 @@ export const cardList: Record<string, CardData> = {
                 type: "infoCard",
                 subCategory: "characterAttribute",
                 questionTitle: `Accessories`,
-                questionDescription: `<span class="b7">Each</span> added accessories will be counted as a minimum of <span class="b7">€5</span>`,
+                questionDescription: `Depending on the accessory's complexity, <span class="b7">each</span> added accessories will be charged <span class="b7">from €0</span> and up.`,
                 id: "character_attributes",
             },
             {
@@ -210,8 +210,8 @@ export const cardList: Record<string, CardData> = {
         price: 15,
         tags: [
             "Configurable shading",
-            "Simple Backgrounds",
-            "Allows multi-version",
+            "Configurable Backgrounds",
+            "Multi-version",
             "Pony",
             "Semi-Anthro",
             "Anthro"
@@ -307,7 +307,7 @@ export const cardList: Record<string, CardData> = {
                 type: "infoCard",
                 subCategory: "characterAttribute",
                 questionTitle: `Accessories`,
-                questionDescription: `Depending on the accessory's complexity, <span class="b7">each</span> added accessories will be charged from <span class="b7">€0</span> and up.`,
+                questionDescription: `Depending on the accessory's complexity, <span class="b7">each</span> added accessories will be charged <span class="b7">from €0</span> and up.`,
                 id: "character_attributes",
             },
             {
@@ -360,7 +360,7 @@ export const cardList: Record<string, CardData> = {
             "Configurable Shading",
             "Full backgrounds",
             "Configurable backgrounds",
-            "Allows multi-version",
+            "Multi-version",
             "Pony",
             "Semi-Anthro",
             "Anthro"
@@ -479,14 +479,14 @@ export const cardList: Record<string, CardData> = {
                 required: true,
                 maxFiles: 10,
             },
-            {
-                category: "request_detailing",
-                type: "infoCard",
-                subCategory: "characterAttribute",
-                questionTitle: "Multiple characters?",
-                questionDescription: `Can do! Additional characters will be charged with <span class="b7">80%</span> of your selected <span class="b7">"Character detail"</span>`,
-                id: "character_attributes",
-            },
+            //{
+            //    category: "request_detailing",
+            //    type: "infoCard",
+            //    subCategory: "characterAttribute",
+            //    questionTitle: "Multiple characters?",
+            //    questionDescription: `Can do! Additional characters will be charged with <span class="b7">80%</span> of your selected <span class="b7">"Character detail"</span>`,
+            //    id: "character_attributes",
+            //},
             {
                 category: "request_detailing",
                 type: "characterCount",
@@ -501,9 +501,19 @@ export const cardList: Record<string, CardData> = {
                 category: "request_detailing",
                 type: "infoCard",
                 subCategory: "characterAttribute",
-                questionTitle: `Accessories`,
-                questionDescription: `Depending on the accessory's complexity, <span class="b7">each</span> added accessories will be charged from <span class="b7">€5</span> and up.`,
+                questionTitle: `Accessory pricing`,
+                questionDescription: `Depending on the accessory's complexity, <span class="b7">each</span> added accessories will be charged <span class="b7">from €5</span> and up.`,
                 id: "character_attributes",
+            },
+            {
+                category: "request_detailing",
+                type: "quantityCounter",
+                subCategory: "accessoryCounter",
+                questionTitle: "Accessories",
+                questionDescription: "Just for barebone approximation, how many accessories are you considering to add or have?",
+                id: "accessories",
+
+                perPrice: 5,
             },
             {
                 category: "request_detailing",
@@ -514,6 +524,16 @@ export const cardList: Record<string, CardData> = {
                 id: "request_text",
                 placeholder: `You can leave this VERY brief and discuss it directly!`,
                 required: true,
+            },
+            {
+                category: "request_detailing",
+                type: "quantityCounter",
+                subCategory: "versionCounter",
+                questionTitle: "Add versions",
+                questionDescription: "How many extra versions of your request are you considering? (leave at 0 if you only considered one)",
+                id: "versions",
+
+                perPrice: 5,
             },
             {
                 category: "contacts",

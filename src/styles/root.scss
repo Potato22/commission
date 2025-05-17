@@ -149,6 +149,18 @@ hr {
   font-weight: 700;
 }
 
+.b6 {
+  font-weight: 600;
+}
+
+.b5 {
+  font-weight: 500;
+}
+
+.b4 {
+  font-weight: 400;
+}
+
 .socicon {
   font-family: var(--display);
 }
@@ -215,6 +227,8 @@ hr {
     opacity: 0;
   }
 }
+
+
 @keyframes flashVertDown {
   0% {
     transform: translateY(5px);

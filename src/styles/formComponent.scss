@@ -219,8 +219,14 @@
 }
 
 .quantityCounterInfoCell {
+    .textAreaTitle {
+        display: flex;
+        align-items: center;
+        gap: .2em;
+    }
     .textAreaDesc {
         margin: 0;
+        //max-width: 220px;
     }
 }
 
@@ -306,6 +312,7 @@
     position: relative;
     display: flex;
     transform-origin: left;
+    margin-left: 1.5rem;
 
     @include breakpoint(tiny, mobile) {
         width: 100%;
@@ -370,15 +377,48 @@
 }
 
 .qcDispErr {
-    display: none;
+    position: absolute;
+    background: var(--base);
+    box-shadow: 0 0 20px 20px var(--base);
     margin-right: 1em;
     font-family: var(--doto);
     color: rgb(var(--err));
     font-weight: 800;
     font-size: 1.2rem;
     text-align: right;
-    animation: flash .2s 3;
+    animation: qcDispErr .2s 3;
     width: 120px;
+    right: 0;
+    transform-origin: right center;
+    transform: translateX(-110%);
+    pointer-events: none;
+    display: none;
+    transition: background .2s var(--sleek), box-shadow .2s var(--sleek);
+    @include breakpoint(tiny, mobile) {
+        transform: translateX(0%);
+        left: 0;
+        z-index: 2;
+        background: none;
+        box-shadow: none;
+    }
+}
+
+@keyframes qcDispErr {
+  0% {
+    color: rgb(var(--err));
+  }
+
+  49% {
+    color: rgb(var(--err));
+  }
+
+  50% {
+    color: transparent;
+  }
+
+  100% {
+    color: transparent;
+  }
 }
 
 

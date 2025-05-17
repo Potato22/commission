@@ -19,7 +19,7 @@ function getTagClass(tag: string) {
 const priceState = (cardData.isDisabled || commState.isClosed)
   ? "n/a"
   : "€" + cardData.price.toFixed(0);
-const configButtonText = (cardData.isDisabled || commState.isClosed) ? "Ha. nerd." : "Configure";
+const configButtonText = (cardData.isDisabled || commState.isClosed) ? "Take a look anyway" : "Configure";
 
 // Group configData by category
 function groupByCategory(
@@ -102,7 +102,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           id="buttonLink"
           onclick="document.getElementById('proceedBtn').click()"
         >
-          <span class="submitString">Submit</span>
+          <span class="submitString">{(cardData.isDisabled || commState.isClosed) ? "End Demo" : "Submit"}</span>
           <div class="configIco material-symbols-rounded">priority</div>
         </button>
         <div id="cancel" class="material-symbols-rounded">close</div>
@@ -170,7 +170,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           <span class="startsFrom">Starts from...</span>
           <div class="price">{priceState}</div>
         </div>
-        <div class={(cardData.isDisabled || commState.isClosed) ? "disabled" : ""} id="startConfig">
+        <div class={cardData.isDisabled ? "disabled" : ""} id="startConfig">
           {configButtonText}
           <div class="configIco material-symbols-rounded">
             arrow_circle_right
@@ -466,9 +466,10 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
             </>
           ))
       }
+      <div id="errAnchor"></div>
       <div class="mobileSubmitDisclaimer">Prices calculated here are an estimate, overall request complexity may affect the final price!</div>
       <button class="submitButtons sbBottom" type="button" id="proceedBtn">
-        <span class="submitString">Submit</span>
+        <span class="submitString">{(cardData.isDisabled || commState.isClosed) ? "End Demo" : "Submit"}</span>
         <div class="configIco material-symbols-rounded">priority</div>
       </button>
     </form>
@@ -476,8 +477,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
 </div>
 
 <div id="configSummary">
-  <span id="confirmText">Make sure you picked something you want!</span>
-
+<span id="confirmText">{(cardData.isDisabled || commState.isClosed) ? "You were thinking of ordering..." : "Make sure you picked something you want!"}</span>
   <div id="pickedConfigGrid">
     <!-- inject on every surface key in submitted form data -->
     <!-- just append strings from form data-->
@@ -503,10 +503,11 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
       </div>
     </div>
   </div>
+  <div id="scrollInd">scoll! <span class="scrollArrow">▼</span></div>
 
   <div id="confirmButtons">
     <div id="summary-cancelConfirm">Go back</div>
-    <div id="summary-proceed">Yes, I'm sure.</div>
+    <div id="summary-proceed">{(cardData.isDisabled || commState.isClosed) ? "What's next?" : "Yes, I'm sure."}</div>
   </div>
 
   <div id="loadAnim">
