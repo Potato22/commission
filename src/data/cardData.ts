@@ -511,7 +511,7 @@ export const cardList: Record<string, CardData> = {
                 subCategory: "accessoryCounter",
                 questionTitle: "Accessories",
                 questionDescription: "Just for barebone approximation, how many accessories are you considering to add or have?",
-                id: "accessories",
+                id: "accessories_count",
 
                 perPrice: 5,
             },
@@ -531,7 +531,7 @@ export const cardList: Record<string, CardData> = {
                 subCategory: "versionCounter",
                 questionTitle: "Add versions",
                 questionDescription: "How many extra versions of your request are you considering? (leave at 0 if you only considered one)",
-                id: "versions",
+                id: "version_count",
 
                 perPrice: 5,
             },
