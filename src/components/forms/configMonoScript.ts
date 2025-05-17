@@ -258,37 +258,54 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
     }
 
     function collector(configFormElem?: HTMLFormElement) {
-
-        const data: Record<string, string | number | File | File[]> = {};
+        const data: Record<string, string | number | File | File[] | string | string[]> = {};
         const formData = new FormData(configFormElem);
 
         setupFormValidation();
 
-        // Collect all normal fields
         if (cardData.configData) {
             for (const field of cardData.configData) {
-                const value = formData.getAll(field.id);
-                if (value.length > 1) {
-                    data[field.id] = value.filter((v) => v instanceof File);
-                } else if (value[0] instanceof File) {
-                    data[field.id] = value[0];
-                } else if (value[0] != null) {
-                    data[field.id] = value[0].toString();
+                const values = formData.getAll(field.id);
+
+                // multiple files?
+                if (values.length > 1 && values[0] instanceof File) {
+                    const files = (values as File[]);
+                    data[field.id] = files;
+                    // grab all the MIME types
+                    data[`${field.id}_types`] = files.map(f => f.type);
+                }
+                // exactly one file?
+                else if (values[0] instanceof File) {
+                    const file = values[0] as File;
+                    data[field.id] = file;
+                    // store its type too
+                    data[`${field.id}_type`] = file.type;
+                }
+                // plain text / number
+                else if (values[0] != null) {
+                    data[field.id] = values[0].toString();
                 }
             }
         }
 
-        // Collect files from Dropzone instances
-        cardData.configData?.forEach((config) => {
+        cardData.configData?.forEach(config => {
             if (config.type === "fileUpload") {
                 const dzElem = document.getElementById(`dropZone_${config.id}`);
-                if (dzElem && dzElem.dropzone) {
+                if (dzElem?.dropzone) {
                     const dzFiles = dzElem.dropzone.getAcceptedFiles();
-                    if (dzFiles.length > 0) {
-                        dzFiles.forEach((file) => {
+                    if (dzFiles.length) {
+                        // append files to your FormData
+                        dzFiles.forEach(file => {
                             formData.append(config.id, file, file.name);
                         });
                         data[config.id] = dzFiles.length === 1 ? dzFiles[0] : dzFiles;
+
+                        // and here’s your MIME info
+                        if (dzFiles.length === 1) {
+                            data[`${config.id}_type`] = dzFiles[0].type;
+                        } else {
+                            data[`${config.id}_types`] = dzFiles.map(f => f.type);
+                        }
                     }
                 }
             }
@@ -300,10 +317,9 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
         data.cardId = lookupConfigId;
         formData.append("type", lookupConfigId);
 
-        //console.log("Collected config data:", data);
-
         return { data, formData };
     }
+
 
     function initPseudoSubmit() {
         // FORM PACKAGING
@@ -332,7 +348,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
     //summaryDisplayControl("open");
 
     function generateSummary(
-        formData: Record<string, string | number | File | File[]>,
+        formData: Record<string, string | number | File | File[] | string | string[]>,
         targetElement: HTMLElement
     ) {
         // Safety check for formData
@@ -419,7 +435,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
 
     function summaryDisplayControl(
         mode: string | null,
-        appendedFormData: Record<string, string | number | File | File[]> | null
+        appendedFormData: Record<string, string | number | File | File[] | string | string[]> | null
     ) {
         console.log("summaryDisplayControl:", mode);
 
@@ -498,21 +514,21 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                             setTimeout(() => {
                                 summaryDisplayControl("close", {});
                                 configDisplayControl(false);
-                                setTimeout(() => {
-                                    const currentPage = window.location.href;
-
-                                    window.history.back();
-
-                                    setTimeout(() => {
-                                        if (window.location.href === currentPage) {
-                                            if (window.history.state?.index > 0) {
-                                                navigate('/', { history: 'replace' });
-                                            } else {
-                                                navigate('/', { history: 'auto' });
-                                            }
-                                        }
-                                    }, 100);
-                                }, 500);
+                                //setTimeout(() => {
+                                //    const currentPage = window.location.href;
+                                //
+                                //    window.history.back();
+                                //
+                                //    setTimeout(() => {
+                                //        if (window.location.href === currentPage) {
+                                //            if (window.history.state?.index > 0) {
+                                //                navigate('/', { history: 'replace' });
+                                //            } else {
+                                //                navigate('/', { history: 'auto' });
+                                //            }
+                                //        }
+                                //    }, 100);
+                                //}, 500);
                             }, 2000);
                             startButton.classList.add("disabled");
                         } else {
