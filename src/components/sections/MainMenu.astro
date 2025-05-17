@@ -28,14 +28,14 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
       <span>{commState.isClosed ? "" : "Comm"}</span><span id="typewriter"
       ></span>
     </div>
-    <span class="labelSecondary"
-      >{commState.isClosed ? "Commission's closed!" : "Available Options"}</span
-    >
+    <span class="labelSecondary">
+      {commState.isClosed ? "Commission's closed!" : "Available Options"}
+    </span>
     {commState.message && (
-      <div class="menuMessageBox" style=`background: var(--${commState.message.icon})` >
-        <div class="mmIconBox" style=`background: url(${iconEval})`></div>
+      <div class="menuMessageBox" style={`background: var(--${commState.message.icon})`}>
+        <div class="mmIconBox" style={`background: url(${iconEval})`}></div>
         <div class="mmMsgBox">
-          <div class="mmMsgTitle" set:html={commState.message.title} />
+          {commState.message.title && <div class="mmMsgTitle" set:html={commState.message.title} />}
           <div class="mmMsg" set:html={commState.message.content} />
         </div>
       </div>
@@ -160,9 +160,8 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
     padding: 0.5em 1em;
     //width: 50%;
     max-width: 100%;
-    text-align: center;
     margin-top: 2em;
-    font-size: 1.3em;
+    font-size: 1.3rem;
     font-family: var(--content);
     border-radius: 20px;
     display: flex;
@@ -183,6 +182,7 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
   .mmIconBox {
     --size: 70px;
     width: calc(var(--size) + (var(--size) / 4));
+    min-width: calc(var(--size) + (var(--size) / 4));
     height: var(--size);
     margin-right: 1em;
     border-right: 1px solid var(--fore);
@@ -191,7 +191,7 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
   }
   .mmMsgTitle {
     font-weight: 700;
-    font-size: 1.5em;
+    font-size: 1.5rem;
   }
   .mmMsg {
     padding-top: 0.1em;

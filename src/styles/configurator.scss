@@ -592,7 +592,7 @@
 .startsFrom {
     font-family: var(--content);
     font-weight: 400;
-    font-size: 0.5em;
+    font-size: 0.5em;//I know what im doing
     color: var(--foreSecondary);
     transform: translateY(-0.7em);
     transition: color 0.2s var(--sleek);
@@ -605,7 +605,7 @@
 .price {
     font-family: var(--content);
     font-weight: 900;
-    font-size: 2em;
+    font-size: 2em; //I know what im doing
     color: var(--fore);
     transition: color 0.2s var(--sleek);
 }

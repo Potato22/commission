@@ -64,7 +64,8 @@ const cardId = typeTitle.toLowerCase().replace(/\s+/g, "");
 // Use internalIsDisabled for all dependent constants
 const priceState =
   internalIsDisabled || commState.isClosed ? "n/a" : "€" + price.toFixed(0);
-const interactive = internalIsDisabled || commState.isClosed ? "false" : "true"; // This controls the data-interactive attribute
+//const interactive = internalIsDisabled || commState.isClosed ? "false" : "true"; // data-interactive
+const interactive = internalIsDisabled ? "false" : "true"; // data-interactive
 
 //const bodyTypes = ["pony", "semi-anthro", "anthro"];
 function getTagClass(tag: string) {
@@ -369,7 +370,7 @@ function getTagClass(tag: string) {
   .price {
     font-family: var(--content);
     font-weight: 900;
-    font-size: 1em;
+    font-size: 1em; //I know what I'm doing
     color: var(--fore);
     transition: color 0.2s var(--sleek);
   }

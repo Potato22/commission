@@ -528,7 +528,22 @@ input[type="number"] {
     gap: 1em;
     transition: opacity 0.2s var(--sleek);
     max-height: 100vh;
-    overflow-y: scroll;
+    @include breakpoint(tiny, mobile) {
+        overflow-y: scroll;
+    }
+}
+
+#scrollInd {
+    margin-top: .3em;
+    font-family: var(--doto);
+    font-weight: 900;
+    .scrollArrow {
+        position: absolute;
+        animation: flashVertDown .5s infinite;
+    }
+    @include breakpoint(tablet, desktop) {
+        display: none;
+    }
 }
 
 #confirmButtons {
@@ -537,6 +552,7 @@ input[type="number"] {
     display: flex;
     gap: 2em;
     transition: all 0.2s var(--sleek);
+    text-align: center;
 
     @include breakpoint(tiny, mobile) {
         margin: 2em 0;
@@ -627,12 +643,16 @@ input[type="number"] {
         &.loadErr {
             animation: loadErr .8s forwards !important;
         }
+
+        &.loadDemo {
+            animation: loadDemo 1s infinite !important;
+        }
     }
 
     #loadStatString {
         position: absolute;
         width: 300px;
-        top: -30px;
+        top: 15px;
         font-family: var(--doto);
         font-weight: 900;
         text-align: center;
@@ -661,6 +681,17 @@ input[type="number"] {
     100% {
         background: linear-gradient(90deg, rgb(var(--err)) 50%, transparent 50%);
         background-position: 0px;
+    }
+}
+@keyframes loadDemo {
+    0%, 20%, 100% {
+        background: var(--accent);
+        opacity: .3;
+    }
+
+    10%, 30% {
+        background: var(--accent);
+        opacity: 1;
     }
 }
 

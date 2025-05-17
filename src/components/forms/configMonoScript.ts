@@ -1,6 +1,7 @@
 import Dropzone from "dropzone";
 import { navigate } from "astro:transitions/client";
 import { type CardData } from "../../data/cardData";
+import { commState } from "../../data/cardData";
 const { BASE_URL } = import.meta.env;
 
 
@@ -436,6 +437,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
         const loadAnim = document.getElementById("loadAnim") as HTMLElement;
         const loadBar = document.getElementById("gradbar") as HTMLElement;
         const loadString = document.getElementById("loadStatString") as HTMLElement;
+        const mobileScrollInd = document.getElementById("scrollInd") as HTMLElement;
 
         const configForm = document.getElementById(
             "configWindow"
@@ -476,6 +478,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                 summaryButtons.style.opacity = "0";
                 summaryButtons.style.pointerEvents = "none"
                 summaryGrid.style.opacity = "0";
+                mobileScrollInd.style.opacity = "0"
                 summaryButtons.style.transform = "translateY(2em)";
                 loadString.innerHTML = "Sending...";
                 loadBar.classList.remove("loadOK");
@@ -510,9 +513,9 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                             }, 2000);
                             startButton.classList.add("disabled");
                         } else {
-                            loadBar.classList.add("loadErr");
-                            loadString.innerHTML = `fail: ${error ?? "unknown error"}`;
-                            setTimeout(() => summaryDisplayControl("close", {}), 2000);
+                            loadBar.classList.add((cardData.isDisabled || commState.isClosed) ? "loadDemo" : "loadErr");
+                            loadString.innerHTML = `<span style="color: var(--accent)">fail:</span> ${error ?? "unknown error"}`;
+                            setTimeout(() => summaryDisplayControl("close", {}), (cardData.isDisabled || commState.isClosed) ? 5000 : 2000);
                         }
                     });
                 }, 300);
@@ -523,6 +526,7 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
                 summaryButtons.style.opacity = "1";
                 summaryButtons.style.transform = "";
                 summaryGrid.style.opacity = "1";
+                mobileScrollInd.style.opacity = "1"
                 summaryButtons.style.pointerEvents = "auto"
                 break;
             default:
@@ -560,16 +564,15 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
     async function submitFormToWorker(
         formData: FormData | null
     ): Promise<SubmissionResult> {
-        const WORKER_URL = "https://pottocomm-collector.pottoart.workers.dev/";
+
+        //precaution
+        const WORKER_URL = (cardData.isDisabled || commState.isClosed) ? "demo" : "https://pottocomm-collector.pottoart.workers.dev/";
         //const WORKER_URL = "https://no.pottoart.workers.dev/"; //disable for now
 
-        if (cardData.isDisabled) {
-            const disMsg: string =
-                "supposedly your submission is already on the way, but this one is not available right now. Appreciate your effort for bruteforcing your way here though.";
-            alert(disMsg);
+        if (cardData.isDisabled || commState.isClosed) {
             return {
                 success: false,
-                error: disMsg,
+                error: "It's closed, but thanks for trying the website!",
             };
         }
 

@@ -69,7 +69,7 @@ const drawQuantityGroup = {
 
 type messageObject = {
     isClosed: boolean;
-    message: {
+    message?: {
         icon: string;
         title: string;
         content: string;
@@ -77,13 +77,13 @@ type messageObject = {
 }
 export const commState: messageObject = {
     isClosed: true,
-    //message: {
-    //    icon: "stop",
-    //    title: `Stopped`,
-    //    content: `
-    //    The quick brown fox jumps over the lazy dog
-    //    `
-    //}
+    message: {
+        icon: "warn",
+        title: `Not Ready`,
+        content: `
+        This webpage is being finalized. But you can still look around!
+        `
+    }
 };
 
 
