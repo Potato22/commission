@@ -1,84 +1,46 @@
 ---
 import Type from "../TypeCards.astro";
-import { cardList } from "../../data/cardData";
+import { cardList, commState } from "../../data/cardData";
+
+import info from "../../assets/icons/info.svg";
+import warn from "../../assets/icons/warn.svg";
+import stop from "../../assets/icons/stop.svg";
+
+function evalMsgIcon(lookup: string) {
+  switch (lookup) {
+    case "info":
+      return info.src;
+    case "warn":
+      return warn.src;
+    case "stop":
+      return stop.src;
+
+    default:
+      break;
+  }
+}
+const iconEval = commState.message && evalMsgIcon(commState.message.icon);
 ---
 
 <div class="mainSelections" id="menu">
   <div id="pageLabel">
     <div class="label" id="label">
-      <span>Comm</span><span id="typewriter"></span>
+      <span>{commState.isClosed ? "" : "Comm"}</span><span id="typewriter"
+      ></span>
     </div>
-    <span class="labelSecondary">Available Options</span>
-    <script>
-      function initlabelDeco() {
-        const text = "ission";
-        const typewriter = document.getElementById("typewriter");
-        const label = document.getElementById("label");
-
-        function updateTypewriter() {
-          if (!label) return;
-
-          // Get element's position relative to viewport
-          const rect = label.getBoundingClientRect();
-          const windowHeight = window.innerHeight;
-
-          const triggerPoint = windowHeight * 0.8;
-
-          // Calculate progress based on element position
-          const progress = Math.min(
-            Math.max(
-              (triggerPoint - rect.top) / (triggerPoint * 0.5), // Adjust 0.5 to control animation length
-              0
-            ),
-            1
-          );
-
-          // Calculate characters to show
-          const charsToShow = Math.floor(progress * text.length);
-
-          if (typewriter) {
-            typewriter.textContent = text.substring(0, charsToShow);
-          }
-        }
-
-        updateTypewriter();
-        window.addEventListener("scroll", updateTypewriter);
-      }
-      initlabelDeco();
-
-      document.addEventListener("astro:after-swap", () => {
-        initlabelDeco();
-      });
-    </script>
+    <span class="labelSecondary"
+      >{commState.isClosed ? "Commission's closed!" : "Available Options"}</span
+    >
+    {commState.message && (
+      <div class="menuMessageBox" style=`background: var(--${commState.message.icon})` >
+        <div class="mmIconBox" style=`background: url(${iconEval})`></div>
+        <div class="mmMsgBox">
+          <div class="mmMsgTitle" set:html={commState.message.title} />
+          <div class="mmMsg" set:html={commState.message.content} />
+        </div>
+      </div>
+    )}
   </div>
-  <style>
-    #pageLabel {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 0;
-    }
-    .label {
-      background: var(--fore);
-      font-size: 2rem;
-      font-family: var(--display);
-      font-weight: 700;
-      padding: 0.2em 0.5em;
-      color: var(--base);
-      border-radius: 15px;
-      transition:
-        background 0.2s var(--sleek),
-        color 0.2s var(--sleek);
-    }
-    .labelSecondary {
-      font-family: var(--doto);
-      font-size: 1rem;
-      margin-top: 0.5em;
-      color: var(--accent);
-      font-weight: bold;
-      transition: color 0.2s var(--sleek);
-    }
-  </style>
 
   <Type
     typeTitle={cardList.sketchbook.title}
@@ -111,6 +73,48 @@ import { cardList } from "../../data/cardData";
   />
 </div>
 
+<script>
+  import { commState } from "../../data/cardData";
+  function initlabelDeco() {
+    const text = commState.isClosed ? "uh oh..." : "ission";
+    const typewriter = document.getElementById("typewriter");
+    const label = document.getElementById("label");
+
+    function updateTypewriter() {
+      if (!label) return;
+
+      // Get element's position relative to viewport
+      const rect = label.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      const triggerPoint = windowHeight * 0.8;
+
+      // Calculate progress based on element position
+      const progress = Math.min(
+        Math.max(
+          (triggerPoint - rect.top) / (triggerPoint * 0.5), // Adjust 0.5 to control animation length
+          0
+        ),
+        1
+      );
+
+      // Calculate characters to show
+      const charsToShow = Math.floor(progress * text.length);
+
+      if (typewriter) {
+        typewriter.textContent = text.substring(0, charsToShow);
+      }
+    }
+
+    updateTypewriter();
+    window.addEventListener("scroll", updateTypewriter);
+  }
+  initlabelDeco();
+
+  document.addEventListener("astro:after-swap", () => {
+    initlabelDeco();
+  });
+</script>
 <style lang="scss">
   @use "../../../src/styles/_mixins" as *;
   .mainSelections {
@@ -125,13 +129,71 @@ import { cardList } from "../../data/cardData";
       padding: 2em;
     }
   }
+  #pageLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 0;
+  }
+  .label {
+    background: var(--fore);
+    font-size: 2rem;
+    font-family: var(--display);
+    font-weight: 700;
+    padding: 0.2em 0.5em;
+    color: var(--base);
+    border-radius: 15px;
+    transition:
+      background 0.2s var(--sleek),
+      color 0.2s var(--sleek);
+  }
+  .labelSecondary {
+    font-family: var(--doto);
+    font-size: 1rem;
+    margin-top: 0.5em;
+    color: var(--accent);
+    font-weight: bold;
+    transition: color 0.2s var(--sleek);
+  }
+  .menuMessageBox {
+    color: var(--fore);
+    padding: 0.5em 1em;
+    //width: 50%;
+    max-width: 100%;
+    text-align: center;
+    margin-top: 2em;
+    font-size: 1.3em;
+    font-family: var(--content);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.205);
+    @include breakpoint(tiny, mobile) {
+      width: 95%;
+    }
+    @include breakpoint(tablet) {
+      width: 100%;
+    }
+  }
+  .mmMsgBox {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .mmIconBox {
+    --size: 70px;
+    width: calc(var(--size) + (var(--size) / 4));
+    height: var(--size);
+    margin-right: 1em;
+    border-right: 1px solid var(--fore);
+    background-position: left !important;
+    background-repeat: no-repeat !important;
+  }
+  .mmMsgTitle {
+    font-weight: 700;
+    font-size: 1.5em;
+  }
+  .mmMsg {
+    padding-top: 0.1em;
+  }
 </style>
-
-<div id="configModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span id="closeModal" class="close">&times;</span>
-    <div id="modalBody">
-      <!-- Config UI will be injected here -->
-    </div>
-  </div>
-</div>

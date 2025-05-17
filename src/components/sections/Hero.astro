@@ -1,4 +1,6 @@
 ---
+import { commState } from "../../data/cardData";
+
 const { BASE_URL } = import.meta.env;
 
 // Helper function for path normalization inside this file
@@ -65,7 +67,7 @@ const heroImages = [
 <a href="#menu">
   <div class="forwarder" id="forwarder">
     <div class="arrowClip" id="arrowClip">
-      <div class="arrow material-symbols-rounded">arrow_downward</div>
+      <div class=`${commState.isClosed ? "noAnim" : ""} arrow material-symbols-rounded`>{commState.isClosed ? "close" : "arrow_downward"}</div>
     </div>
   </div>
 </a>
@@ -219,6 +221,10 @@ const heroImages = [
     font-size: 3rem;
     animation: clipDown 1s linear infinite;
     color: var(--fore);
+
+  }
+  .noAnim {
+    animation: none;
   }
   @keyframes clipDown {
     0% {

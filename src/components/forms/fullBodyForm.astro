@@ -3,9 +3,8 @@ import "../../styles/root.scss";
 import "../../styles/dz.scss";
 import "../../styles/formComponent.scss";
 import "../../styles/configurator.scss";
-import { cardList } from "../../data/cardData";
+import { cardList, bodyTypes, commState } from "../../data/cardData";
 import type { FormQuestion } from "../../data/cardData";
-import { bodyTypes } from "../../data/cardData";
 
 const cardId = "fullbody";
 const cardData = cardList[cardId];
@@ -17,10 +16,10 @@ function getTagClass(tag: string) {
   return "";
 }
 
-const priceState = cardData.isDisabled
+const priceState = (cardData.isDisabled || commState.isClosed)
   ? "n/a"
   : "€" + cardData.price.toFixed(0);
-const configButtonText = cardData.isDisabled ? "Ha. nerd." : "Configure";
+const configButtonText = (cardData.isDisabled || commState.isClosed) ? "Ha. nerd." : "Configure";
 
 // Group configData by category
 function groupByCategory(
@@ -171,7 +170,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           <span class="startsFrom">Starts from...</span>
           <div class="price">{priceState}</div>
         </div>
-        <div class={cardData.isDisabled ? "disabled" : ""} id="startConfig">
+        <div class={(cardData.isDisabled || commState.isClosed) ? "disabled" : ""} id="startConfig">
           {configButtonText}
           <div class="configIco material-symbols-rounded">
             arrow_circle_right

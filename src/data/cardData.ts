@@ -67,6 +67,25 @@ const drawQuantityGroup = {
     gMax: 5,
 };
 
+type messageObject = {
+    isClosed: boolean;
+    message: {
+        icon: string;
+        title: string;
+        content: string;
+    }
+}
+export const commState: messageObject = {
+    isClosed: true,
+    //message: {
+    //    icon: "stop",
+    //    title: `Stopped`,
+    //    content: `
+    //    The quick brown fox jumps over the lazy dog
+    //    `
+    //}
+};
+
 
 export const cardList: Record<string, CardData> = {
     sketchbook: {

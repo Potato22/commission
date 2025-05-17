@@ -1,6 +1,10 @@
 ---
 import noImgPlchldr from "../assets/noImg.svg";
-import { bodyTypes, cardList as allCardsData } from "../data/cardData";
+import {
+  bodyTypes,
+  commState,
+  cardList as allCardsData,
+} from "../data/cardData";
 interface Props {
   typeTitle: string;
   description: string;
@@ -58,9 +62,9 @@ if (images.length > 4) {
 const cardId = typeTitle.toLowerCase().replace(/\s+/g, "");
 
 // Use internalIsDisabled for all dependent constants
-//const configButtonText = internalIsDisabled ? "Not available" : "Configure";
-const priceState = internalIsDisabled ? "n/a" : "€" + price.toFixed(0);
-const interactive = internalIsDisabled ? "false" : "true"; // This controls the data-interactive attribute
+const priceState =
+  internalIsDisabled || commState.isClosed ? "n/a" : "€" + price.toFixed(0);
+const interactive = internalIsDisabled || commState.isClosed ? "false" : "true"; // This controls the data-interactive attribute
 
 //const bodyTypes = ["pony", "semi-anthro", "anthro"];
 function getTagClass(tag: string) {
@@ -80,6 +84,7 @@ function getTagClass(tag: string) {
   <div class="imgGrid">
     <div class="imgContainer">
       <img
+        loading="lazy"
         src={images[0].src}
         alt={images[0].alt}
         class="img"
@@ -90,6 +95,7 @@ function getTagClass(tag: string) {
     </div>
     <div class="imgContainer">
       <img
+        loading="lazy"
         src={images[1].src}
         alt={images[1].alt}
         class="img"
@@ -100,6 +106,7 @@ function getTagClass(tag: string) {
     </div>
     <div class="imgContainer">
       <img
+        loading="lazy"
         src={images[2].src}
         alt={images[2].alt}
         class="img"
@@ -110,6 +117,7 @@ function getTagClass(tag: string) {
     </div>
     <div class="imgContainer">
       <img
+        loading="lazy"
         src={images[3].src}
         alt={images[3].alt}
         class="img"
@@ -391,6 +399,8 @@ function getTagClass(tag: string) {
     --imgGridRounding: calc(var(--cardRounding) - 1em);
     width: var(--imgSize);
     height: var(--imgSize);
+    min-width: var(--imgSize);
+    min-height: var(--imgSize);
     position: relative;
     overflow: hidden;
     transition: all var(--animDur) var(--sleek);

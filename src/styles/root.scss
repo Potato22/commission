@@ -66,7 +66,11 @@ body {
   --accent: #61dfce;
   --accentSecondary: rgba(39, 189, 206, 0.02);
   --viscueDisabled: #3f3f3f65;
-  
+
+  --info: #2c3a69;
+  --warn: #745630;
+  --stop: #863a3a;
+
   //rgba( var(...) , ??)
   --primSecondaryRGB: 27, 82, 91;
   --baseRGB: 24, 24, 24;
@@ -109,6 +113,11 @@ body {
   --accentSecondary: hsl(29, 100%, 65%, 5%);
   --viscueDisabled: #0000002d;
 
+
+  --info: #e7f5ff;
+  --warn: #ffc983;
+  --stop: #ffa9a9;
+
   --brightness: brightness(.8);
   --inverto: invert(0);
 }
@@ -149,9 +158,8 @@ hr {
     'FILL' 0,
     'wght' 400,
     'GRAD' 0,
-    'opsz' 24
-    ;
-    user-select: none;
+    'opsz' 24;
+  user-select: none;
 }
 
 .holdon {
@@ -189,12 +197,25 @@ hr {
 
   }
 }
+
 @keyframes flash {
-  0% { opacity: 1; }
-  49% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 1;
+  }
+
+  49% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
+
 @keyframes shake {
 
   0%,
@@ -222,6 +243,7 @@ hr {
     border-color: var(--fore);
   }
 }
+
 @keyframes shakeVert {
 
   0%,
