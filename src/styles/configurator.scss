@@ -52,6 +52,10 @@
         justify-content: space-between;
     }
 
+    @include breakpoint(tablet) {
+        position: fixed;
+    }
+
     @include breakpoint(tiny, mobile) {
         top: 0;
         position: fixed;
@@ -209,7 +213,7 @@
         border: 2px solid var(--fore);
 
     }
-    
+
     &:hover::before {
         transform: translate(-80%, 90px);
         opacity: 1;
@@ -219,6 +223,7 @@
         &::before {
             font-size: 1.3rem;
         }
+
         &:hover::before {
             transform: translate(-80%, 160px);
         }
@@ -592,7 +597,7 @@
 .startsFrom {
     font-family: var(--content);
     font-weight: 400;
-    font-size: 0.5em;//I know what im doing
+    font-size: 0.5em; //I know what im doing
     color: var(--foreSecondary);
     transform: translateY(-0.7em);
     transition: color 0.2s var(--sleek);
@@ -691,6 +696,9 @@
         justify-content: center;
     }
 
+    @include breakpoint(tablet) {
+        padding: 8em 2em 4em 2em;
+    }
     @include breakpoint(tiny, mobile) {
         padding: 10em 2em 4em 2em;
     }
@@ -710,6 +718,7 @@
     padding: 1em;
     animation: breathe 4s infinite;
     margin-bottom: 1em;
+
     @include breakpoint(desktop) {
         display: none;
     }
@@ -723,9 +732,11 @@
     49% {
         opacity: .7;
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         opacity: .7;
     }
@@ -825,6 +836,313 @@
     to {
         background: var(--base);
         border-color: var(--fore);
+    }
+}
+
+#configSummary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: scroll;
+    z-index: 20;
+    backdrop-filter: grayscale(1) blur(12px);
+    background: rgba(var(--baseRGB), 0.9);
+    opacity: 0;
+    transform: translateY(-1vh) scale(0.9);
+    transition: all 0.2s;
+    transition-timing-function: var(--accel);
+    pointer-events: none;
+    padding: 0 5em;
+    border-radius: 50px;
+
+    //opacity: 1;
+    //transform: none;
+    //pointer-events: all;
+
+    .formComponent {
+        background: var(--base);
+        width: 300px;
+        max-width: 300px;
+        height: 165px;
+        margin: 0;
+        cursor: auto;
+
+        @include breakpoint(tiny, mobile, tablet) {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        //margin-bottom: 1em;
+
+        & .optionTitle {
+            font-size: 1rem;
+            font-weight: 400;
+
+            &.longTextTitle {
+                font-weight: 900;
+
+            }
+        }
+
+        & .optionDesc {
+            position: relative;
+            font-size: 2rem;
+            font-weight: 900;
+            overflow: hidden;
+
+            &.longText {
+                font-size: 1rem;
+                font-weight: 500;
+                padding-top: .3em;
+
+                @include breakpoint(tiny, mobile) {
+                    font-size: 1.2rem;
+                }
+
+                &::before {
+                    position: absolute;
+                    content: "";
+                    background: linear-gradient(150deg, transparent, var(--base) 90%);
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+
+        & .ocHeader {
+            min-height: 40px;
+        }
+    }
+
+    &.active {
+        pointer-events: auto;
+        transition-timing-function: var(--sleek);
+        opacity: 1;
+        transform: translateY(0vh) scale(1);
+        border-radius: 0px;
+    }
+}
+
+@keyframes revealSummary {
+    from {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0vh);
+        opacity: 1;
+    }
+}
+
+#confirmText {
+    color: var(--fore);
+    font-size: 3rem;
+    font-family: var(--display);
+    font-weight: 700;
+    margin-bottom: 1em;
+    transition: opacity 0.2s var(--sleek);
+    text-align: center;
+
+    @include breakpoint(tiny, mobile) {
+        font-size: 2rem;
+        margin-top: 1em;
+    }
+    @include breakpoint(tablet) {
+        font-size: 2.4rem;
+        margin-top: 1em;
+    }
+}
+
+#pickedConfigGrid {
+    display: flex;
+    //display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1em;
+    transition: opacity 0.2s var(--sleek);
+    max-height: 100vh;
+    @include breakpoint(tiny, mobile, tablet) {
+        overflow-y: scroll;
+    }
+}
+
+#scrollInd {
+    margin-top: .3em;
+    font-family: var(--doto);
+    font-weight: 900;
+    .scrollArrow {
+        position: absolute;
+        animation: flashVertDown .5s infinite;
+    }
+    @include breakpoint(desktop) {
+        display: none;
+    }
+}
+
+#confirmButtons {
+    position: relative;
+    margin-top: 3em;
+    display: flex;
+    gap: 2em;
+    transition: all 0.2s var(--sleek);
+    text-align: center;
+
+    @include breakpoint(tablet) {
+        margin: 2em 0;
+    }
+
+    @include breakpoint(tiny, mobile) {
+        flex-direction: column-reverse;
+        width: 100%;
+        gap: 1em;
+    }
+
+    &>* {
+        position: relative;
+        border: 4px solid transparent;
+        /* Inner transparent border */
+        border-radius: 20px;
+        /* Optional: for rounded corners */
+        z-index: 1;
+        font-size: 1.5rem;
+        font-family: var(--content);
+        font-weight: 700;
+        color: var(--base);
+        padding: 1em 1.5em;
+        border-radius: 99px;
+        background: var(--fore);
+        user-select: none;
+        cursor: pointer;
+        box-shadow: 0 0 0 2px transparent inset;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border: 4px solid var(--base);
+            border-radius: 99px;
+            pointer-events: none;
+            z-index: 2;
+            transition: all 0.2s var(--accel);
+            transform: scale(1.1);
+            opacity: 0;
+        }
+
+        &:hover {
+            &::before {
+                transition-timing-function: var(--sleek);
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        &:active {
+            &::before {
+                transition-timing-function: var(--sleek);
+                transform: scale(0.9);
+                opacity: 1;
+            }
+        }
+    }
+}
+
+#loadAnim {
+    position: absolute;
+    z-index: 2;
+    align-items: center;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+
+    .gradOverflow {
+        width: 100px;
+        height: 10px;
+        overflow: hidden;
+        border-radius: 20px;
+        filter: blur(2px);
+        box-shadow: 0 0 12px transparent;
+    }
+
+    #gradbar {
+        width: 200%;
+        height: 10px;
+        background: linear-gradient(90deg, transparent 50%, var(--accent));
+        background-repeat: no-repeat;
+        background-position: -100px 0;
+        animation: ps5loadGrad 0.8s infinite;
+
+
+        &.loadOK {
+            animation: loadOK .8s forwards !important;
+        }
+
+        &.loadErr {
+            animation: loadErr .8s forwards !important;
+        }
+
+        &.loadDemo {
+            animation: loadDemo 1s infinite !important;
+        }
+    }
+
+    #loadStatString {
+        position: absolute;
+        width: 300px;
+        top: 15px;
+        font-family: var(--doto);
+        font-weight: 900;
+        text-align: center;
+        color: var(--fore);
+    }
+}
+
+@keyframes loadOK {
+    0% {
+        background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+        background-position: -200px 0;
+    }
+
+    100% {
+        background: linear-gradient(90deg, #47ff47 50%, transparent 50%);
+        background-position: 0px;
+    }
+}
+
+@keyframes loadErr {
+    0% {
+        background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+        background-position: -200px 0;
+    }
+
+    100% {
+        background: linear-gradient(90deg, rgb(var(--err)) 50%, transparent 50%);
+        background-position: 0px;
+    }
+}
+@keyframes loadDemo {
+    0%, 20%, 100% {
+        background: var(--accent);
+        opacity: .3;
+    }
+
+    10%, 30% {
+        background: var(--accent);
+        opacity: 1;
+    }
+}
+
+@keyframes ps5loadGrad {
+    0% {
+        background-position: -200px 0;
+    }
+
+    100% {
+        background-position: 0px;
     }
 }
 

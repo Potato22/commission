@@ -340,17 +340,20 @@ export default function initConfigPageLogic(cardData: CardData, lookupConfigId: 
             console.error("Invalid form data provided to generateSummary");
             return;
         }
-        //console.log(formData)
+        console.log(formData)
 
         //reset
         targetElement.innerHTML = "";
 
         const keysToDisplay = {
+            nickname: "Inquiry for:",
             character_detail: "Character Detail",
             anthro: "Anthro?",
             background: "Background Art",
             nsfw: "NSFW?",
             character_count: "Character Count",
+            accessories_count: "Accessory count",
+            version_count: "Versions",
             sketch_quantity: "Sketch Quantity",
             color_quantity: "Colored Sketch Quantity",
             request_text: "Request",
