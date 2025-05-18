@@ -19,7 +19,7 @@ function getTagClass(tag: string) {
 const priceState = (cardData.isDisabled || commState.isClosed)
   ? "n/a"
   : "€" + cardData.price.toFixed(0);
-const configButtonText = (cardData.isDisabled || commState.isClosed) ? "Ha. nerd." : "Configure";
+const configButtonText = (cardData.isDisabled || commState.isClosed) ? "Take a look anyway" : "Configure";
 
 // Group configData by category
 function groupByCategory(
