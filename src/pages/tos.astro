@@ -1,23 +1,138 @@
 ---
-import Home from "../layouts/default.astro";
-import GhostSpacer from "../components/sections/GhostSpacer.astro";
-import Hero from "../components/sections/Hero.astro";
-import MainMenu from "../components/sections/MainMenu.astro";
+import Markdown from "../layouts/Markdown.astro";
 //import ConfigModal from "../components/configurator.astro";
 import ImageZoom from "../components/imageZoom.astro";
 import PersistentWindow from "../components/persistentWindow.astro";
+import QuirkyLoad from "../components/quirkyLoad.astro";
+import TOS from "../components/sections/TOSfile.mdx";
 
 import "../styles/root.scss";
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Home>
-  <PersistentWindow />
+<Markdown title="TOS" description="Potto's commission Terms of Service">
+  <QuirkyLoad />
+  <PersistentWindow ignoreScrollCheck />
   <ImageZoom />
-</Home>
+  <div class="mdCont">
+    <TOS />
+  </div>
+</Markdown>
 
-<script>
-  //document.documentElement.setAttribute('data-theme', 'light');
-</script>
+<style is:inline lang="scss">
+  .logoHead {
+    --logoSize: 300px;
+    width: var(--logoSize);
+    height: var(--logoSize);
+    margin-top: 2em;
+    .logoBase {
+      fill: var(--fore);
+    }
+    .logoText {
+      fill: var(--base);
+    }
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    display: flex;
+    gap: 0.5em;
+    margin-bottom: 0em;
+  }
+  h1,
+  h2 {
+    font-family: var(--display);
+  }
+  h1 {
+    font-weight: 900;
+    margin-top: 2em;
+  }
+  h2 {
+    font-weight: 700;
+    color: var(--accent);
+  }
+  h3,
+  h5 {
+    font-family: var(--content);
+    color: var(--accent);
+  }
+  h5 {
+    font-weight: 400;
+  }
+  h6 {
+    margin: 0;
+  }
+  img {
+    max-width: 100%;
+    border-radius: 20px;
+    border: 2px solid var(--fore);
+    &[alt="headLogo"] {
+      border: none;
+      border-radius: 0px;
+    }
+    &[alt$="-compro"] {
+      max-width: 40px;
+      max-height: 40px;
+      border-radius: 10px;
+      border: none;
+    }
+  }
+  a {
+    color: var(--accent);
+
+    transition: color 0.2s var(--sleek);
+
+    &:link {
+      text-decoration: underline wavy;
+    }
+    &:visited {
+      text-decoration: underline;
+
+      color: var(--prim);
+    }
+    &:hover {
+      color: var(--fore);
+    }
+  }
+
+  code {
+    font-family: var(--contentSecondary);
+    background: var(--baseSecondary);
+    padding: 0em 0.1em;
+    border: 2px solid var(--foreSecondary);
+    border-radius: 10px;
+  }
+  pre {
+    border-radius: 20px;
+    padding: 1em;
+    background: var(--baseSecondary) !important;
+    font-size: 1rem;
+    transition: all 0.2s var(--sleek);
+    code {
+      padding: 0;
+      border: none;
+      border-radius: 0;
+    }
+  }
+  blockquote {
+    background: var(--primSecondary);
+    border-left: 4px solid var(--prim);
+    padding: 0.5em;
+    padding-left: 1em;
+    border-radius: 0 20px 20px 0;
+    margin-left: 0.5em;
+    & p {
+      margin: 0;
+    }
+  }
+
+  li {
+    margin-bottom: 1em;
+  }
+</style>

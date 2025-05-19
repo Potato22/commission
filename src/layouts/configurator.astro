@@ -12,7 +12,7 @@ import pottoCeramic from "../assets/Pottoceramic.png";
 
     <!-- OG -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://pottoart.uk/" />
+    <meta property="og:url" content="https://commission.pottoart.uk/" />
     <meta property="og:title" content="Potto" />
     <meta property="og:description" content="As weird as a name can get." />
     <meta
@@ -22,7 +22,7 @@ import pottoCeramic from "../assets/Pottoceramic.png";
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://pottoart.uk/" />
+    <meta property="twitter:url" content="https://commission.pottoart.uk/" />
     <meta property="twitter:title" content="Potto" />
     <meta
       property="twitter:description"
@@ -46,20 +46,21 @@ import pottoCeramic from "../assets/Pottoceramic.png";
     <ClientRouter />
   </head>
   <body>
-
     <div class="configuratorCanvas">
-        <slot />
+      <slot />
     </div>
-
   </body>
 </html>
 
 <style>
-.configuratorCanvas {
-  background: var(--base);
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-  max-width: 100vw;
-}
+  a {
+    text-decoration: none;
+  }
+  .configuratorCanvas {
+    background: var(--base);
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    max-width: 100vw;
+  }
 </style>

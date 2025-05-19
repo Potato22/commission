@@ -1,4 +1,11 @@
 ---
+interface Props {
+  title: string,
+  description: string,
+}
+const { title, description } = Astro.props;
+
+
 import { ClientRouter } from "astro:transitions";
 import pottoCeramic from "../assets/Pottoceramic.png";
 ---
@@ -12,9 +19,9 @@ import pottoCeramic from "../assets/Pottoceramic.png";
 
     <!-- OG -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://commission.pottoart.uk/" />
+    <meta property="og:url" content="https://commission.pottoart.uk/tos" />
     <meta property="og:title" content="Potto Comm's" />
-    <meta property="og:description" content="interactive commission page" />
+    <meta property="og:description" content={description} />
     <meta
       property="og:image"
       content="https://raw.githubusercontent.com/Potato22/commission/master/demo.jpg"
@@ -22,11 +29,11 @@ import pottoCeramic from "../assets/Pottoceramic.png";
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://commission.pottoart.uk/" />
-    <meta property="twitter:title" content="Potto" />
+    <meta property="twitter:url" content="https://commission.pottoart.uk/tos" />
+    <meta property="twitter:title" content={title} />
     <meta
       property="twitter:description"
-      content="interactive commission page"
+      content={description}
     />
     <meta
       property="twitter:image"
@@ -35,13 +42,13 @@ import pottoCeramic from "../assets/Pottoceramic.png";
 
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back,arrow_circle_right,arrow_downward,close,dark_mode,light_mode"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=dark_mode,light_mode"
     />
-    <title>Potto Commissions</title>
+    <title>{title}</title>
     <ClientRouter />
   </head>
   <body>
-    <div>
+    <div class="mdCanvas">
       <slot />
     </div>
 
@@ -83,9 +90,6 @@ document.addEventListener("astro:after-swap", () => {
 // does not work
 </script> -->
 <style>
-  a {
-    text-decoration: none;
-  }
   .endOfPage {
     display: flex;
     justify-content: center;

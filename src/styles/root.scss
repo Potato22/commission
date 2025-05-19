@@ -1,3 +1,5 @@
+@use "mixins" as *;
+
 html {
   scroll-behavior: smooth;
 }
@@ -54,7 +56,7 @@ body {
   transition-timing-function: var(--sleek);
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@400..800&family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Syne:wght@400..800&family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap');
 
 :root {
   --base: #181818;
@@ -85,6 +87,7 @@ body {
   --doto: "Doto";
   --content: "Inter Tight";
   --text: "Inter";
+  --easyRead: "Lexend";
   --contentSecondary: "Ubuntu Sans Mono";
   --sleek: cubic-bezier(0.03, 0.77, 0.34, 1);
   --accel: cubic-bezier(0.72, 0.06, 0.96, 0.57);
@@ -96,6 +99,15 @@ body {
   --brightness: brightness(1.2);
   --faded: brightness(0.5);
   --inverto: invert(1);
+}
+
+[data-theme=dark] {
+
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
 }
 
 [data-theme=light] {
@@ -122,16 +134,16 @@ body {
   --inverto: invert(0);
 }
 
-a {
-  text-decoration: none !important;
-  color: initial;
-
-  &:link,
-  &:visited {
-    text-decoration: none !important;
-    color: currentColor;
-  }
-}
+//a {
+//  text-decoration: none !important;
+//  color: initial;
+//
+//  &:link,
+//  &:visited {
+//    text-decoration: none !important;
+//    color: currentColor;
+//  }
+//}
 
 hr {
   width: 100%;
@@ -176,6 +188,18 @@ hr {
 
 .holdon {
   animation: holdon .5s infinite
+}
+
+.mdCont {
+  padding: 1em 20%;
+  font-family: var(--easyRead);
+  color: var(--fore);
+  font-size: 1.2rem;
+  line-height: 2em;
+
+  @include breakpoint(tiny, mobile) {
+    padding: 1em 5%;
+  }
 }
 
 @keyframes holdon {
