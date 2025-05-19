@@ -1,85 +1,14 @@
 import Dropzone from "dropzone";
 import { navigate } from "astro:transitions/client";
 import { type CardData } from "../../data/cardData";
-import { commState, cardList } from "../../data/cardData";
-
-// Keep track of current state
-let currentCleanup: (() => void) | null = null;
-let isInitialized = false;
-
-// Self-detect and initialize based on the page
-function initializeIfNeeded() {
-    // Clean up previous initialization if any
-    if (currentCleanup) {
-        currentCleanup();
-        currentCleanup = null;
-        isInitialized = false;
-    }
-
-    // Check if we're on a config page
-    const currentPath = window.location.pathname;
-    if (!currentPath.includes('/config/')) return;
-
-    // Find the config wrapper
-    const configWrapper = document.getElementById("configWrap");
-    if (!configWrapper) return;
-
-    // Get the config ID
-    const lookupConfigId = configWrapper.dataset.configureId as keyof typeof cardList;
-    if (!lookupConfigId) return;
-
-    // Get card data
-    const cardData = cardList[lookupConfigId];
-
-    // Initialize the page
-    //console.log(`\n\n\n\n\n\n\n\ninit requested, isInit: ${isInitialized}, for: ${lookupConfigId}`);
-
-    initConfigPageLogic(cardData, lookupConfigId);
-
-    //// Set up event listeners
-    //const handleSomeEvent = () => {
-    //    // Event handling logic
-    //};
-
-    //const someElement = document.getElementById("some-element");
-    //someElement?.addEventListener("click", handleSomeEvent);
-
-    // Store cleanup function
-    currentCleanup = () => {
-        //console.log(`Shutting down.`);
-        //someElement?.removeEventListener("click", handleSomeEvent);
-        // Clean up other resources
-    };
-
-    isInitialized = true;
-}
-
-function setupListeners() {
-    if ((window as any).__configMonoScriptListenersSet) return;
-
-    document.addEventListener("astro:page-load", initializeIfNeeded);
-    document.addEventListener("astro:before-swap", () => {
-        if (currentCleanup) {
-            currentCleanup();
-            currentCleanup = null;
-            isInitialized = false;
-            console.log("shutdown")
-            //it's not really a shitdown perse, it's just more intuitive than to say "shut the fuck up stop firing the pulse again"
-        }
-    });
-
-    (window as any).__configMonoScriptListenersSet = true;
-}
-
-// Self-initialize
-setupListeners();
-
-// If someone imports this module, they don't need to do anything else
-export default {};
+import { commState } from "../../data/cardData";
+import { init } from "astro/virtual-modules/prefetch.js";
+const { BASE_URL } = import.meta.env;
 
 
-function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command?: string) {
-    console.log(`config logic started ${lookupConfigId}`)
+const initialized = new Set<string>();
+
+export default function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command?: string) {
 
     function initDz() {
         //const key = `initDz-${lookupConfigId}`;
@@ -89,7 +18,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
         //destroy dropzone cus it's a crybaby
         if (Dropzone.instances.length > 0) Dropzone.instances.forEach(bz => bz.destroy());
-        //console.log('dz destroyed')
+        console.log('dz destroyed')
 
         const dzConfigFileSize: number = 19.0735;
 
@@ -451,7 +380,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             console.error("Invalid form data provided to generateSummary");
             return;
         }
-        //console.log(formData)
+        console.log(formData)
 
         //reset
         targetElement.innerHTML = "";
@@ -698,7 +627,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             }
 
             const result = await response.json();
-            //console.log("Submission successful:", result);
+            console.log("Submission successful:", result);
             return { success: true };
         } catch (err: unknown) {
             console.error("failure sending:", err);
@@ -730,7 +659,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             }
         }
         requestAnimationFrame(update);
-        //console.log(`animateNumber: ${start} -> ${end}`)
+        console.log(`animateNumber: ${start} -> ${end}`)
     }
 
     let priceAdd: number = 0;
@@ -743,7 +672,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             const newPrice = 0 + priceAdd;
             animateNumber(priceElem, lastPrice, newPrice);
             lastPrice = newPrice;
-            //console.log(`updatePrice: ${lastPrice}`)
+            console.log(`updatePrice: ${lastPrice}`)
         }
     }
 
@@ -775,7 +704,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         const dH = date.getHours();
         const dM = date.getMinutes();
         const dS = date.getSeconds();
-        //console.log(`${dH}:${dM}:${dS} recalculatePrice fired`)
+        console.log(`\n\n\n\n\n\n\n\n${dH}:${dM}:${dS} recalculatePrice fired`)
         const configForm = document.getElementById("configWindow");
         let totalAdd = 0;
 
@@ -785,9 +714,9 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
             //console.log(`GSOP called from: charDet :: ${detailConfig?.options?.map(opt => opt.optionName)}, #configWindow`)
             const characterDetailPrice = detailConfig ? getSelectedOptionPrice(detailConfig, configForm) : 0;
-            //console.log(`\n[<-] charDet:`)
-            //console.log(`   L id = ${detailConfig?.id}`)
-            //console.log(`   L price = ${characterDetailPrice}`)
+            console.log(`\n[<-] charDet:`)
+            console.log(`   L id = ${detailConfig?.id}`)
+            console.log(`   L price = ${characterDetailPrice}`)
             const characterCountConfig = cardData.configData.find(config => config.type === "characterCount");
 
             // Process each config for price calculation
@@ -796,15 +725,15 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 // This prevents double counting the base price
                 if ((config.type === "singleChoice" || config.type === "flipflop") && config.id !== "character_detail") {
                     totalAdd += getSelectedOptionPrice(config, configForm);
-                    //console.log(`GSOP called from: forEach singleChoice :: ${config?.options?.map(opt => opt.optionName)}, #configWindow`)
+                    console.log(`GSOP called from: forEach singleChoice :: ${config?.options?.map(opt => opt.optionName)}, #configWindow`)
                 }
                 else if (config.type === "quantityCounter") {
                     const input = document.getElementById(config.id) as HTMLInputElement;
                     const quantity = input && (parseInt(input.value) || 0);
-                    //console.log(`\n[@] quantityCounter:`)
-                    //console.log(`    L id = ${config.id}`)
-                    //console.log(`    L perPrice = ${config.perPrice}`)
-                    //console.log(`    L eval = ${quantity} * ${config.perPrice || 0}`)
+                    console.log(`\n[@] quantityCounter:`)
+                    console.log(`    L id = ${config.id}`)
+                    console.log(`    L perPrice = ${config.perPrice}`)
+                    console.log(`    L eval = ${quantity} * ${config.perPrice || 0}`)
                     totalAdd += quantity * (config.perPrice || 0);
                 }
             });
@@ -813,9 +742,9 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             if (characterCountConfig) {
                 const input = document.getElementById(characterCountConfig.id) as HTMLInputElement;
                 const count = input && (parseInt(input.value) || 0);
-                //console.log(`\n[@] characterCountConfig:`)
-                //console.log(`    L count = ${count}`)
-                //console.log(`    L charDetPrice = ${characterDetailPrice}`)
+                console.log(`\n[@] characterCountConfig:`)
+                console.log(`    L count = ${count}`)
+                console.log(`    L charDetPrice = ${characterDetailPrice}`)
 
                 // Always add the base character price once
                 totalAdd += characterDetailPrice;
@@ -873,10 +802,10 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             }
         }
 
-        //console.log(`\n[DEBUG] Price formula: ${debugParts.join("\n+\n")}`);
+        console.log(`\n[DEBUG] Price formula: ${debugParts.join("\n+\n")}`);
 
         priceAdd = totalAdd;
-        //console.log(`\nrecalculatePrice: ${priceAdd}`)
+        console.log(`\nrecalculatePrice: ${priceAdd}`)
         updatePrice();
     }
 
@@ -884,7 +813,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         //const key = `initPriceCalc-${lookupConfigId}`;
         //if (initialized.has(key)) return;
         const configForm = document.getElementById("configWindow");
-        //console.log(`initPriceCalc fired`)
+        console.log(`initPriceCalc fired`)
         configForm?.removeEventListener("change", recalculatePrice);
 
 
@@ -892,7 +821,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             //console.log("realtime price calc")
             configForm.addEventListener("change", recalculatePrice);
         }
-        //console.log(`[->] initPriceCalc calls RCP`)
+        console.log(`[->] initPriceCalc calls RCP`)
         recalculatePrice();
         //initialized.add(key);
     }
@@ -1227,7 +1156,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
                     // Trigger price recalculation
                     if (typeof recalculatePrice === 'function') {
-                        //console.log(`[->] QC handleValueChange calls RCP`)
+                        console.log(`[->] QC handleValueChange calls RCP`)
 
                         recalculatePrice();
                     }
@@ -1267,7 +1196,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
                 // Trigger price recalculation
                 if (typeof recalculatePrice === 'function') {
-                    //console.log(`[->] onChange calls RCP`)
+                    console.log(`[->] onChange calls RCP`)
 
                     recalculatePrice();
                 }
@@ -1328,6 +1257,13 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
     }
 
     function initList() {
+        //I give up
+        if (!(window.location.pathname.includes('/config/'))) {
+            console.log('supressed');
+            return
+        }
+
+        console.log(initialized)
         //every navigation, lmao
         initbackButton();
         setupFormValidation();
@@ -1340,10 +1276,21 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         assignRadioListeners();
         initSummaryButtons();
         initPriceCalc();
+        //only on each config
+
+        //once
+
+
+        //updatePrice();
+        //document.removeEventListener("astro:page-load", initList);
+        //console.log(`removed page-load listener`)
+
     }
 
     // rehydraters
     //document.addEventListener("DOMContentLoaded", initList);
-    initList();    //initList();
+    initList();
+    console.log(`initConfigPageLogic`)
+    //initList();
 }
 

@@ -39,7 +39,7 @@ if (Astro.props.isDisabled !== undefined) {
   // Use optional chaining and nullish coalescing.
   // If cardDataEntry exists and has isDisabled, use that value.
   // Otherwise, default to false (not disabled).
-  internalIsDisabled = cardDataEntry?.isDisabled ?? false;
+  internalIsDisabled = (cardDataEntry?.isDisabled || commState.disableInteractivity) ?? false;
 }
 
 if (images.length > 4) {

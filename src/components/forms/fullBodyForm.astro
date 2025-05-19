@@ -19,7 +19,7 @@ function getTagClass(tag: string) {
 const priceState = (cardData.isDisabled || commState.isClosed)
   ? "n/a"
   : "€" + cardData.price.toFixed(0);
-const configButtonText = (cardData.isDisabled || commState.isClosed) ? "Take a look anyway" : "Configure";
+const configButtonText = (cardData.isDisabled || commState.isClosed && !commState.disableInteractivity) ? "Take a look anyway" : "Configure";
 
 // Group configData by category
 function groupByCategory(
@@ -170,7 +170,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           <span class="startsFrom">Starts from...</span>
           <div class="price">{priceState}</div>
         </div>
-        <div class={cardData.isDisabled ? "disabled" : ""} id="startConfig">
+        <div class={cardData.isDisabled || commState.disableInteractivity ? "disabled" : ""} id="startConfig">
           {configButtonText}
           <div class="configIco material-symbols-rounded">
             arrow_circle_right
@@ -268,7 +268,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                       </div>
                       <div class="optionValue">
                         {opt.optionPrice == null || opt.optionPrice === 0
-                          ? "init"
+                          ? "-"
                           : opt.basePrice //elseif
                             ? "€" + opt.optionPrice
                             : "+€" + opt.optionPrice}
@@ -603,7 +603,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   </div>
 </div>
 
-<script>
+<!-- <script>
   import { cardList } from "../../data/cardData";
   import initConfigPageLogic from "./configMonoScript";
 
@@ -617,5 +617,11 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
     throw new Error("Missing or invalid dataset on #configWrap");
   }
 
-  initConfigPageLogic(cardData, lookupConfigId);
+  document.addEventListener("astro:page-load", () => {
+    initConfigPageLogic(cardData, lookupConfigId);
+  })
+
+</script> -->
+<script>
+  import "./configMonoScript";
 </script>

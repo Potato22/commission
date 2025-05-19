@@ -1,3 +1,24 @@
+type messageObject = {
+    isClosed: boolean;
+    disableInteractivity: boolean;
+    message?: {
+        icon: string;
+        title: string;
+        content: string;
+    }
+}
+export const commState: messageObject = {
+    isClosed: true,
+    disableInteractivity: false,
+    message: {
+        icon: "warn",
+        title: `Not Ready`,
+        content: `
+        This webpage is being finalized. But you can still look around and try out the configurator!
+        `
+    }
+};
+
 export interface CardData {
     title: string;
     description: string;
@@ -66,26 +87,6 @@ const drawQuantityGroup = {
     name: "drawQuantity",
     gMax: 5,
 };
-
-type messageObject = {
-    isClosed: boolean;
-    message?: {
-        icon: string;
-        title: string;
-        content: string;
-    }
-}
-export const commState: messageObject = {
-    isClosed: true,
-    message: {
-        icon: "warn",
-        title: `Not Ready`,
-        content: `
-        This webpage is being finalized. But you can still look around!
-        `
-    }
-};
-
 
 export const cardList: Record<string, CardData> = {
     sketchbook: {

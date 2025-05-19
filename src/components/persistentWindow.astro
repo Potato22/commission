@@ -62,16 +62,16 @@ const noHide = ignoreScrollCheck ? "true" : "false";
 
     if (currentTheme) {
       document.documentElement.setAttribute("data-theme", currentTheme);
-      console.log('fromMem "' + currentTheme + '"');
+      //console.log('fromMem "' + currentTheme + '"');
 
       if (currentTheme === "light") {
         if (toggleSwitch instanceof HTMLInputElement) {
           toggleSwitch.checked = true;
           tticcon.innerHTML = "dark_mode";
         }
-        console.log('applied "' + currentTheme + '"');
+        //console.log('applied "' + currentTheme + '"');
       } else {
-        console.log('applied "' + currentTheme + '"');
+        //console.log('applied "' + currentTheme + '"');
         tticcon.innerHTML = "light_mode";
       }
     }
@@ -90,14 +90,14 @@ const noHide = ignoreScrollCheck ? "true" : "false";
         if (target?.checked) {
           document.documentElement.setAttribute("data-theme", "light");
           localStorage.setItem("theme", "light");
-          console.log('addMem "light"');
+          //console.log('addMem "light"');
           tticcon.innerHTML = "dark_mode";
           themeSwitch?.classList.add("poked");
           resetAnimation();
         } else {
           document.documentElement.setAttribute("data-theme", "dark");
           localStorage.setItem("theme", "dark");
-          console.log('addMem "dark"');
+          //console.log('addMem "dark"');
           tticcon.innerHTML = "light_mode";
           themeSwitch?.classList.add("poked");
           resetAnimation();
