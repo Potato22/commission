@@ -13,17 +13,20 @@
 
 <style lang="scss">
   #quirkyContainer {
-    position: fixed;
-    display: grid;
-    place-items: center;
     width: 100vw;
-    height: 100vh;
+    height: 100px;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: fixed;
     z-index: 50;
-    background: rgba(var(--baseRGB), 0.8);
-    backdrop-filter: grayscale(1) blur(5px);
+    //background: rgba(var(--baseRGB), 0.8);
+    //backdrop-filter: grayscale(1) blur(5px);
     pointer-events: none;
+    background: linear-gradient(transparent, var(--base));
     display: none;
-    animation: startLoading .8s var(--sleek);
+    animation: startLoading .2s var(--sleek) forwards;
     &.loading {
         display: grid;
     }
@@ -33,7 +36,7 @@
         opacity: 0;
     }
     to {
-        overflow: 1;
+        opacity: 1;
     }
   }
 
@@ -47,11 +50,11 @@
     align-items: center;
 
     .gradOverflow {
-      width: 200px;
+      width: 300px;
       height: 10px;
       overflow: hidden;
       border-radius: 20px;
-      filter: blur(2px);
+      filter: blur(10px);
       box-shadow: 0 0 12px transparent;
     }
 
@@ -59,7 +62,7 @@
       width: 200%;
       height: 10px;
       background-position: -100% 0;
-      animation: wisp .5s infinite;
+      animation: wisp 1s infinite;
       background-repeat: no-repeat;
     }
 
@@ -76,7 +79,7 @@
   @keyframes wisp {
     0% {
       background: linear-gradient(90deg, transparent 50%, var(--accent));
-      background-position: -400px 0;
+      background-position: -600px 0;
     }
 
     50% {
@@ -85,12 +88,12 @@
     }
     50.01% {
       background: linear-gradient(90deg, var(--accent), transparent 50%);
-      background-position: 200px;
+      background-position: 300px;
     }
 
     100% {
       background: linear-gradient(90deg, var(--accent), transparent 50%);
-      background-position: -200px;
+      background-position: -300px;
     }
   }
 </style>
