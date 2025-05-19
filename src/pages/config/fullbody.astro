@@ -2,11 +2,13 @@
 import Configurator from "../../layouts/configurator.astro";
 import PersistentWindow from "../../components/persistentWindow.astro";
 import FullBodyForm from "../../components/forms/fullBodyForm.astro";
+import QuirkyLoad from "../../components/quirkyLoad.astro";
 
 import "../../styles/root.scss";
 ---
 
 <Configurator>
+  <QuirkyLoad />
   <PersistentWindow ignoreScrollCheck />
   <FullBodyForm />
 </Configurator>

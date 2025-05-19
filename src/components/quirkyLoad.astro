@@ -1,0 +1,106 @@
+---
+
+---
+
+<div id="quirkyContainer" transition:persist>
+  <div id="loadAnim">
+    <div class="gradOverflow">
+      <div id="gradbar"></div>
+    </div>
+    <!-- <div id="loadStatString">loading nothing..?</div> -->
+  </div>
+</div>
+
+<style lang="scss">
+  #quirkyContainer {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    width: 100vw;
+    height: 100vh;
+    z-index: 50;
+    background: rgba(var(--baseRGB), 0.8);
+    backdrop-filter: grayscale(1) blur(5px);
+    pointer-events: none;
+    display: none;
+    animation: startLoading .2s var(--sleek);
+    &.loading {
+        display: grid;
+    }
+  }
+  @keyframes startLoading {
+    from {
+        opacity: 0;
+    }
+    to {
+        overflow: 1;
+    }
+  }
+
+
+  #loadAnim {
+    position: relative;
+    z-index: 2;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .gradOverflow {
+      width: 200px;
+      height: 10px;
+      overflow: hidden;
+      border-radius: 20px;
+      filter: blur(2px);
+      box-shadow: 0 0 12px transparent;
+    }
+
+    #gradbar {
+      width: 200%;
+      height: 10px;
+      background-position: -100% 0;
+      animation: wisp .5s infinite;
+      background-repeat: no-repeat;
+    }
+
+    //#loadStatString {
+    //  position: absolute;
+    //  width: 300px;
+    //  top: 15px;
+    //  font-family: var(--doto);
+    //  font-weight: 900;
+    //  text-align: center;
+    //  color: var(--fore);
+    //}
+  }
+  @keyframes wisp {
+    0% {
+      background: linear-gradient(90deg, transparent 50%, var(--accent));
+      background-position: -400px 0;
+    }
+
+    50% {
+      background: linear-gradient(90deg, transparent 50%, var(--accent));
+      background-position: 0px;
+    }
+    50.01% {
+      background: linear-gradient(90deg, var(--accent), transparent 50%);
+      background-position: 200px;
+    }
+
+    100% {
+      background: linear-gradient(90deg, var(--accent), transparent 50%);
+      background-position: -200px;
+    }
+  }
+</style>
+
+<script>
+    const loaderAnim = document.getElementById("quirkyContainer") as HTMLElement;
+  document.addEventListener("astro:before-preparation", () => {
+    loaderAnim.classList.add("loading");
+  });
+  document.addEventListener("astro:after-preparation", () => {
+    loaderAnim.classList.remove("loading");
+  });
+</script>
