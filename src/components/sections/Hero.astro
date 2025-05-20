@@ -1,21 +1,12 @@
 ---
 import { commState } from "../../data/cardData";
 
-const { BASE_URL } = import.meta.env;
-
-// Helper function for path normalization inside this file
-function getImagePath(path: string): string {
-  // Remove leading slash if present
-  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-  return `${BASE_URL}${cleanPath}`;
-  return `${BASE_URL}/${cleanPath}`; //for githubPages
-}
 const heroImages = [
-  { url: getImagePath("imgs/warm_snow.jpg"), pos: "50% 20%" },
-  { url: getImagePath("imgs/old_station.jpg"), pos: "center" },
-  { url: getImagePath("imgs/just.jpg"), pos: "50% 25%" },
-  { url: getImagePath("imgs/prod_sb.jpg"), pos: "center" },
-  { url: getImagePath("imgs/trainstation.jpg"), pos: "center" },
+  { url: "/imgs/warm_snow.jpg", pos: "50% 20%" },
+  { url: "/imgs/old_station.jpg", pos: "center" },
+  { url: "/imgs/just.jpg", pos: "50% 25%" },
+  { url: "/imgs/prod_sb.jpg", pos: "center" },
+  { url: "/imgs/trainstation.jpg", pos: "center" },
 ];
 // MAX 5
 ---

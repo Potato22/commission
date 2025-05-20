@@ -760,6 +760,11 @@
     font-weight: 700;
     transition: all 0.2s var(--sleek);
 
+    &.disabled {
+        filter: grayscale(1);
+        pointer-events: none;
+    }
+
     @include breakpoint(tiny, mobile, tablet) {
         padding: 1em 5em;
 
@@ -1008,7 +1013,11 @@
         gap: 1em;
     }
 
-    &>* {
+    #summary-noTos {
+        display: none;
+    }
+
+    &>div {
         position: relative;
         border: 4px solid transparent;
         /* Inner transparent border */
@@ -1025,6 +1034,7 @@
         user-select: none;
         cursor: pointer;
         box-shadow: 0 0 0 2px transparent inset;
+        min-width: 170px;
 
         &::before {
             content: "";
@@ -1034,7 +1044,7 @@
             border-radius: 99px;
             pointer-events: none;
             z-index: 2;
-            transition: all 0.2s var(--accel);
+            transition: all 0.2s var(--sleek);
             transform: scale(1.1);
             opacity: 0;
         }

@@ -78,12 +78,13 @@
 
     .dz-message {
       opacity: 0.5;
-      animation: holdon .4s infinite;
+      animation: bouncy .4s infinite;
     }
   }
 
   .dz-message {
     text-align: center;
+    pointer-events: none;
     //margin: 3em 0;
 
     .dz-button {

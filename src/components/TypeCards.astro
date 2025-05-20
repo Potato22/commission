@@ -39,7 +39,8 @@ if (Astro.props.isDisabled !== undefined) {
   // Use optional chaining and nullish coalescing.
   // If cardDataEntry exists and has isDisabled, use that value.
   // Otherwise, default to false (not disabled).
-  internalIsDisabled = (cardDataEntry?.isDisabled || commState.disableInteractivity) ?? false;
+  internalIsDisabled =
+    (cardDataEntry?.isDisabled || commState.disableInteractivity) ?? false;
 }
 
 if (images.length > 4) {
@@ -154,6 +155,8 @@ function getTagClass(tag: string) {
 
 <script>
   import { navigate } from "astro:transitions/client";
+  import { isTOSAccepted } from "./tosLogic"
+  import { commState } from "../data/cardData";
 
   // Handle configure button click
   function initNavigate() {
@@ -161,14 +164,14 @@ function getTagClass(tag: string) {
       if (card instanceof HTMLElement) {
         card.addEventListener("click", () => {
           const cardIdPage = card.id;
-          //alert(`Configure ${cardIdPage}`);
-          //good ol alert debugger
-          //navigate(`/config/${cardIdPage}`, {
-          //  state: {
-          //    // Add any other state you want to pass
-          //  },
-          //});
-          navigate(`config/${cardIdPage}`);
+
+          //if (isTOSAccepted() && commState.isClosed) {
+          if (isTOSAccepted()) {
+            navigate(`config/${cardIdPage}`);
+          } else {
+            //navigate(`tos`);
+            navigate(`config/${cardIdPage}`);
+          }
         });
       }
     });

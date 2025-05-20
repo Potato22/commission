@@ -1,3 +1,5 @@
+export const dev:boolean = true;
+
 type messageObject = {
     isClosed: boolean;
     disableInteractivity: boolean;
@@ -8,7 +10,7 @@ type messageObject = {
     }
 }
 export const commState: messageObject = {
-    isClosed: true,
+    isClosed: false,
     disableInteractivity: false,
     message: {
         icon: "warn",

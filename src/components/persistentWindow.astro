@@ -8,6 +8,9 @@ const noHide = ignoreScrollCheck ? "true" : "false";
 
 <!-- <div id="persistentWindow" data-ignore-scroll-check={noHide} transition:persist> -->
 <div id="persistentWindow" data-ignore-scroll-check={noHide}>
+  <a class="tos" href="/tos">
+    <div class="tosButton">TOS</div>
+  </a>
   <div class="horizontalAlign">
     <div id="themeSwitch" class="" title="Change to Light Mode">
       <label class="checkboxtrig">
@@ -15,34 +18,49 @@ const noHide = ignoreScrollCheck ? "true" : "false";
         <div class="material-symbols-rounded" id="theme-icon">light_mode</div>
       </label>
     </div>
-    <a href="tos" class="persistentButtons">
+    <!-- <a href="/tos" class="persistentButtons">
       <div>
         <div class="buttonTitle">Open TOS</div>
       </div>
-    </a>
+    </a> -->
   </div>
 </div>
 
 <script>
   function initPersistentWindow() {
     const windowWidth = window.innerWidth as number;
-    const toggleSwitch: Element | null = document.getElementById("ttoggle");
+    const toggleSwitch = document.getElementById("ttoggle") as HTMLElement;
     const currentTheme: string | null = localStorage.getItem("theme");
     const tticcon = document.getElementById("theme-icon") as HTMLElement;
-    const themeSwitch: Element | null = document.getElementById("themeSwitch");
+    const themeSwitch = document.getElementById("themeSwitch") as HTMLElement;
     const persistentWindowWrap = document.getElementById(
       "persistentWindow"
     ) as HTMLElement;
+    const tosLink = document.querySelector(".tos") as HTMLElement;
+    const tosButton = document.querySelector(".tosButton") as HTMLElement;
 
-    //alert(persistentWindowWrap.dataset.ignoreScrollCheck == "false")
+    const isUrlTos = window.location.href.includes("/tos");
 
+    if (isUrlTos) {
+      tosButton?.classList.add("material-symbols-rounded");
+      tosButton.innerHTML = "home";
+      tosLink.setAttribute("href", "/");
+    } else {
+      tosButton?.classList.remove("material-symbols-rounded");
+      tosButton.innerHTML = "TOS";
+      tosLink.setAttribute("href", "/tos");
+    }
+
+    //appearance
     if (
       persistentWindowWrap.dataset.ignoreScrollCheck == "true" ||
       windowWidth < 767
       //_mixins mobile preset
     ) {
-      persistentWindowWrap.classList.add("active");
-      persistentWindowWrap.style.pointerEvents = "auto";
+      setTimeout(() => {
+        persistentWindowWrap.classList.add("active");
+        persistentWindowWrap.style.pointerEvents = "auto";
+      }, 500);
     } else {
       persistentWindowWrap.classList.remove("active");
       persistentWindowWrap.style.pointerEvents = "none";
@@ -92,6 +110,7 @@ const noHide = ignoreScrollCheck ? "true" : "false";
           localStorage.setItem("theme", "light");
           //console.log('addMem "light"');
           tticcon.innerHTML = "dark_mode";
+          themeSwitch?.classList.add("onLight");
           themeSwitch?.classList.add("poked");
           resetAnimation();
         } else {
@@ -99,6 +118,7 @@ const noHide = ignoreScrollCheck ? "true" : "false";
           localStorage.setItem("theme", "dark");
           //console.log('addMem "dark"');
           tticcon.innerHTML = "light_mode";
+          themeSwitch?.classList.remove("onLight");
           themeSwitch?.classList.add("poked");
           resetAnimation();
         }
@@ -124,10 +144,14 @@ const noHide = ignoreScrollCheck ? "true" : "false";
   @use "../../src/styles/_mixins" as *;
 
   #persistentWindow {
+    --themeSwitchSize: 60px;
+    --rounding: 20px;
     position: fixed;
     z-index: 50;
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1em;
     user-select: none;
     opacity: 0;
     transition: all 0.5s var(--sleek);
@@ -145,20 +169,47 @@ const noHide = ignoreScrollCheck ? "true" : "false";
         transform: scale(0.9) translateY(-60px);
       }
     }
+    & > input {
+      display: none;
+    }
   }
+  .tos {
+    width: var(--themeSwitchSize);
+    height: var(--themeSwitchSize);
+    border-radius: var(--rounding);
+    display: grid;
+    place-items: center;
+    font-size: 1.5em;
+    font-family: var(--doto);
+    font-weight: 900;
+    text-decoration: none;
+    color: var(--fore);
+    background: var(--base);
+    border: 2px solid var(--fore);
+    transition:
+      all 0.2s var(--accel),
+      transform 0.3s var(--bounce);
 
-  #ttogle {
-    display: none;
+    &:hover {
+      background: var(--base);
+      color: var(--base);
+      border-width: calc(var(--themeSwitchSize) / 2);
+      transition-timing-function: var(--sleek);
+      transform: scale(1.2);
+    }
+    .tosButton {
+      position: absolute;
+      &.material-symbols-rounded {
+        font-size: 1.5em;
+      }
+    }
   }
-
   #themeSwitch {
-    --size: 60px;
-    --borderwidth: 1px;
-    --rounding: 20px;
+    --borderwidth: 2px;
     position: relative;
     border: solid var(--borderwidth) var(--fore);
-    width: var(--size);
-    height: var(--size);
+    width: var(--themeSwitchSize);
+    height: var(--themeSwitchSize);
     display: grid;
     place-items: center;
     transition: all 0.5s var(--sleek);
@@ -169,6 +220,12 @@ const noHide = ignoreScrollCheck ? "true" : "false";
     background-position: right;
 
     box-shadow: rgba(36, 36, 40, 0.624) 0 0 20px;
+
+    &.onLight {
+      background: linear-gradient(90deg, #f8f4e8 50%, #242428 50%);
+      background-size: 210% 100%;
+      background-position: right;
+    }
 
     & > * {
       cursor: pointer;
@@ -233,6 +290,10 @@ const noHide = ignoreScrollCheck ? "true" : "false";
     vertical-align: middle;
     mix-blend-mode: exclusion;
     font-size: 2rem;
+
+    &.onLight {
+      color: black;
+    }
   }
   #ttoggle {
     display: none;

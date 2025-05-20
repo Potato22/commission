@@ -134,16 +134,25 @@ body {
   --inverto: invert(0);
 }
 
-//a {
-//  text-decoration: none !important;
-//  color: initial;
-//
-//  &:link,
-//  &:visited {
-//    text-decoration: none !important;
-//    color: currentColor;
-//  }
-//}
+a {
+  color: var(--accent);
+
+  transition: color 0.2s var(--sleek);
+
+  &:link {
+    text-decoration: underline wavy;
+  }
+
+  &:visited {
+    text-decoration: underline;
+
+    color: var(--prim);
+  }
+
+  &:hover {
+    color: var(--fore);
+  }
+}
 
 hr {
   width: 100%;
@@ -186,10 +195,6 @@ hr {
   user-select: none;
 }
 
-.holdon {
-  animation: holdon .5s infinite
-}
-
 .mdCont {
   padding: 1em 20%;
   font-family: var(--easyRead);
@@ -202,7 +207,79 @@ hr {
   }
 }
 
-@keyframes holdon {
+.endOfPage {
+  display: flex;
+  justify-content: center;
+}
+
+.end {
+  width: 90%;
+  margin: 4em 0 2em 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1.5em;
+}
+
+.flexbox1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+}
+
+.copyright {
+  font-family: var(--display), sans-serif;
+  font-size: 0.8rem;
+  margin-bottom: 0.2em;
+  color: var(--fore);
+}
+
+.messageend {
+  font-family: var(--contentSecondary), sans-serif;
+  font-style: italic;
+  text-align: center;
+  color: var(--foreSecondary);
+  font-size: 0.8rem;
+}
+
+.socicon {
+  --size: 40px;
+  width: var(--size);
+  height: var(--size);
+  margin: 0 0.2em;
+  font-size: 32px;
+  background: var(--fore);
+  mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+
+  &.twt {
+    mask-image: url('/socials/twt.svg');
+  }
+
+  &.bsky {
+    mask-image: url('/socials/bsky.svg');
+  }
+}
+
+.tosPageLink {
+  font-family: var(--display), sans-serif;
+  color: var(--accent) !important;
+  margin-bottom: .5em;
+
+  &:hover {
+    text-decoration: underline !important;
+  }
+}
+
+@keyframes bouncy {
   0% {
     transform: translateY(0px);
     opacity: 1;

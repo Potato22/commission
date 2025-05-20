@@ -2,6 +2,14 @@ import Dropzone from "dropzone";
 import { navigate } from "astro:transitions/client";
 import { type CardData } from "../../data/cardData";
 import { commState, cardList } from "../../data/cardData";
+import { isTOSAccepted } from "../tosLogic";
+
+function devConsole(...args: any[]): void {
+  if (import.meta.env.DEV) {
+    console.log(...args);
+  }
+}
+
 
 // Keep track of current state
 let currentCleanup: (() => void) | null = null;
@@ -32,7 +40,7 @@ function initializeIfNeeded() {
     const cardData = cardList[lookupConfigId];
 
     // Initialize the page
-    //console.log(`\n\n\n\n\n\n\n\ninit requested, isInit: ${isInitialized}, for: ${lookupConfigId}`);
+    //devConsole(`\n\n\n\n\n\n\n\ninit requested, isInit: ${isInitialized}, for: ${lookupConfigId}`);
 
     initConfigPageLogic(cardData, lookupConfigId);
 
@@ -46,7 +54,7 @@ function initializeIfNeeded() {
 
     // Store cleanup function
     currentCleanup = () => {
-        //console.log(`Shutting down.`);
+        //devConsole(`Shutting down.`);
         //someElement?.removeEventListener("click", handleSomeEvent);
         // Clean up other resources
     };
@@ -63,7 +71,7 @@ function setupListeners() {
             currentCleanup();
             currentCleanup = null;
             isInitialized = false;
-            console.log("shutdown")
+            devConsole("shutdown")
             //it's not really a shitdown perse, it's just more intuitive than to say "shut the fuck up stop firing the pulse again"
         }
     });
@@ -79,17 +87,17 @@ export default {};
 
 
 function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command?: string) {
-    console.log(`config logic started ${lookupConfigId}`)
+    devConsole(`config logic started ${lookupConfigId}`)
 
     function initDz() {
         //const key = `initDz-${lookupConfigId}`;
         //if (initialized.has(key)) return;
 
-        //console.log('initDz fired')
+        //devConsole('initDz fired')
 
         //destroy dropzone cus it's a crybaby
         if (Dropzone.instances.length > 0) Dropzone.instances.forEach(bz => bz.destroy());
-        //console.log('dz destroyed')
+        //devConsole('dz destroyed')
 
         const dzConfigFileSize: number = 19.0735;
 
@@ -170,7 +178,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
     }
 
     function updateConditionalOptions() {
-        //console.log('updateConditionalOptions fired')
+        //devConsole('updateConditionalOptions fired')
         //searcha all
         document.querySelectorAll(".conditionalOpt").forEach((elem) => {
             const elAsHTML = elem as HTMLElement;
@@ -205,7 +213,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
     updateConditionalOptions();
 
     function setupFormValidation() {
-        //console.log(`setupFormValidation fired`)
+        //devConsole(`setupFormValidation fired`)
 
         const configForm = document.getElementById(
             "configWindow"
@@ -418,16 +426,17 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         const configForm = document.getElementById("configWindow") as HTMLFormElement;
         const proceedBtn = document.getElementById("proceedBtn") as HTMLButtonElement;
 
+        const skipCheck = true && import.meta.env.DEV;
+
         if (!(configForm && proceedBtn)) {
             return
         }
         // FORM PACKAGING
 
-
         function pseudoSubmit(event: Event) {
             const { validate } = setupFormValidation();
             const result = validate(event);
-            if (!result.isValid) {
+            if (!result.isValid && !skipCheck) {
                 event.preventDefault();
                 return;
             }
@@ -436,6 +445,10 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             const { data } = collector(configForm);
 
             summaryDisplayControl("open", data);
+        }
+
+        if (skipCheck) {
+            devConsole("%c" + "[DEV] Validation is being skipped.", "color: red; font-size: 2rem; font-weight: bold;");
         }
 
         proceedBtn.addEventListener("click", pseudoSubmit);
@@ -451,7 +464,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             console.error("Invalid form data provided to generateSummary");
             return;
         }
-        //console.log(formData)
+        //devConsole(formData)
 
         //reset
         targetElement.innerHTML = "";
@@ -536,6 +549,9 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
         const summaryWindow = document.getElementById("configSummary") as HTMLElement;
         const summaryButtons = document.getElementById("confirmButtons") as HTMLElement;
+        const summaryGoBack = document.getElementById('summary-cancelConfirm') as HTMLElement;
+        const summaryProceedButton = document.getElementById('summary-proceed') as HTMLElement;
+        const summaryNoTos = document.getElementById('summary-noTos') as HTMLElement;
         const summaryHeading = document.getElementById("confirmText") as HTMLElement;
         const summaryGrid = document.getElementById("pickedConfigGrid") as HTMLElement;
         const loadAnim = document.getElementById("loadAnim") as HTMLElement;
@@ -547,6 +563,10 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
         if (!configForm) {
             return
+        }
+
+        function letsRead() {
+            summaryNoTos.addEventListener("click", () => navigate("/tos"));
         }
 
         // Only get formData if we need it
@@ -626,6 +646,33 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                     });
                 }, 300);
                 break;
+            case "noTos":
+                summaryHeading.style.opacity = "0";
+                summaryButtons.style.opacity = "0";
+                summaryButtons.style.pointerEvents = "none"
+                summaryGrid.style.opacity = "0";
+                mobileScrollInd.style.opacity = "0"
+                summaryButtons.style.transform = "translateY(2em)";
+                setTimeout(() => {
+                    loadBar.classList.add("loadDemo");
+                    loadAnim.style.display = "flex";
+                    summaryButtons.style.transform = "translateY(0em)";
+
+                    setTimeout(() => {
+                        letsRead();
+                        summaryHeading.innerHTML = "Let's read the TOS first..."
+                        summaryHeading.style.opacity = "1";
+                        summaryButtons.style.opacity = "1";
+                        summaryButtons.style.pointerEvents = "all"
+                        mobileScrollInd.style.display = "none";
+                        summaryGrid.style.display = "none";
+                        loadAnim.style.opacity = "0";
+                        summaryGoBack.innerHTML = "Hold on"
+                        summaryProceedButton.style.display = "none"
+                        summaryNoTos.style.display = "block"
+                    }, 2000);
+                }, 300);
+                break;
             case "reset":
                 loadAnim.style.display = "none";
                 summaryHeading.style.opacity = "1";
@@ -663,7 +710,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             summaryDisplayControl("close", {})
         );
         (oldIAmSure as HTMLElement).addEventListener("click", () =>
-            summaryDisplayControl("proceed", {})
+            summaryDisplayControl(isTOSAccepted() ? "proceed" : "noTos", {})
         );
         //initialized.add(key);
     }
@@ -676,16 +723,31 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         formData: FormData | null
     ): Promise<SubmissionResult> {
 
-        //precaution
-        const WORKER_URL = (cardData.isDisabled || commState.isClosed) ? "demo" : "https://pottocomm-collector.pottoart.workers.dev/";
-        //const WORKER_URL = "https://no.pottoart.workers.dev/"; //disable for now
+        const isIdeal = isTOSAccepted() && !(cardData.isDisabled || commState.isClosed)
 
         if (cardData.isDisabled || commState.isClosed) {
             return {
                 success: false,
                 error: "It's closed, but thanks for trying the website!",
             };
+        } else if (!isTOSAccepted()) {
+            return {
+                success: false,
+                error: "Something tells me you're not supposed to be here, yet.",
+            };
         }
+
+        const workerToggle = () => {
+            if (isIdeal) {
+                return "https://pottocomm-collector.pottoart.workers.dev/"
+            } else {
+                return "demo"
+            }
+        }
+
+        //precaution
+        const WORKER_URL: URL | string = workerToggle()
+        //const WORKER_URL = "https://no.pottoart.workers.dev/"; //disable for now
 
         try {
             const response = await fetch(WORKER_URL, {
@@ -698,7 +760,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             }
 
             const result = await response.json();
-            //console.log("Submission successful:", result);
+            //devConsole("Submission successful:", result);
             return { success: true };
         } catch (err: unknown) {
             console.error("failure sending:", err);
@@ -730,7 +792,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             }
         }
         requestAnimationFrame(update);
-        //console.log(`animateNumber: ${start} -> ${end}`)
+        //devConsole(`animateNumber: ${start} -> ${end}`)
     }
 
     let priceAdd: number = 0;
@@ -743,7 +805,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             const newPrice = 0 + priceAdd;
             animateNumber(priceElem, lastPrice, newPrice);
             lastPrice = newPrice;
-            //console.log(`updatePrice: ${lastPrice}`)
+            //devConsole(`updatePrice: ${lastPrice}`)
         }
     }
 
@@ -763,19 +825,12 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         return found ? found.optionPrice : 0;
     }
 
-    //setInterval(() => {
-    //    console.log('characterCountConfig ---')
-    //    console.log(cardData.configData.find(config => config.type === "characterCount"))
-    //    console.log('quantityCounterConfigs ---')
-    //    console.log(cardData.configData.filter(config => config.type === "quantityCounter"))
-    //}, 1000);
-
     function recalculatePrice() {
         const date = new Date();
         const dH = date.getHours();
         const dM = date.getMinutes();
         const dS = date.getSeconds();
-        //console.log(`${dH}:${dM}:${dS} recalculatePrice fired`)
+        //devConsole(`${dH}:${dM}:${dS} recalculatePrice fired`)
         const configForm = document.getElementById("configWindow");
         let totalAdd = 0;
 
@@ -783,11 +838,11 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             // Get all configs first
             const detailConfig = cardData.configData.find(config => config.id === "character_detail");
 
-            //console.log(`GSOP called from: charDet :: ${detailConfig?.options?.map(opt => opt.optionName)}, #configWindow`)
+            //devConsole(`GSOP called from: charDet :: ${detailConfig?.options?.map(opt => opt.optionName)}, #configWindow`)
             const characterDetailPrice = detailConfig ? getSelectedOptionPrice(detailConfig, configForm) : 0;
-            //console.log(`\n[<-] charDet:`)
-            //console.log(`   L id = ${detailConfig?.id}`)
-            //console.log(`   L price = ${characterDetailPrice}`)
+            //devConsole(`\n[<-] charDet:`)
+            //devConsole(`   L id = ${detailConfig?.id}`)
+            //devConsole(`   L price = ${characterDetailPrice}`)
             const characterCountConfig = cardData.configData.find(config => config.type === "characterCount");
 
             // Process each config for price calculation
@@ -796,15 +851,15 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 // This prevents double counting the base price
                 if ((config.type === "singleChoice" || config.type === "flipflop") && config.id !== "character_detail") {
                     totalAdd += getSelectedOptionPrice(config, configForm);
-                    //console.log(`GSOP called from: forEach singleChoice :: ${config?.options?.map(opt => opt.optionName)}, #configWindow`)
+                    //devConsole(`GSOP called from: forEach singleChoice :: ${config?.options?.map(opt => opt.optionName)}, #configWindow`)
                 }
                 else if (config.type === "quantityCounter") {
                     const input = document.getElementById(config.id) as HTMLInputElement;
                     const quantity = input && (parseInt(input.value) || 0);
-                    //console.log(`\n[@] quantityCounter:`)
-                    //console.log(`    L id = ${config.id}`)
-                    //console.log(`    L perPrice = ${config.perPrice}`)
-                    //console.log(`    L eval = ${quantity} * ${config.perPrice || 0}`)
+                    //devConsole(`\n[@] quantityCounter:`)
+                    //devConsole(`    L id = ${config.id}`)
+                    //devConsole(`    L perPrice = ${config.perPrice}`)
+                    //devConsole(`    L eval = ${quantity} * ${config.perPrice || 0}`)
                     totalAdd += quantity * (config.perPrice || 0);
                 }
             });
@@ -813,9 +868,9 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             if (characterCountConfig) {
                 const input = document.getElementById(characterCountConfig.id) as HTMLInputElement;
                 const count = input && (parseInt(input.value) || 0);
-                //console.log(`\n[@] characterCountConfig:`)
-                //console.log(`    L count = ${count}`)
-                //console.log(`    L charDetPrice = ${characterDetailPrice}`)
+                //devConsole(`\n[@] characterCountConfig:`)
+                //devConsole(`    L count = ${count}`)
+                //devConsole(`    L charDetPrice = ${characterDetailPrice}`)
 
                 // Always add the base character price once
                 totalAdd += characterDetailPrice;
@@ -873,10 +928,10 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             }
         }
 
-        //console.log(`\n[DEBUG] Price formula: ${debugParts.join("\n+\n")}`);
+        //devConsole(`\n[DEBUG] Price formula: ${debugParts.join("\n+\n")}`);
 
         priceAdd = totalAdd;
-        //console.log(`\nrecalculatePrice: ${priceAdd}`)
+        //devConsole(`\nrecalculatePrice: ${priceAdd}`)
         updatePrice();
     }
 
@@ -884,15 +939,15 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         //const key = `initPriceCalc-${lookupConfigId}`;
         //if (initialized.has(key)) return;
         const configForm = document.getElementById("configWindow");
-        //console.log(`initPriceCalc fired`)
+        //devConsole(`initPriceCalc fired`)
         configForm?.removeEventListener("change", recalculatePrice);
 
 
         if (configForm) {
-            //console.log("realtime price calc")
+            //devConsole("realtime price calc")
             configForm.addEventListener("change", recalculatePrice);
         }
-        //console.log(`[->] initPriceCalc calls RCP`)
+        //devConsole(`[->] initPriceCalc calls RCP`)
         recalculatePrice();
         //initialized.add(key);
     }
@@ -909,7 +964,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
     }
 
     function initbackButton() {
-        //console.log(`initbackButton fired`)
+        //devConsole(`initbackButton fired`)
         const backBs = document.querySelectorAll(".backB, .backBMobile");
         backBs.forEach(backElem => {
             backElem.addEventListener("click", backUtil);
@@ -1227,7 +1282,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
                     // Trigger price recalculation
                     if (typeof recalculatePrice === 'function') {
-                        //console.log(`[->] QC handleValueChange calls RCP`)
+                        //devConsole(`[->] QC handleValueChange calls RCP`)
 
                         recalculatePrice();
                     }
@@ -1267,7 +1322,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
                 // Trigger price recalculation
                 if (typeof recalculatePrice === 'function') {
-                    //console.log(`[->] onChange calls RCP`)
+                    //devConsole(`[->] onChange calls RCP`)
 
                     recalculatePrice();
                 }
@@ -1322,7 +1377,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         //if (initialized.has(key)) return;
         document.querySelectorAll('input[type="radio"]').forEach((input) => {
             input.addEventListener("change", updateConditionalOptions);
-            //console.log('eventListener on radios');
+            //devConsole('eventListener on radios');
         });
         //initialized.add(key);
     }
