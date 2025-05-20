@@ -26,7 +26,10 @@ import "../styles/md.scss";
         required
       />
       <span class="custCheckbox"></span>
-      <div class="butoneText"><i>Ignorantia legis non excusat</i>. You agreed to the TOS the moment you sent an order</div>
+      <div class="butoneText">
+        <i>Ignorantia legis non excusat</i>. You agreed to the TOS the moment
+        you sent an order
+      </div>
     </label>
 
     <div id="tosAccept">Let's go</div>
@@ -98,6 +101,12 @@ import "../styles/md.scss";
     flex-direction: column;
     align-items: center;
     color: var(--fore);
+    padding: 2em 20%;
+    padding-bottom: 0;
+    @include breakpoint(tiny, mobile) {
+      padding: 0 5%;
+      padding-bottom: 0;
+    }
   }
   #isReadLabel {
     display: flex;
@@ -133,11 +142,17 @@ import "../styles/md.scss";
     position: relative;
     height: var(--size);
     width: var(--size);
+    min-height: var(--size);
+    min-width: var(--size);
     border-radius: 5px;
     margin-right: 0.5em;
     border: 2px solid var(--prim);
     transition: all 0.2s var(--sleek);
     background: transparent;
+
+    @include breakpoint(tiny, mobile) {
+      margin-right: 1em;
+    }
 
     &::after {
       content: "";
