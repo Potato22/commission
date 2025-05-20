@@ -10,7 +10,7 @@ type messageObject = {
     }
 }
 export const commState: messageObject = {
-    isClosed: false,
+    isClosed: true,
     disableInteractivity: false,
     message: {
         icon: "warn",
