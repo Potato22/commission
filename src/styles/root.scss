@@ -66,6 +66,7 @@ body {
   --prim: #20a5b4;
   --primSecondary: #1b525b;
   --accent: #61dfce;
+  --linkVisited: #61dfab;
   --accentSecondary: rgba(39, 189, 206, 0.02);
   --viscueDisabled: #3f3f3f65;
 
@@ -146,7 +147,7 @@ a {
   &:visited {
     text-decoration: underline;
 
-    color: var(--prim);
+    color: var(--linkVisited);
   }
 
   &:hover {
