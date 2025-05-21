@@ -565,13 +565,14 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
   <div id="confirmButtons">
     <div id="summary-cancelConfirm">Go back</div>
     <div id="summary-proceed">{(cardData.isDisabled || commState.isClosed) ? "What's next?" : "Yes, I'm sure."}</div>
+    <div id="summary-noTos">Ok</div>
   </div>
 
   <div id="loadAnim">
     <div class="gradOverflow">
       <div id="gradbar"></div>
     </div>
-    <div id="loadStatString">loading nothing..?</div>
+    <div id="loadStatString">...</div>
   </div>
 </div>
 

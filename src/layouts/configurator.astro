@@ -2,6 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import pottoCeramic from "../assets/Pottoceramic.png";
 import PersistentWindow from "../components/persistentWindow.astro";
+import QuirkyLoad from "../components/quirkyLoad.astro";
 ---
 
 <!doctype html>
@@ -48,6 +49,7 @@ import PersistentWindow from "../components/persistentWindow.astro";
   </head>
   <body>
     <PersistentWindow ignoreScrollCheck />
+      <QuirkyLoad />
     <div class="configuratorCanvas">
       <slot />
     </div>

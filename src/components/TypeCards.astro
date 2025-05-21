@@ -155,8 +155,9 @@ function getTagClass(tag: string) {
 
 <script>
   import { navigate } from "astro:transitions/client";
-  import { isTOSAccepted } from "./tosLogic"
+  import { isTOSAccepted } from "./tosLogic";
   import { commState } from "../data/cardData";
+  import { screenPrompt, promptStoreTarget } from "./screenPrompt";
 
   // Handle configure button click
   function initNavigate() {
@@ -164,12 +165,14 @@ function getTagClass(tag: string) {
       if (card instanceof HTMLElement) {
         card.addEventListener("click", () => {
           const cardIdPage = card.id;
+          const tosAccepted = isTOSAccepted();
+          const commOpen = !commState.isClosed;
 
-          //if (isTOSAccepted() && commState.isClosed) {
-          if (isTOSAccepted()) {
-            navigate(`config/${cardIdPage}`);
+          if (!tosAccepted && commOpen) {
+            promptStoreTarget(`config/${cardIdPage}`)
+            screenPrompt("noTos");
+            return
           } else {
-            //navigate(`tos`);
             navigate(`config/${cardIdPage}`);
           }
         });

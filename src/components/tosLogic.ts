@@ -1,13 +1,24 @@
-const ONE_DAY: number = 864e5;
-const TOS_EXPIRY: number = 6048e5;
+const DAY: number = 864e5;
+const WEEK: number = 6048e5;
 
 export function isTOSAccepted(): boolean {
     const t = localStorage.getItem("potto.dev-LSLOGIC.TAA");
-    return t ? Date.now() - new Date(t).getTime() <= TOS_EXPIRY : false;
+    if (!t) return false;
+
+    const [timestamp, durationStr] = t.split("_d");
+    const duration = parseInt(durationStr, 10);
+    if (isNaN(duration)) return false;
+
+    const savedTime = new Date(timestamp).getTime();
+    return Date.now() - savedTime <= duration;
 }
 
-export function acceptTOS(): void {
-    localStorage.setItem("potto.dev-LSLOGIC.TAA", new Date().toISOString());
+export function acceptTOS(assignedDuration: "day" | "week"): void {
+    const durations = {
+        day: DAY,
+        week: WEEK,
+    };
+    localStorage.setItem("potto.dev-LSLOGIC.TAA", new Date().toISOString() + "_d" + durations[assignedDuration]);
 }
 
 // Helper function to replace jQuery's fadeOut

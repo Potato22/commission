@@ -3,7 +3,6 @@ import Markdown from "../layouts/Markdown.astro";
 //import ConfigModal from "../components/configurator.astro";
 import ImageZoom from "../components/imageZoom.astro";
 import PersistentWindow from "../components/persistentWindow.astro";
-import QuirkyLoad from "../components/quirkyLoad.astro";
 import TOS from "../components/sections/TOSfile.mdx";
 
 import "../styles/root.scss";
@@ -14,7 +13,6 @@ import "../styles/md.scss";
   title="Terms of Service"
   description="Potto's commission Terms of Service"
 >
-  <QuirkyLoad />
   <ImageZoom />
 
   <div class="mdCont">
@@ -37,6 +35,7 @@ import "../styles/md.scss";
     </label>
 
     <div id="tosAccept">Let's go</div>
+    <div id="extraMsg"></div>
   </div>
 </Markdown>
 
@@ -50,6 +49,7 @@ import "../styles/md.scss";
     const tosAccept = document.getElementById("tosAccept");
     const tosCheckBox = document.getElementById("tosCheckBox");
     const checkBoxRequirement = document.getElementById("isReadLabel");
+    const extraMsg = document.getElementById("extraMsg") as HTMLElement;
 
     if (!(tosAccept && tosCheckBox)) {
       return;
@@ -58,6 +58,11 @@ import "../styles/md.scss";
     if (checkBoxRequirement && (isTOSAccepted() || commState.isClosed)) {
       checkBoxRequirement.style.display = "none";
       tosAccept.innerHTML = "I've done enough reading";
+    }
+    
+    if (commState.isClosed) {
+      extraMsg.innerHTML =
+        "Commissions are closed for the moment, submitting will not send anything!";
     }
 
     tosAccept.addEventListener("click", tosClose);
@@ -70,9 +75,12 @@ import "../styles/md.scss";
     const checked = tosCheckBox?.checked;
     const checkBoxRequirement = document.getElementById("isReadLabel");
 
-    if (checked || commState.isClosed) {
+    if (commState.isClosed) {
+      acceptTOS("day");
       navigate("/");
-      //acceptTOS();
+    } else if (isTOSAccepted() || !isTOSAccepted() && checked && !commState.isClosed) {
+      acceptTOS("week");
+      navigate("/");
     } else {
       if (checkBoxRequirement) {
         checkBoxRequirement.style.animation = "flash .2s 3";
@@ -110,6 +118,9 @@ import "../styles/md.scss";
     @include breakpoint(tiny, mobile) {
       padding: 0 5%;
       padding-bottom: 0;
+    }
+    #extraMsg {
+      font-family: var(--content);
     }
   }
   #isReadLabel {

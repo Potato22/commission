@@ -4,10 +4,13 @@ import { type CardData } from "../../data/cardData";
 import { commState, cardList } from "../../data/cardData";
 import { isTOSAccepted } from "../tosLogic";
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const playground = commState.isClosed; //closed = true
+
 function devConsole(...args: any[]): void {
-  if (import.meta.env.DEV) {
-    console.log(...args);
-  }
+    if (import.meta.env.DEV) {
+        console.log(...args);
+    }
 }
 
 
@@ -426,7 +429,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         const configForm = document.getElementById("configWindow") as HTMLFormElement;
         const proceedBtn = document.getElementById("proceedBtn") as HTMLButtonElement;
 
-        const skipCheck = true && import.meta.env.DEV;
+        const devSkipCheck = true && import.meta.env.DEV;
+
 
         if (!(configForm && proceedBtn)) {
             return
@@ -436,9 +440,13 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         function pseudoSubmit(event: Event) {
             const { validate } = setupFormValidation();
             const result = validate(event);
-            if (!result.isValid && !skipCheck) {
-                event.preventDefault();
-                return;
+
+            //warn
+            if (!playground) {
+                if (!result.isValid && (!devSkipCheck || !playground)) {
+                    event.preventDefault();
+                    return;
+                }
             }
 
             //collect
@@ -447,7 +455,11 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             summaryDisplayControl("open", data);
         }
 
-        if (skipCheck) {
+        if (playground && !devSkipCheck) {
+            console.log("%c" + "[Commission] Commissions are closed but interactivity is enabled, validation is being skipped.", "color: cyan; font-size: 1.2rem; font-weight: bold;");
+        }
+
+        if (devSkipCheck) {
             devConsole("%c" + "[DEV] Validation is being skipped.", "color: red; font-size: 2rem; font-weight: bold;");
         }
 
@@ -541,7 +553,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         return template.content;
     }
 
-    function summaryDisplayControl(
+    async function summaryDisplayControl(
         mode: string | null,
         appendedFormData: Record<string, string | number | File | File[] | string | string[]> | null
     ) {
@@ -653,25 +665,25 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 summaryGrid.style.opacity = "0";
                 mobileScrollInd.style.opacity = "0"
                 summaryButtons.style.transform = "translateY(2em)";
-                setTimeout(() => {
-                    loadBar.classList.add("loadDemo");
-                    loadAnim.style.display = "flex";
-                    summaryButtons.style.transform = "translateY(0em)";
+                await sleep(300);
 
-                    setTimeout(() => {
-                        letsRead();
-                        summaryHeading.innerHTML = "Let's read the TOS first..."
-                        summaryHeading.style.opacity = "1";
-                        summaryButtons.style.opacity = "1";
-                        summaryButtons.style.pointerEvents = "all"
-                        mobileScrollInd.style.display = "none";
-                        summaryGrid.style.display = "none";
-                        loadAnim.style.opacity = "0";
-                        summaryGoBack.innerHTML = "Hold on"
-                        summaryProceedButton.style.display = "none"
-                        summaryNoTos.style.display = "block"
-                    }, 2000);
-                }, 300);
+                loadBar.classList.add("loadDemo");
+                loadAnim.style.display = "flex";
+                summaryButtons.style.transform = "translateY(0em)";
+                await sleep(2000)
+
+                letsRead();
+                summaryHeading.innerHTML = "Let's read the TOS first..."
+                summaryHeading.innerHTML = "Let's read the TOS first..."
+                summaryHeading.style.opacity = "1";
+                summaryButtons.style.opacity = "1";
+                summaryButtons.style.pointerEvents = "all"
+                mobileScrollInd.style.display = "none";
+                summaryGrid.style.display = "none";
+                loadAnim.style.opacity = "0";
+                summaryGoBack.innerHTML = "Hold on"
+                summaryProceedButton.style.display = "none"
+                summaryNoTos.style.display = "block"
                 break;
             case "reset":
                 loadAnim.style.display = "none";

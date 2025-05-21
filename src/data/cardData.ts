@@ -1,14 +1,5 @@
 export const dev:boolean = true;
 
-type messageObject = {
-    isClosed: boolean;
-    disableInteractivity: boolean;
-    message?: {
-        icon: string;
-        title: string;
-        content: string;
-    }
-}
 export const commState: messageObject = {
     isClosed: true,
     disableInteractivity: false,
@@ -20,6 +11,15 @@ export const commState: messageObject = {
         `
     }
 };
+type messageObject = {
+    isClosed: boolean;
+    disableInteractivity: boolean;
+    message?: {
+        icon: string;
+        title: string;
+        content: string;
+    }
+}
 
 export interface CardData {
     title: string;
