@@ -2,7 +2,7 @@
 
 ---
 
-<div id="quirkyContainer" transition:persist>
+<div id="quirkyContainer" transition:persist transition:name=`quirker`>
   <div id="quirky-loadAnim">
     <div class="quirky-gradOverflow">
       <div id="quirky-gradbar"></div>
@@ -12,6 +12,7 @@
 </div>
 
 <style lang="scss">
+  @use "../styles/mixins" as *;
   #quirkyContainer {
     width: 100vw;
     height: 100px;
@@ -21,25 +22,20 @@
     align-items: flex-end;
     position: fixed;
     z-index: 50;
-    //background: rgba(var(--baseRGB), 0.8);
-    //backdrop-filter: grayscale(1) blur(5px);
     pointer-events: none;
     background: linear-gradient(transparent, var(--base));
+    transform: translateY(20%);
+    transition: all 0.2s var(--accel);
     display: none;
-    animation: startLoading .2s var(--sleek) forwards;
+    opacity: 0;
     &.loading {
-        display: grid;
+      opacity: 1;
+      transform: translateY(20%);
+      @include breakpoint(tiny, mobile, tablet) {
+        transform: translateY(10%);
+      }
     }
   }
-  @keyframes startLoading {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-  }
-
 
   #quirky-loadAnim {
     position: relative;
@@ -100,11 +96,17 @@
 </style>
 
 <script>
-    const loaderAnim = document.getElementById("quirkyContainer") as HTMLElement;
+  const loaderAnim = document.getElementById("quirkyContainer") as HTMLElement;
   document.addEventListener("astro:before-preparation", () => {
+    setTimeout(() => {
+      loaderAnim.style.display = "flex";
+    }, 10);
     loaderAnim.classList.add("loading");
   });
-  document.addEventListener("astro:after-preparation", () => {
+  document.addEventListener("astro:page-load", () => {
     loaderAnim.classList.remove("loading");
+    setTimeout(() => {
+      loaderAnim.style.display = "";
+    }, 300);
   });
 </script>

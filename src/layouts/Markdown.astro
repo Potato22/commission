@@ -21,7 +21,7 @@ import QuirkyLoad from "../components/quirkyLoad.astro";
     <!-- OG -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://commission.pottoart.uk/tos" />
-    <meta property="og:title" content={title}/>
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta
       property="og:image"
@@ -47,8 +47,7 @@ import QuirkyLoad from "../components/quirkyLoad.astro";
   </head>
   <body>
     <PersistentWindow ignoreScrollCheck />
-      <QuirkyLoad />
-
+    <QuirkyLoad transition:persist />
 
     <div class="mdCanvas" transition:animate={slide({ duration: ".5s" })}>
       <slot />
