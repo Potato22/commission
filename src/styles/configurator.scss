@@ -853,7 +853,7 @@
     position: fixed;
     width: 100vw;
     height: 100vh;
-    overflow-y: scroll;
+    overflow: hidden;
     z-index: 20;
     backdrop-filter: grayscale(1) blur(12px);
     background: rgba(var(--baseRGB), 0.9);
@@ -864,6 +864,10 @@
     pointer-events: none;
     padding: 0 5em;
     border-radius: 50px;
+
+    @include breakpoint(tiny, mobile, tablet) {
+        overflow-y: auto;
+    }
 
     //opacity: 1;
     //transform: none;
@@ -1011,6 +1015,8 @@
         flex-direction: column-reverse;
         width: 100%;
         gap: 1em;
+        margin-bottom: 20%;
+
     }
 
     #summary-noTos {
@@ -1035,6 +1041,10 @@
         cursor: pointer;
         box-shadow: 0 0 0 2px transparent inset;
         min-width: 170px;
+
+        @include breakpoint(tiny, mobile) {
+            padding: .5em 1.5em;
+        }
 
         &::before {
             content: "";

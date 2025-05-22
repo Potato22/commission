@@ -115,6 +115,7 @@ import "../styles/md.scss";
     color: var(--fore);
     padding: 2em 20%;
     padding-bottom: 0;
+    text-align: center;
     @include breakpoint(tiny, mobile) {
       padding: 0 5%;
       padding-bottom: 0;
@@ -199,7 +200,9 @@ import "../styles/md.scss";
     transition: all 0.2s var(--sleek);
 
     @include breakpoint(tiny, mobile, tablet) {
-      padding: 1em 5em;
+      width: 100%;
+      padding: 1em 2em;
+      margin-bottom: 1em;
     }
     &:hover {
       background: transparent;
