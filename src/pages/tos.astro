@@ -43,6 +43,7 @@ import "../styles/md.scss";
   import { navigate } from "astro:transitions/client";
   import { acceptTOS, isTOSAccepted } from "../components/tosLogic";
   import { commState } from "../data/cardData";
+  import { slotCheckLS } from "../components/utils/slotCheck";
 
   function tosLogic() {
     //console.log("started tos");
@@ -55,17 +56,27 @@ import "../styles/md.scss";
       return;
     }
 
-    if (checkBoxRequirement && (isTOSAccepted() || commState.isClosed)) {
+    if (checkBoxRequirement && (isTOSAccepted() || commState.isClosed || slotCheckLS("get")?.isFull)) {
       checkBoxRequirement.style.display = "none";
       tosAccept.innerHTML = "I've done enough reading";
     }
-    
-    if (commState.isClosed) {
+
+    if (commState.isClosed || slotCheckLS("get")?.isFull) {
       extraMsg.innerHTML =
         "Commissions are closed for the moment, submitting will not send anything!";
     }
 
     tosAccept.addEventListener("click", tosClose);
+  }
+
+  function returnToLastConfigPage() {
+    const savedPage = localStorage.getItem("lastConfigPage") as string;
+    if (!savedPage) {
+      navigate("/");
+      return;
+    }
+    navigate(`config/${savedPage}`);
+    localStorage.removeItem("lastConfigPage");
   }
 
   function tosClose() {
@@ -75,12 +86,12 @@ import "../styles/md.scss";
     const checked = tosCheckBox?.checked;
     const checkBoxRequirement = document.getElementById("isReadLabel");
 
-    if (commState.isClosed) {
+    if (commState.isClosed || slotCheckLS("get")?.isFull) {
       acceptTOS("day");
-      navigate("/");
+      returnToLastConfigPage();
     } else if (isTOSAccepted() || !isTOSAccepted() && checked && !commState.isClosed) {
       acceptTOS("week");
-      navigate("/");
+      returnToLastConfigPage();
     } else {
       if (checkBoxRequirement) {
         checkBoxRequirement.style.animation = "flash .2s 3";

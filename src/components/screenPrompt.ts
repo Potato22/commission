@@ -28,11 +28,8 @@ export async function screenPrompt(mode: string) {
     const screenHeading = document.getElementById(
         "screenHeading"
     ) as HTMLElement;
-    const b0 = document.getElementById("screen-button0") as HTMLElement;
-    const b1 = document.getElementById("screen-button1") as HTMLElement;
-    const b2 = document.getElementById("screen-button2") as HTMLElement;
 
-    const sBtn = document.querySelectorAll("sBtn") as NodeListOf<HTMLElement>
+    const sBtn = document.querySelectorAll(".sBtn") as NodeListOf<HTMLElement>
 
     async function goRead() {
         screenPrompt("close")
@@ -57,28 +54,34 @@ export async function screenPrompt(mode: string) {
             screen.style.display = "none";
             break;
         case "reset":
-            sBtn.forEach((btns) => {
-                btns.style.opacity = "0"
-                btns.style.transform = "";
-                wipeListeners(btns);
-            })
+            screenButtons.style.transform = "";
             screenButtons.style.pointerEvents = "none";
+            sBtn.forEach((btns) => {
+                wipeListeners(btns);
+                btns.innerHTML = "";
+                btns.dataset.highlight = "";
+            })
             break;
         case "noTos":
             screenPrompt("initialize");
 
             await sleep(400)
 
+            const b0 = document.getElementById("screen-button0") as HTMLElement;
+            const b1 = document.getElementById("screen-button1") as HTMLElement;
+            const b2 = document.getElementById("screen-button2") as HTMLElement;
+
             screenHeading.innerHTML = "Welcome! I'd advise you to read the TOS first.";
             screenHeading.style.opacity = "1";
             screenButtons.style.opacity = "1";
             screenButtons.style.pointerEvents = "all";
-            b2.innerHTML = "OK";
-            b1.innerHTML = "Later";
             b0.innerHTML = "Close";
-            b2.addEventListener("click", goRead);
-            b1.addEventListener("click", () => promptStoreTarget(null, "go"));
+            b1.innerHTML = "Only checking in";
+            b2.innerHTML = "OK";
+            b2.dataset.highlight = "true";
             b0.addEventListener("click", () => screenPrompt("close"));
+            b1.addEventListener("click", () => promptStoreTarget(null, "go"));
+            b2.addEventListener("click", goRead);
             break;
         default:
             break;

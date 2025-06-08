@@ -25,21 +25,43 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
 <div class="mainSelections" id="menu">
   <div id="pageLabel">
     <div class="label" id="label">
-      <span>{commState.isClosed ? "" : "Comm"}</span><span id="typewriter"
-      ></span>
+      <div class="labelLoadCont">
+        <div class="labelLoad">●</div>
+        <div class="labelLoad">●</div>
+        <div class="labelLoad">●</div>
+      </div>
+
+      <span id="staticText"></span><span id="typewriter"></span>
     </div>
-    <span class="labelSecondary">
-      {commState.isClosed ? "Commission's closed!" : "Available Options"}
-    </span>
-    {commState.message && (
-      <div class="menuMessageBox" style={`background: var(--${commState.message.icon})`}>
-        <div class="mmIconBox" style={`background: url(${iconEval})`}></div>
-        <div class="mmMsgBox">
-          {commState.message.title && <div class="mmMsgTitle" set:html={commState.message.title} />}
-          <div class="mmMsg" set:html={commState.message.content} />
+    <span class="labelSecondary"></span>
+    {
+      commState.message && (
+        <div
+          class="menuMessageBox"
+          style={`background: var(--${commState.message.icon})`}
+        >
+          <div class="mmIconBox" style={`background: url(${iconEval})`} />
+          <div class="mmMsgBox">
+            {commState.message.title && (
+              <div class="mmMsgTitle" set:html={commState.message.title} />
+            )}
+            <div class="mmMsg" set:html={commState.message.content} />
+          </div>
+        </div>
+      )
+    }
+    <div class="menuMessageBox slotStat">
+      <div class="mmIconBox" style=""></div>
+      <div class="mmMsgBox">
+        <div class="mmMsgTitle">?</div>
+        <div class="mmMsg">
+          <span class="slotMsg">?</span>
+          <span class="b7">
+            <span class="sCount"> - </span>/<span class="sMax"> - </span>
+          </span>
         </div>
       </div>
-    )}
+    </div>
   </div>
 
   <Type
@@ -75,10 +97,73 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
 
 <script>
   import { commState } from "../../data/cardData";
-  function initlabelDeco() {
-    const text = commState.isClosed ? "uh oh..." : "ission";
+  import { dbSlotsPromise, slotCheckLS } from "../utils/slotCheck";
+  import { withLoaderAnim } from "../utils/quirkyLoaderAsync";
+  import info from "../../assets/icons/info.svg";
+  import warn from "../../assets/icons/warn.svg";
+  import stop from "../../assets/icons/stop.svg";
+
+  window.quirkyLoader.lock();
+  const dbSlots = await withLoaderAnim(dbSlotsPromise);
+  slotCheckLS("write", dbSlots);
+  window.quirkyLoader.unlock();
+
+  async function slotCheck() {
+    const slotStat = document.querySelector(".slotStat") as HTMLElement;
+    const icon = slotStat.querySelector(".mmIconBox") as HTMLElement;
+    const slotTitle = slotStat.querySelector(".mmMsgTitle") as HTMLElement;
+    const slotMsg = slotStat.querySelector(".slotMsg") as HTMLElement;
+
+    if (slotStat && dbSlots) {
+      slotStat.style.display = "flex";
+      const sCount = slotStat.querySelector(".sCount");
+      const sMax = slotStat.querySelector(".sMax");
+
+      if (dbSlots.isFull) {
+        slotStat.style.background = "var(--stop)";
+        icon.style.background = `url(${stop.src})`;
+        slotTitle.textContent = "Slots are out!";
+        slotMsg.textContent = "Better luck next time ...";
+      } else {
+        slotStat.style.background = "var(--info)";
+        icon.style.background = `url(${info.src})`;
+        slotTitle.textContent = "Available!";
+        slotMsg.textContent = "Remaining slots";
+      }
+
+      if (sCount && sMax) {
+        sCount.textContent = dbSlots.count.toString();
+        sMax.textContent = dbSlots.max.toString();
+      }
+    }
+  }
+
+  async function initlabelDeco() {
+    const staticText = document.getElementById("staticText");
+    if (staticText) {
+      staticText.textContent =
+        commState.isClosed || dbSlots.isFull ? "" : "Comm";
+    }
+    const text = commState.isClosed || dbSlots.isFull ? "uh oh..." : "ission";
     const typewriter = document.getElementById("typewriter");
     const label = document.getElementById("label");
+
+    const labelLoadCont = document.querySelector(
+      ".labelLoadCont"
+    ) as HTMLElement;
+    if (labelLoadCont) {
+      labelLoadCont.style.display = "none";
+    }
+
+    const labelSecondary = document.querySelector(
+      ".labelSecondary"
+    ) as HTMLElement;
+    if (labelSecondary) {
+      labelSecondary.textContent =
+        commState.isClosed || dbSlots.isFull
+          ? "Commission's closed!"
+          : "Available options";
+    }
 
     function updateTypewriter() {
       if (!label) return;
@@ -110,6 +195,7 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
     window.addEventListener("scroll", updateTypewriter);
   }
   initlabelDeco();
+  slotCheck();
 
   document.addEventListener("astro:after-swap", () => {
     initlabelDeco();
@@ -136,6 +222,9 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
     padding: 2rem 0;
   }
   .label {
+    position: relative;
+    display: flex;
+    justify-content: center;
     background: var(--fore);
     font-size: 2rem;
     font-family: var(--display);
@@ -143,9 +232,34 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
     padding: 0.2em 0.5em;
     color: var(--base);
     border-radius: 15px;
+    min-height: 51.78px;
+    min-width: 4rem;
     transition:
       background 0.2s var(--sleek),
       color 0.2s var(--sleek);
+  }
+
+  .labelLoadCont {
+    position: absolute;
+    display: flex;
+  }
+  .labelLoad {
+    animation: shakeVert 1s infinite;
+    &:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+  }
+  @keyframes dotBounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
   .labelSecondary {
     font-family: var(--doto);
@@ -156,9 +270,10 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
     transition: color 0.2s var(--sleek);
   }
   .menuMessageBox {
+    position: relative;
     color: var(--fore);
-    padding: 0.5em 1em;
-    //width: 50%;
+    padding: 0.5em .8em;
+    width: 100%;
     max-width: 100%;
     margin-top: 2em;
     font-size: 1.3rem;
@@ -172,6 +287,10 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
     }
     @include breakpoint(tablet) {
       width: 100%;
+    }
+
+    &.slotStat {
+      display: none;
     }
   }
   .mmMsgBox {

@@ -1,13 +1,12 @@
-export const dev:boolean = true;
-
+//export const devServer:boolean = import.meta.env.DEV;
 export const commState: messageObject = {
-    isClosed: true,
+    isClosed: false,
     disableInteractivity: false,
     message: {
         icon: "warn",
-        title: `Not Ready`,
+        title: `Limited slots`,
         content: `
-        This webpage is being finalized. But you can still look around and try out the configurator!
+        Commissions capacity is very limited.
         `
     }
 };

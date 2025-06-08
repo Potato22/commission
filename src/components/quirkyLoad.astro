@@ -96,7 +96,33 @@
 </style>
 
 <script>
+  declare global {
+    interface Window {
+      quirkyLoader: {
+        lock: () => void;
+        unlock: () => void;
+      };
+    }
+  }
+
+  let loaderLock = false;
   const loaderAnim = document.getElementById("quirkyContainer") as HTMLElement;
+
+  window.quirkyLoader = {
+    lock: () => {
+      loaderLock = true;
+      loaderAnim.style.display = "flex";
+      loaderAnim.classList.add("loading");
+    },
+    unlock: () => {
+      loaderLock = false;
+      loaderAnim.classList.remove("loading");
+      setTimeout(() => {
+        loaderAnim.style.display = "";
+      }, 300);
+    },
+  };
+
   document.addEventListener("astro:before-preparation", () => {
     setTimeout(() => {
       loaderAnim.style.display = "flex";
@@ -104,9 +130,12 @@
     loaderAnim.classList.add("loading");
   });
   document.addEventListener("astro:page-load", () => {
-    loaderAnim.classList.remove("loading");
-    setTimeout(() => {
-      loaderAnim.style.display = "";
-    }, 300);
+    // Only hide if not locked
+    if (!loaderLock) {
+      loaderAnim.classList.remove("loading");
+      setTimeout(() => {
+        loaderAnim.style.display = "";
+      }, 300);
+    }
   });
 </script>

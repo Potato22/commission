@@ -171,7 +171,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
           <div class="price">{priceState}</div>
         </div>
         <div class={cardData.isDisabled || commState.disableInteractivity ? "disabled" : ""} id="startConfig">
-          {configButtonText}
+          <span id="configButtonText">{configButtonText}</span>
           <div class="configIco material-symbols-rounded">
             arrow_circle_right
           </div>

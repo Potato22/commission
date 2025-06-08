@@ -3,6 +3,8 @@ import { navigate } from "astro:transitions/client";
 import { type CardData } from "../../data/cardData";
 import { commState, cardList } from "../../data/cardData";
 import { isTOSAccepted } from "../tosLogic";
+import { dbSlotsPromise, slotCheckLS } from "../utils/slotCheck";
+import { withLoaderAnim } from "../utils/quirkyLoaderAsync";
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const playground = commState.isClosed; //closed = true
@@ -13,6 +15,16 @@ function devConsole(...args: any[]): void {
     }
 }
 
+function saveLastConfigPage() {
+    //sabe last config page to localstorage
+    const configWrap = document.getElementById("configWrap");
+    if (configWrap) {
+        const lookupConfigId = configWrap.dataset.configureId;
+        if (lookupConfigId) {
+            localStorage.setItem("lastConfigPage", lookupConfigId);
+        }
+    }
+}
 
 // Keep track of current state
 let currentCleanup: (() => void) | null = null;
@@ -91,6 +103,18 @@ export default {};
 
 function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command?: string) {
     devConsole(`config logic started ${lookupConfigId}`)
+
+    async function slotIsFullCheck() {
+        const submitString = document.querySelector('.submitString') as HTMLElement;
+        const startConfig = document.getElementById('configButtonText') as HTMLElement;
+
+        const dbSlots = slotCheckLS("get");
+
+        if (submitString && dbSlots?.isFull) {
+            submitString.textContent = "End Demo"
+            startConfig.textContent = "Take a look anyway"
+        }
+    }
 
     function initDz() {
         //const key = `initDz-${lookupConfigId}`;
@@ -425,11 +449,13 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
     }
 
 
-    function initPseudoSubmit() {
+    async function initPseudoSubmit() {
         const configForm = document.getElementById("configWindow") as HTMLFormElement;
         const proceedBtn = document.getElementById("proceedBtn") as HTMLButtonElement;
 
         const devSkipCheck = true && import.meta.env.DEV;
+
+        const dbSlots = slotCheckLS("get");
 
 
         if (!(configForm && proceedBtn)) {
@@ -441,8 +467,9 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             const { validate } = setupFormValidation();
             const result = validate(event);
 
-            //warn
-            if (!playground) {
+
+
+            if (!dbSlots?.isFull && !devSkipCheck && !playground) {
                 if (!result.isValid && (!devSkipCheck || !playground)) {
                     event.preventDefault();
                     return;
@@ -455,8 +482,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             summaryDisplayControl("open", data);
         }
 
-        if (playground && !devSkipCheck) {
-            console.log("%c" + "[Commission] Commissions are closed but interactivity is enabled, validation is being skipped.", "color: cyan; font-size: 1.2rem; font-weight: bold;");
+        if (dbSlots?.isFull || (playground && !devSkipCheck)) {
+            console.log("%c" + "[i] Commissions are closed but interactivity is enabled, validation is being skipped.", "color: cyan; font-weight: bold;");
         }
 
         if (devSkipCheck) {
@@ -578,6 +605,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         }
 
         function letsRead() {
+            saveLastConfigPage();
             summaryNoTos.addEventListener("click", () => navigate("/tos"));
         }
 
@@ -621,6 +649,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 loadString.innerHTML = "Sending...";
                 loadBar.classList.remove("loadOK");
                 loadBar.classList.remove("loadErr");
+                loadBar.classList.remove("loadDemo");
 
                 setTimeout(() => {
                     loadAnim.style.display = "flex";
@@ -651,7 +680,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                             }, 2000);
                             startButton.classList.add("disabled");
                         } else {
-                            loadBar.classList.add((cardData.isDisabled || commState.isClosed) ? "loadDemo" : "loadErr");
+                            loadBar.classList.add((cardData.isDisabled || commState.isClosed) && !import.meta.env.DEV ? "loadDemo" : "loadErr");
                             loadString.innerHTML = `<span style="color: var(--accent)">fail:</span> ${error ?? "unknown error"}`;
                             setTimeout(() => summaryDisplayControl("close", {}), (cardData.isDisabled || commState.isClosed) ? 5000 : 2000);
                         }
@@ -670,7 +699,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 loadBar.classList.add("loadDemo");
                 loadAnim.style.display = "flex";
                 summaryButtons.style.transform = "translateY(0em)";
-                await sleep(2000)
+                await sleep(1000)
 
                 letsRead();
                 summaryHeading.innerHTML = "Let's read the TOS first..."
@@ -737,21 +766,28 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
         const isIdeal = isTOSAccepted() && !(cardData.isDisabled || commState.isClosed)
 
-        if (cardData.isDisabled || commState.isClosed) {
-            return {
-                success: false,
-                error: "It's closed, but thanks for trying the website!",
-            };
-        } else if (!isTOSAccepted()) {
-            return {
-                success: false,
-                error: "Something tells me you're not supposed to be here, yet.",
-            };
+        if (!isIdeal) {
+            if ((cardData.isDisabled || commState.isClosed) && !import.meta.env.DEV) {
+                return {
+                    success: false,
+                    error: "It's closed, but thanks for trying the website!",
+                };
+            } else if (!isTOSAccepted()) {
+                return {
+                    success: false,
+                    error: "Something tells me you're not supposed to be here, yet. Go read the TOS first...",
+                };
+            }
         }
+
 
         const workerToggle = () => {
             if (isIdeal) {
                 return "https://pottocomm-collector.pottoart.workers.dev/"
+                return "http://127.0.0.1:8787"
+            } else if (import.meta.env.DEV) {
+                alert('dev');
+                return "http://127.0.0.1:8787"
             } else {
                 return "demo"
             }
@@ -767,7 +803,16 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 body: formData,
             });
             if (!response.ok) {
-                const msg = `Server responded with ${response.status}`;
+                let msg = `${response.status}`;
+                try {
+                    const errorJson = await response.json();
+                    if (errorJson?.message) {
+                        msg += ` - ${errorJson.message}`;
+                    }
+                } catch {
+                    // fallback if not JSON
+                    msg += ` - ${response.statusText}`;
+                }
                 throw new Error(msg);
             }
 
@@ -1397,6 +1442,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
     function initList() {
         //every navigation, lmao
         initbackButton();
+        slotIsFullCheck();
         setupFormValidation();
         updateConditionalOptions();
         initConfigControl();
