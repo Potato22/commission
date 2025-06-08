@@ -56,7 +56,10 @@ import "../styles/md.scss";
       return;
     }
 
-    if (checkBoxRequirement && (isTOSAccepted() || commState.isClosed || slotCheckLS("get")?.isFull)) {
+    if (
+      checkBoxRequirement &&
+      (isTOSAccepted() || commState.isClosed || slotCheckLS("get")?.isFull)
+    ) {
       checkBoxRequirement.style.display = "none";
       tosAccept.innerHTML = "I've done enough reading";
     }
@@ -71,11 +74,25 @@ import "../styles/md.scss";
 
   function returnToLastConfigPage() {
     const savedPage = localStorage.getItem("lastConfigPage") as string;
+    const currentPage = window.location.href;
+
     if (!savedPage) {
       navigate("/");
+      localStorage.removeItem("lastConfigPage");
       return;
     }
-    navigate(`/config/${savedPage}`);
+
+    window.history.back();
+
+    setTimeout(() => {
+      if (window.location.href === currentPage) {
+        if (window.history.state?.index > 0) {
+          navigate(`/config/${savedPage}`, { history: "replace" });
+        } else {
+          navigate(`/config/${savedPage}`, { history: "auto" });
+        }
+      }
+    }, 400);
     localStorage.removeItem("lastConfigPage");
   }
 
@@ -89,7 +106,10 @@ import "../styles/md.scss";
     if (commState.isClosed || slotCheckLS("get")?.isFull) {
       acceptTOS("day");
       returnToLastConfigPage();
-    } else if (isTOSAccepted() || !isTOSAccepted() && checked && !commState.isClosed) {
+    } else if (
+      isTOSAccepted() ||
+      (!isTOSAccepted() && checked && !commState.isClosed)
+    ) {
       acceptTOS("week");
       returnToLastConfigPage();
     } else {

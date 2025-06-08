@@ -663,19 +663,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                                 summaryDisplayControl("close", {});
                                 configDisplayControl(false);
                                 setTimeout(() => {
-                                    const currentPage = window.location.href;
-
-                                    window.history.back();
-
-                                    setTimeout(() => {
-                                        if (window.location.href === currentPage) {
-                                            if (window.history.state?.index > 0) {
-                                                navigate('/', { history: 'replace' });
-                                            } else {
-                                                navigate('/', { history: 'auto' });
-                                            }
-                                        }
-                                    }, 100);
+                                    navigate("/");
                                 }, 500);
                             }, 2000);
                             startButton.classList.add("disabled");
