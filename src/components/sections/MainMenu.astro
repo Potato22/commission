@@ -62,7 +62,11 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
         </div>
       </div>
     </div>
+    <div class="menuMessageBox mini">
+      The prices are in <span class="b7">Euro (€)</span>
+    </div>
   </div>
+
 
   <Type
     typeTitle={cardList.sketchbook.title}
@@ -291,6 +295,19 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
 
     &.slotStat {
       display: none;
+    }
+    &.mini {
+      font-size: 1rem;
+      color: var(--fore);
+      margin-top: 1em;
+      width: 100%;
+      max-width: 100%;
+      padding: .5em 1em;
+      border: 2px solid var(--fore);
+      justify-content: center;
+      & .b7 {
+        margin-left: .2rem;
+      }
     }
   }
   .mmMsgBox {
