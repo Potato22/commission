@@ -547,6 +547,28 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                   />
                 </div>
               )}
+              {config.type === "email" && (
+                <div class="formComponent notLabel">
+                  <div class="textAreaTitle">
+                    {config.questionTitle || "Text area component"}
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
+                  <div
+                    class="textAreaDesc"
+                    set:html={config.questionDescription || ""}
+                  />
+                  <input
+                    class="formTextInput short"
+                    id={config.id}
+                    name={config.id}
+                    placeholder={config.placeholder || ""}
+                    type="email"
+                    required={config.required}
+                  />
+                </div>
+              )}
             </>
           ))
       }

@@ -38,7 +38,15 @@ export interface FormQuestion {
     category: string;
     subCategory: string;
     id: string;
-    type: "textArea" | "flipflop" | "singleChoice" | "fileUpload" | "infoCard" | "quantityCounter" | "characterCount";
+    type:
+    "textArea"
+    | "flipflop"
+    | "singleChoice"
+    | "fileUpload"
+    | "infoCard"
+    | "quantityCounter"
+    | "characterCount"
+    | "email";
     options?: {
         //singleChoice & flipflop
         optionName: string;
@@ -197,7 +205,19 @@ export const cardList: Record<string, CardData> = {
                 id: "nickname",
                 placeholder: `Potto, Mary, xXIDrinkBromineXx, etc.`,
                 required: true,
-            }
+            },
+            {
+                category: "contacts",
+                type: "email",
+                subCategory: "invEmail",
+                questionTitle: "Invoicing Email",
+                questionDescription: `
+                Put your email here to receive the invoice for your request
+                `,
+                id: "invoicing",
+                placeholder: `lorem@ipsum.dolor`,
+                required: true,
+            },
         ]
     },
     headshot: {
@@ -345,7 +365,19 @@ export const cardList: Record<string, CardData> = {
                 id: "nickname",
                 placeholder: `Potto, Mary, xXIDrinkBromineXx, etc.`,
                 required: true,
-            }
+            },
+            {
+                category: "contacts",
+                type: "email",
+                subCategory: "invEmail",
+                questionTitle: "Invoicing Email",
+                questionDescription: `
+                Put your email here to receive the invoice for your request
+                `,
+                id: "invoicing",
+                placeholder: `lorem@ipsum.dolor`,
+                required: true,
+            },
         ]
     },
     fullbody: {
@@ -560,7 +592,19 @@ export const cardList: Record<string, CardData> = {
                 id: "nickname",
                 placeholder: `Potto, Mary, xXIDrinkBromineXx, etc.`,
                 required: true,
-            }
+            },
+            {
+                category: "contacts",
+                type: "email",
+                subCategory: "invEmail",
+                questionTitle: "Invoicing Email",
+                questionDescription: `
+                Put your email here to receive the invoice for your request
+                `,
+                id: "invoicing",
+                placeholder: `lorem@ipsum.dolor`,
+                required: true,
+            },
         ],
     },
 };

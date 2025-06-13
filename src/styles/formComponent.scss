@@ -240,7 +240,10 @@
     font-family: var(--doto);
     font-weight: 900;
     font-size: 1rem;
-    border: 2px solid var(--fore)
+    border: 2px solid var(--fore);
+    &.short {
+        height: auto;
+    }
 }
 
 .formQCounter {

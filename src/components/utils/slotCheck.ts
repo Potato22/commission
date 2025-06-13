@@ -2,7 +2,7 @@ import { withLoaderAnim } from "../utils/quirkyLoaderAsync";
 
 import.meta.env.DEV
   ? console.log(
-    "%c" + "[DEV] Worker rerouted to local",
+    "%c" + "[DEV: slotCheck] Worker rerouted to local",
     "color: orange; font-weight: bold;"
   )
   : null;

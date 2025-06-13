@@ -82,6 +82,11 @@ export async function screenPrompt(mode: string) {
             b0.addEventListener("click", () => screenPrompt("close"));
             b1.addEventListener("click", () => promptStoreTarget(null, "go"));
             b2.addEventListener("click", goRead);
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    screenPrompt("close");
+                }
+            });
             break;
         default:
             break;

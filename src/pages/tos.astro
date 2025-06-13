@@ -106,10 +106,7 @@ import "../styles/md.scss";
     if (commState.isClosed || slotCheckLS("get")?.isFull) {
       acceptTOS("day");
       returnToLastConfigPage();
-    } else if (
-      isTOSAccepted() ||
-      (!isTOSAccepted() && checked && !commState.isClosed)
-    ) {
+    } else if (isTOSAccepted() || (!isTOSAccepted() && checked && !commState.isClosed)) {
       acceptTOS("week");
       returnToLastConfigPage();
     } else {

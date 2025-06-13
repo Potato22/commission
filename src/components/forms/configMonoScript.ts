@@ -9,6 +9,8 @@ import { withLoaderAnim } from "../utils/quirkyLoaderAsync";
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const playground = commState.isClosed; //closed = true
 
+import.meta.env.DEV ? console.log("%c" + "[DEV: configMonoScript] Worker rerouted to local", "color: orange; font-weight: bold;") : null;
+
 function devConsole(...args: any[]): void {
     if (import.meta.env.DEV) {
         console.log(...args);
@@ -349,6 +351,33 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                         }
                     }
                 });
+                configForm.querySelectorAll('input[type="email"][required]').forEach((elem) => {
+                    const emailInput = elem as HTMLInputElement;
+                    const value = emailInput.value.trim();
+
+                    // Let the browser do the validation, then check the result
+                    if (!value || !emailInput.validity.valid) {
+                        hasErrors = true;
+
+                        // Find the config for this email input by id
+                        const emailConfig = cardData.configData?.find(
+                            (cfg) => cfg.id === emailInput.id
+                        );
+                        const emailTitle = emailConfig?.questionTitle || emailInput.name || emailInput.id;
+
+                        const errorMsg = document.createElement("div");
+                        // You can even use the browser's built-in error message
+                        const browserMessage = emailInput.validationMessage;
+                        errorMsg.innerHTML = `<span class="b7">${emailTitle}</span>: ${browserMessage}`;
+                        errorMsg.className = "errBlob";
+                        errorContainer.appendChild(errorMsg);
+
+                        if (!validatedFields.has(emailInput.id)) {
+                            emailInput.scrollIntoView({ behavior: "smooth", block: "center" });
+                            validatedFields.add(emailInput.id);
+                        }
+                    }
+                });
 
                 if (hasErrors) {
                     event.preventDefault();
@@ -469,11 +498,11 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
 
 
-            if (!dbSlots?.isFull && !devSkipCheck && !playground) {
-                if (!result.isValid && (!devSkipCheck || !playground)) {
-                    event.preventDefault();
-                    return;
-                }
+            // OK if slots are not full, not in dev, and not in playground
+            const globalRule = !dbSlots?.isFull && !devSkipCheck && !playground;
+            if (globalRule && !result.isValid) {
+                event.preventDefault();
+                return;
             }
 
             //collect
@@ -503,7 +532,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             console.error("Invalid form data provided to generateSummary");
             return;
         }
-        //devConsole(formData)
+        devConsole("%c" + "[DEV] Payload ↴", "color: lightgreen; font-weight: bold;")
+        devConsole(formData)
 
         //reset
         targetElement.innerHTML = "";
@@ -521,6 +551,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             color_quantity: "Colored Sketch Quantity",
             request_text: "Request",
             contacts: "Contact Information",
+            invoicing: "Invoice Email",
         };
 
         // Generate HTML for each key
@@ -738,6 +769,11 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         (oldGoBack as HTMLElement).addEventListener("click", () =>
             summaryDisplayControl("close", {})
         );
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                summaryDisplayControl("close", {});
+            }
+        });
         (oldIAmSure as HTMLElement).addEventListener("click", () =>
             summaryDisplayControl(isTOSAccepted() ? "proceed" : "noTos", {})
         );
@@ -770,20 +806,18 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
 
         const workerToggle = () => {
-            if (isIdeal) {
-                return "https://pottocomm-collector.pottoart.workers.dev/"
-                return "http://127.0.0.1:8787"
-            } else if (import.meta.env.DEV) {
+            if (import.meta.env.DEV) {
                 alert('dev');
                 return "http://127.0.0.1:8787"
+            }
+            if (isIdeal) {
+                return "https://pottocomm-collector.pottoart.workers.dev/"
             } else {
                 return "demo"
             }
         }
 
-        //precaution
         const WORKER_URL: URL | string = workerToggle()
-        //const WORKER_URL = "https://no.pottoart.workers.dev/"; //disable for now
 
         try {
             const response = await fetch(WORKER_URL, {
