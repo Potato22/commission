@@ -67,7 +67,6 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
     </div>
   </div>
 
-
   <Type
     typeTitle={cardList.sketchbook.title}
     description={cardList.sketchbook.description}
@@ -128,6 +127,11 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
         icon.style.background = `url(${stop.src})`;
         slotTitle.textContent = "Slots are out!";
         slotMsg.textContent = "Better luck next time ...";
+      } else if (dbSlots.count === dbSlots.max - 1) {
+        slotStat.style.background = "var(--info)";
+        icon.style.background = `url(${info.src})`;
+        slotTitle.textContent = "1 Slot left ...";
+        slotMsg.textContent = "Slots filled in:";
       } else {
         slotStat.style.background = "var(--info)";
         icon.style.background = `url(${info.src})`;
@@ -276,7 +280,7 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
   .menuMessageBox {
     position: relative;
     color: var(--fore);
-    padding: 0.5em .8em;
+    padding: 0.5em 0.8em;
     width: 100%;
     max-width: 100%;
     margin-top: 2em;
@@ -302,12 +306,12 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
       margin-top: 1em;
       width: 100%;
       max-width: 100%;
-      padding: .5em 1em;
+      padding: 0.5em 1em;
       border: 2px solid var(--fore);
       justify-content: center;
       box-shadow: none;
       & .b7 {
-        margin-left: .2rem;
+        margin-left: 0.2rem;
       }
     }
   }
