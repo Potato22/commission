@@ -114,7 +114,7 @@ export const cardList: Record<string, CardData> = {
             "Simple backgrounds",
             "Pony",
             "Semi-anthro",
-            "Anthro"
+            //"Anthro"
         ],
         isDisabled: false,
         configData: [
@@ -224,10 +224,10 @@ export const cardList: Record<string, CardData> = {
         title: "Headshot",
         description: "Headshot features the character's face and bust.",
         images: [
-            { src: getImagePath(`imgs/showcase/portrait1.jpg`) },
+            { src: getImagePath(`imgs/showcase/portrait4.jpg`) },
             { src: getImagePath(`imgs/showcase/portrait2.jpg`) },
+            { src: getImagePath(`imgs/showcase/portrait1.jpg`) },
             { src: getImagePath(`imgs/showcase/portrait3.jpg`) },
-            { src: getImagePath(`imgs/showcase/portrait4.jpg`) }
         ],
         price: 15,
         tags: [
@@ -384,10 +384,10 @@ export const cardList: Record<string, CardData> = {
         title: "Fullbody",
         description: "Display the full body of your character(s) of choice.",
         images: [
-            { src: getImagePath(`imgs/showcase/fullbod1.jpg`) },
+            { src: getImagePath(`imgs/showcase/fullbod1.jpg`), pos: "85% 0" },
             { src: getImagePath(`imgs/showcase/fullbod2.jpg`) },
             { src: getImagePath(`imgs/showcase/fullbod3.jpg`) },
-            { src: getImagePath(`imgs/showcase/fullbod4.jpg`), pos: "top" },
+            { src: getImagePath(`imgs/showcase/fullbod4.jpg`) },
         ],
         price: 25,
         tags: [
