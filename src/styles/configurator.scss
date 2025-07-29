@@ -1095,12 +1095,14 @@
     }
 
     #gradbar {
+        display: block;
         width: 200%;
         height: 10px;
         background: linear-gradient(90deg, transparent 50%, var(--accent));
         background-repeat: no-repeat;
         background-position: -100px 0;
         animation: ps5loadGrad 0.8s infinite;
+        transition: opacity .2s var(--sleek);
 
 
         &.loadOK {
@@ -1118,12 +1120,14 @@
 
     #loadStatString {
         position: absolute;
-        width: 300px;
+        width: 95vw;
+        max-width: 600px;
         top: 15px;
         font-family: var(--doto);
         font-weight: 900;
         text-align: center;
         color: var(--fore);
+        transition: opacity .2s var(--sleek);
     }
 }
 
