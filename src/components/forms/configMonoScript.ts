@@ -102,7 +102,7 @@ setupListeners();
 // If someone imports this module, they don't need to do anything else
 export default {};
 
-
+let recacheEval
 function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command?: string) {
     devConsole(`config logic started ${lookupConfigId}`)
 
@@ -111,14 +111,13 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         const startConfig = document.getElementById('configButtonText') as HTMLElement;
 
         let dbSlots = slotCheckLS("get");
-        let recache;
 
         if (submitString && dbSlots?.isFull) {
             submitString.textContent = "End Demo"
             startConfig.textContent = "Take a look"
         } else if (!dbSlots || dbSlots === undefined) {
-            recache = slotCheckLS("write", await dbSlotsPromise)
-            dbSlots = recache
+            recacheEval = slotCheckLS("write", await dbSlotsPromise)
+            dbSlots = recacheEval
             slotIsFullCheck();
         }
     }
@@ -691,7 +690,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                     loadAnim.style.display = "flex";
 
                     //fire worker submitter, read success return
-                    submitFormToWorker(formData).then(async ({ success, error }) => {
+                    submitFormToWorker(formData).then(({ success, error }) => {
                         if (success) {
                             loadBar.classList.add("loadOK");
                             loadString.innerHTML = `Thank you!`;
@@ -706,38 +705,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                         } else {
                             loadBar.classList.add((cardData.isDisabled || commState.isClosed) && !import.meta.env.DEV ? "loadDemo" : "loadErr");
                             loadString.innerHTML = `<span style="color: var(--accent)">fail:</span> ${error ?? "unknown error"}`;
-                            if ((slotCheckLS("get")?.isFull === false) && error?.includes("full")) {
-                                const dbSlots = await dbSlotsPromise;
-                                slotCheckLS("write", dbSlots);
-                                setTimeout(() => {
-                                    loadString.style.opacity = "0"
-                                    loadBar.style.opacity = "0"
-                                    setTimeout(() => {
-                                        loadBar.style.display = "none"
-                                        loadString.style.opacity = "1"
-                                        loadString.innerHTML = `
-                                        Hey, I appreciate your eagerness to commission me. But it's really closed for the moment, I don't have a lot of time nor energy hence the tiny amount of slots available. There are plenty more other artists you can consider instead, support others!
-                                        <br><br>
-                                        <a style="color: var(--accent); cursor: pointer;" id="inlineOK"><b>OK</b></a>
-                                        `
-                                        document.getElementById("inlineOK")?.addEventListener("click", () => {
-                                            loadString.style.opacity = "0"
-                                            setTimeout(() => {
-                                                loadString.style.opacity = "1"
-                                                loadString.innerHTML = `Thank you.`
-                                                setTimeout(() => {
-                                                    window.close();
-                                                    setTimeout(() => {
-                                                        backUtil();
-                                                    }, 1000);
-                                                }, 3000);
-                                            }, 300);
-                                        })
-                                    }, 300);
-                                }, 3000);
-                            } else {
-                                setTimeout(() => summaryDisplayControl("close", {}), (cardData.isDisabled || commState.isClosed) ? 5000 : 2000);
-                            }
+                            setTimeout(() => summaryDisplayControl("close", {}), (cardData.isDisabled || commState.isClosed) ? 5000 : 2000);
                         }
                     });
                 }, 300);
@@ -758,8 +726,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
                 letsRead();
                 summaryHeading.innerHTML = "Let's read the TOS first..."
+                summaryHeading.innerHTML = "Let's read the TOS first..."
                 summaryHeading.style.opacity = "1";
-
                 summaryButtons.style.opacity = "1";
                 summaryButtons.style.pointerEvents = "all"
                 mobileScrollInd.style.display = "none";
@@ -810,15 +778,9 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 summaryDisplayControl("close", {});
             }
         });
-        (oldIAmSure as HTMLElement).addEventListener("click", () => {
-            let displayTo: string = "noTos";
-            if ((slotCheckLS("get")?.isFull) || (!(slotCheckLS("get")?.isFull) && isTOSAccepted())) {
-                displayTo = "proceed"
-            } else if (!(slotCheckLS("get")?.isFull) && !isTOSAccepted()) {
-                displayTo = "noTos"
-            }
-            summaryDisplayControl(displayTo, {})
-        });
+        (oldIAmSure as HTMLElement).addEventListener("click", () =>
+            summaryDisplayControl(isTOSAccepted() ? "proceed" : "noTos", {})
+        );
         //initialized.add(key);
     }
 
@@ -830,10 +792,10 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         formData: FormData | null
     ): Promise<SubmissionResult> {
 
-        const isIdeal = (isTOSAccepted() && !(cardData.isDisabled || commState.isClosed))
+        const isIdeal = isTOSAccepted() && !(cardData.isDisabled || commState.isClosed)
 
         if (!isIdeal) {
-            if (cardData.isDisabled || commState.isClosed || slotCheckLS("get")?.isFull) {
+            if ((cardData.isDisabled || commState.isClosed) && !import.meta.env.DEV) {
                 return {
                     success: false,
                     error: "It's closed, but thanks for trying the website!",
@@ -844,11 +806,6 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                     error: "Something tells me you're not supposed to be here, yet. Go read the TOS first...",
                 };
             }
-        } else if (isIdeal && slotCheckLS("get")?.isFull) { //bro read the tos but the slot is still full
-            return {
-                success: false,
-                error: "It's closed, but thanks for trying the website!",
-            };
         }
 
 
