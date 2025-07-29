@@ -22,7 +22,7 @@ const priceState =
     : "€" + cardData.price.toFixed(0);
 const configButtonText =
   cardData.isDisabled || (commState.isClosed && !commState.disableInteractivity)
-    ? "Take a look anyway"
+    ? "Take a look"
     : "Configure";
 
 // Group configData by category

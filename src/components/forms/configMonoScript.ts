@@ -115,7 +115,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
 
         if (submitString && dbSlots?.isFull) {
             submitString.textContent = "End Demo"
-            startConfig.textContent = "Take a look anyway"
+            startConfig.textContent = "Take a look"
         } else if (!dbSlots || dbSlots === undefined) {
             recache = slotCheckLS("write", await dbSlotsPromise)
             dbSlots = recache

@@ -158,6 +158,7 @@ function getTagClass(tag: string) {
   import { isTOSAccepted } from "./tosLogic";
   import { commState } from "../data/cardData";
   import { screenPrompt, promptStoreTarget } from "./screenPrompt";
+import { slotCheckLS } from "./utils/slotCheck";
 
   // Handle configure button click
   function initNavigate() {
@@ -167,8 +168,9 @@ function getTagClass(tag: string) {
           const cardIdPage = card.id;
           const tosAccepted = isTOSAccepted();
           const commOpen = !commState.isClosed;
+          const slotIsFull = slotCheckLS("get")?.isFull
 
-          if (!tosAccepted && commOpen) {
+          if (!slotIsFull && !tosAccepted && commOpen) {
             promptStoreTarget(`config/${cardIdPage}`)
             screenPrompt("noTos");
             return
