@@ -102,7 +102,6 @@ setupListeners();
 // If someone imports this module, they don't need to do anything else
 export default {};
 
-let recacheEval
 function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command?: string) {
     devConsole(`config logic started ${lookupConfigId}`)
 
@@ -111,6 +110,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         const startConfig = document.getElementById('configButtonText') as HTMLElement;
 
         let dbSlots = slotCheckLS("get");
+        let recacheEval
 
         if (submitString && dbSlots?.isFull) {
             submitString.textContent = "End Demo"
