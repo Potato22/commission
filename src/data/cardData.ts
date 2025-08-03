@@ -2,13 +2,13 @@
 export const commState: messageObject = {
     isClosed: false,
     disableInteractivity: false,
-    message: {
-        icon: "warn",
-        title: `Limited slots`,
-        content: `
-        Commissions capacity is very limited.
-        `
-    }
+    // message: {
+    //     icon: "warn",
+    //     title: `Limited slots`,
+    //     content: `
+    //     Commissions capacity is very limited.
+    //     `
+    // }
 };
 type messageObject = {
     isClosed: boolean;
