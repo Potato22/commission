@@ -72,7 +72,7 @@ export interface FormQuestion {
     qMin?: number;
     qMax?: number;
     qVal?: number
-    qGroup?: {
+    qGroup?: { //grouped coutners
         name: string;
         gMax?: number;
     };
@@ -544,10 +544,11 @@ export const cardList: Record<string, CardData> = {
                 type: "quantityCounter",
                 subCategory: "accessoryCounter",
                 questionTitle: "Accessories",
-                questionDescription: "Just for barebone approximation, how many accessories are you considering to add or have?",
+                questionDescription: "How many accessories are you considering to add or have?",
                 id: "accessories_count",
 
                 perPrice: 5,
+                qMax: 15,
             },
             {
                 category: "request_detailing",
@@ -568,6 +569,7 @@ export const cardList: Record<string, CardData> = {
                 id: "version_count",
 
                 perPrice: 5,
+                qMax: 10,
             },
             {
                 category: "contacts",
