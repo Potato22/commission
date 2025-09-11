@@ -105,7 +105,7 @@ export default {};
 function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command?: string) {
     devConsole(`config logic started ${lookupConfigId}`)
 
-    async function slotIsFullCheck() {
+    async function configStateSlotIsFullCheck() {
         const submitString = document.querySelector('.submitString') as HTMLElement;
         const startConfig = document.getElementById('configButtonText') as HTMLElement;
 
@@ -118,7 +118,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         } else if (!dbSlots || dbSlots === undefined) {
             recacheEval = slotCheckLS("write", await dbSlotsPromise)
             dbSlots = recacheEval
-            slotIsFullCheck();
+            configStateSlotIsFullCheck();
         }
     }
 
@@ -778,8 +778,22 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 summaryDisplayControl("close", {});
             }
         });
-        (oldIAmSure as HTMLElement).addEventListener("click", () =>
-            summaryDisplayControl(isTOSAccepted() ? "proceed" : "noTos", {})
+        (oldIAmSure as HTMLElement).addEventListener("click", () => {
+            const isIdeal = isTOSAccepted() && !(cardData.isDisabled || commState.isClosed || slotCheckLS("get")?.isFull)
+            const isNotThenCheckIfClosed = (cardData.isDisabled || commState.isClosed || slotCheckLS("get")?.isFull) && !import.meta.env.DEV
+
+            //devConsole("isIdeal: " + isIdeal + "\n" + "isNotThenCheckIfClosed: " + isNotThenCheckIfClosed)
+
+            if (isIdeal) {
+                summaryDisplayControl("proceed", {})
+            } else if (!isIdeal && isNotThenCheckIfClosed) {
+                summaryDisplayControl("proceed", {})
+            } else {
+                summaryDisplayControl("noTos", {})
+            }
+            //summaryDisplayControl(isTOSAccepted() ? "proceed" : "noTos", {})
+
+        }
         );
         //initialized.add(key);
     }
@@ -788,6 +802,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         success: boolean;
         error?: string;
     };
+
+    //if PROCEED is passed
     async function submitFormToWorker(
         formData: FormData | null
     ): Promise<SubmissionResult> {
@@ -795,7 +811,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         const isIdeal = isTOSAccepted() && !(cardData.isDisabled || commState.isClosed)
 
         if (!isIdeal) {
-            if ((cardData.isDisabled || commState.isClosed) && !import.meta.env.DEV) {
+            if ((cardData.isDisabled || commState.isClosed || slotCheckLS("get")?.isFull) && !import.meta.env.DEV) {
+                //devConsole("isDisabled: " + cardData.isDisabled + "\n" + "isClosed: " + commState.isClosed + "\n" + "isFull: " + slotCheckLS("get")?.isFull)
                 return {
                     success: false,
                     error: "It's closed, but thanks for trying the website!",
@@ -1468,7 +1485,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
     function initList() {
         //every navigation, lmao
         initbackButton();
-        slotIsFullCheck();
+        configStateSlotIsFullCheck();
         setupFormValidation();
         updateConditionalOptions();
         initConfigControl();
