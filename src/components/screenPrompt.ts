@@ -46,6 +46,7 @@ export async function screenPrompt(mode: string) {
             screen.classList.add("active");
             break;
         case "close":
+            screenHeading.style.opacity = "0";
             screenButtons.style.opacity = "0";
             screenButtons.style.transform = "translateY(2em)";
             await sleep(100);
@@ -65,7 +66,7 @@ export async function screenPrompt(mode: string) {
         case "noTos":
             screenPrompt("initialize");
 
-            await sleep(400)
+            await sleep(410)
 
             const b0 = document.getElementById("screen-button0") as HTMLElement;
             const b1 = document.getElementById("screen-button1") as HTMLElement;
@@ -80,7 +81,7 @@ export async function screenPrompt(mode: string) {
             b2.innerHTML = "OK";
             b2.dataset.highlight = "true";
             b0.addEventListener("click", () => screenPrompt("close"));
-            b1.addEventListener("click", () => promptStoreTarget(null, "go"));
+            b1.addEventListener("click", () => screenPrompt("checkOnlyPSA"));
             b2.addEventListener("click", goRead);
             document.addEventListener("keydown", (event) => {
                 if (event.key === "Escape") {
@@ -88,6 +89,30 @@ export async function screenPrompt(mode: string) {
                 }
             });
             break;
+        case "checkOnlyPSA":
+            screenPrompt("close");
+            await sleep(410)
+            screenPrompt("initialize");
+            const b3 = document.getElementById("screen-button0") as HTMLElement;
+            const b4 = document.getElementById("screen-button1") as HTMLElement;
+            const b5 = document.getElementById("screen-button2") as HTMLElement;
+
+            screenHeading.innerHTML = `Are you sure? <br> Your choices will not be saved.`;
+            screenHeading.style.opacity = "1";
+            screenButtons.style.opacity = "1";
+            screenButtons.style.pointerEvents = "all";
+            b3.innerHTML = "Close";
+            b4.innerHTML = "Go anyway";
+            b5.innerHTML = "Check TOS";
+            b5.dataset.highlight = "true";
+            b3.addEventListener("click", () => screenPrompt("close"));
+            b4.addEventListener("click", () => promptStoreTarget(null, "go"));
+            b5.addEventListener("click", goRead);
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    screenPrompt("close");
+                }
+            });
         default:
             break;
     }

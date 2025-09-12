@@ -778,7 +778,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             const status = getSubmissionStatus();
             if ((status.isIdeal || status.isDev) && status.tosAccepted) {
                 summaryDisplayControl("proceed", {});
-            } else if (!status.isIdeal && status.isClosed) {
+            } else if (!status.isIdeal) {
                 summaryDisplayControl("noTos", {});
             }
         }
