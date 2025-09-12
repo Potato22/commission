@@ -20,7 +20,7 @@ async function fetchWithFallback() {
     return await fetch(onlineUrl, { method: "GET" });
   } catch (err) {
     console.log(
-      "%c" + "[DEV] Local worker did not respond, using deployed worker",
+      "%c" + "[DEV: slotCheck] Local worker did not respond, using deployed worker",
       "color: red; font-weight: bold;"
     )
     // logIfSlotsFull();

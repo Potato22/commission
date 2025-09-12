@@ -4,18 +4,13 @@ import { type CardData } from "../../data/cardData";
 import { commState, cardList } from "../../data/cardData";
 import { isTOSAccepted } from "../tosLogic";
 import { dbSlotsPromise, slotCheckLS } from "../utils/slotCheck";
+import { devConsole } from "../utils/devConsole";
 import { withLoaderAnim } from "../utils/quirkyLoaderAsync";
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const playground = commState.isClosed; //closed = true
 
 import.meta.env.DEV ? console.log("%c" + "[DEV: configMonoScript] Worker rerouted to local", "color: orange; font-weight: bold;") : null;
-
-function devConsole(...args: any[]): void {
-    if (import.meta.env.DEV) {
-        console.log(...args);
-    }
-}
 
 function saveLastConfigPage() {
     //sabe last config page to localstorage
@@ -103,7 +98,7 @@ setupListeners();
 export default {};
 
 function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command?: string) {
-    devConsole(`config logic started ${lookupConfigId}`)
+    devConsole("%c" + `[DEV: configMonoScript] Config logic started on ${lookupConfigId}`, "color: lightgreen; font-weight: bold;")
 
     async function configStateSlotIsFullCheck() {
         const submitString = document.querySelector('.submitString') as HTMLElement;
@@ -547,6 +542,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             character_detail: "Character Detail",
             anthro: "Anthro?",
             background: "Background Art",
+            specialty: "Specialty",
             nsfw: "NSFW?",
             character_count: "Character Count",
             accessories_count: "Accessory count",
@@ -779,20 +775,12 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             }
         });
         (oldIAmSure as HTMLElement).addEventListener("click", () => {
-            const isIdeal = isTOSAccepted() && !(cardData.isDisabled || commState.isClosed || slotCheckLS("get")?.isFull)
-            const isNotThenCheckIfClosed = (cardData.isDisabled || commState.isClosed || slotCheckLS("get")?.isFull) && !import.meta.env.DEV
-
-            //devConsole("isIdeal: " + isIdeal + "\n" + "isNotThenCheckIfClosed: " + isNotThenCheckIfClosed)
-
-            if (isIdeal) {
-                summaryDisplayControl("proceed", {})
-            } else if (!isIdeal && isNotThenCheckIfClosed) {
-                summaryDisplayControl("proceed", {})
-            } else {
-                summaryDisplayControl("noTos", {})
+            const status = getSubmissionStatus();
+            if ((status.isIdeal || status.isDev) && status.tosAccepted) {
+                summaryDisplayControl("proceed", {});
+            } else if (!status.isIdeal && status.isClosed) {
+                summaryDisplayControl("noTos", {});
             }
-            //summaryDisplayControl(isTOSAccepted() ? "proceed" : "noTos", {})
-
         }
         );
         //initialized.add(key);
@@ -803,35 +791,67 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         error?: string;
     };
 
+    function getSubmissionStatus() {
+        const tosAccepted = isTOSAccepted();
+        const isClosed = cardData.isDisabled || commState.isClosed || slotCheckLS("get")?.isFull;
+        const isDev = import.meta.env.DEV;
+
+        // tos AND NOT closed
+        const isIdeal = tosAccepted && !isClosed;
+
+        // NOT tos AND closed
+        const isDemo = !tosAccepted && isClosed;
+
+        // ideal OR demo mode OR dev mode
+        //const allowAnyway = isIdeal || isDemo;
+
+        devConsole("%c" + `[DEV: getSubmissionStatus]`, "color: lightblue; font-weight: bold;");
+        devConsole("  tosAccepted: ______________________", tosAccepted);
+        devConsole("  isClosed: _________________________", isClosed);
+        devConsole("  isDev: ____________________________", isDev);
+        devConsole("  ----------------------")
+        devConsole("  isIdeal (TOS true, Closed false): _", isIdeal);
+        devConsole("  isDemo (TOS NOT true, Closed true):", isDemo);
+        //devConsole("  allowAnyway (TOS true):", allowAnyway);
+
+        return {
+            tosAccepted,
+            isClosed,
+            isDev,
+            isIdeal,
+            isDemo,
+            //allowAnyway,
+        };
+    }
+
     //if PROCEED is passed
     async function submitFormToWorker(
         formData: FormData | null
     ): Promise<SubmissionResult> {
 
-        const isIdeal = isTOSAccepted() && !(cardData.isDisabled || commState.isClosed)
+        const status = getSubmissionStatus();
 
-        if (!isIdeal) {
-            if ((cardData.isDisabled || commState.isClosed || slotCheckLS("get")?.isFull) && !import.meta.env.DEV) {
-                //devConsole("isDisabled: " + cardData.isDisabled + "\n" + "isClosed: " + commState.isClosed + "\n" + "isFull: " + slotCheckLS("get")?.isFull)
+        if (!status.isIdeal) {
+            if (status.isClosed && status.tosAccepted) {
                 return {
                     success: false,
                     error: "It's closed, but thanks for trying the website!",
                 };
-            } else if (!isTOSAccepted()) {
+            } else if (!status.tosAccepted) {
                 return {
                     success: false,
-                    error: "Something tells me you're not supposed to be here, yet. Go read the TOS first...",
+                    error: "... Please read the TOS first.",
                 };
             }
         }
 
 
         const workerToggle = () => {
-            if (import.meta.env.DEV) {
+            if (status.isDev) {
                 alert('dev');
                 return "http://127.0.0.1:8787"
             }
-            if (isIdeal) {
+            if (status.isIdeal && !status.isDev) {
                 return "https://pottocomm-collector.pottoart.workers.dev/"
             } else {
                 return "demo"

@@ -1,5 +1,8 @@
+import { devConsole } from "./utils/devConsole";
 const DAY: number = 864e5;
 const WEEK: number = 6048e5;
+
+devConsole("%c" + "[DEV: TosLogic] TOS logic loaded", "color: pink; font-style: italic;");
 
 export function isTOSAccepted(): boolean {
     const isRead = localStorage.getItem("potto.dev-LSLOGIC.TAA");
@@ -12,10 +15,11 @@ export function isTOSAccepted(): boolean {
 
     const [timestamp, durationStr] = isRead.split("_d");
     const duration = parseInt(durationStr, 10);
-    if (isNaN(duration)) return false;
-
     const savedTime = new Date(timestamp).getTime();
-    return Date.now() - savedTime <= duration;
+    const passCondition = Date.now() - savedTime <= duration;
+
+    if (isNaN(duration)) return false;
+    return passCondition;
 }
 
 export function acceptTOS(assignedDuration: "day" | "week"): void {

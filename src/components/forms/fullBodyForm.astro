@@ -227,6 +227,17 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                   </div>
                 </div>
               )}
+              {config.subCategory === "specialty" && (
+                <div class="subCategoryBox">
+                  <div class="subCategory">
+                    Specialty
+                    {config.required && (
+                      <span style="color: var(--accent)">*</span>
+                    )}
+                  </div>
+                  <div class="subCategoryDesc">Choose an option.<br> <i>If your request involves: <b>Vehicles, aircrafts, military equipments, etc.</b> Consider using the specialty addition!</i></div>
+                </div>
+              )}
               {config.subCategory === "nsfw" && (
                 <div class="subCategoryBox">
                   <div class="subCategory">

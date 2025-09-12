@@ -495,6 +495,16 @@ export const cardList: Record<string, CardData> = {
             },
             {
                 category: "general_configurations",
+                subCategory: "specialty",
+                type: "flipflop",
+                id: "specialty",
+                options: [
+                    { optionName: "Off", optionDescription: "No need.", optionPrice: 0, preChecked: true },
+                    { optionName: "On", optionDescription: "I need intricate details of specific things!", optionPrice: 30 },
+                ],
+            },
+            {
+                category: "general_configurations",
                 subCategory: "nsfw",
                 type: "flipflop",
                 id: "nsfw",
