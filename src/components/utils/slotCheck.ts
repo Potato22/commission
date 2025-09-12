@@ -8,6 +8,7 @@ import.meta.env.DEV
   : null;
 
 const localUrl = "http://127.0.0.1:8787?rc";
+// const onlineUrl = "http://127.0.0.1:8787?rc";
 const onlineUrl = "https://pottocomm-collector.pottoart.workers.dev?rc";
 
 async function fetchWithFallback() {

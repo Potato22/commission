@@ -776,9 +776,9 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         });
         (oldIAmSure as HTMLElement).addEventListener("click", () => {
             const status = getSubmissionStatus();
-            if ((status.isIdeal || status.isDev) && status.tosAccepted) {
+            if (status.isIdeal || status.isClosed || (status.isDev && status.tosAccepted)) {
                 summaryDisplayControl("proceed", {});
-            } else if (!status.isIdeal) {
+            } else if (!status.tosAccepted) {
                 summaryDisplayControl("noTos", {});
             }
         }
