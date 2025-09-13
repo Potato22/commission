@@ -832,7 +832,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         const status = getSubmissionStatus();
 
         if (!status.isIdeal) {
-            if (status.isClosed && status.tosAccepted) {
+            if (status.isClosed || status.tosAccepted) {
                 return {
                     success: false,
                     error: "It's closed, but thanks for trying the website!",
