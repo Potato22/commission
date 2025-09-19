@@ -201,6 +201,7 @@ import { slotCheckLS } from "./utils/slotCheck";
     --cardRounding: 50px;
     --animDur: 0.3s;
     cursor: pointer;
+    position: relative;
     display: flex;
     width: 50%;
     background-color: var(--accentSecondary);
@@ -385,6 +386,7 @@ import { slotCheckLS } from "./utils/slotCheck";
 
   .imgGrid {
     --imgSize: 100px;
+    position: relative;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     place-items: center;
@@ -397,7 +399,6 @@ import { slotCheckLS } from "./utils/slotCheck";
     }
     @include breakpoint(tiny, mobile) {
       --imgSize: 100%;
-      min-height: 200px;
     }
     @include breakpoint(tablet) {
       max-height: 200px;
