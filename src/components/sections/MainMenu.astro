@@ -107,9 +107,11 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
   import stop from "../../assets/icons/stop.svg";
 
   window.quirkyLoader.lock();
-  const dbSlots = await withLoaderAnim(dbSlotsPromise);
+  const dbSlots = (!commState.disableInteractivity) ? await withLoaderAnim(dbSlotsPromise) : { count: 0, max: 0, isFull: true };
   slotCheckLS("write", dbSlots);
   window.quirkyLoader.unlock();
+
+  const longFakeDaemonError = "Failed to issue method call: Unit potto.commission.service failed to load: No such file or directory."
 
   async function slotCheck() {
     const slotStat = document.querySelector(".slotStat") as HTMLElement;
@@ -125,11 +127,11 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
       if (dbSlots.isFull) {
         slotStat.style.background = "var(--stop)";
         icon.style.background = `url(${stop.src})`;
-        slotTitle.textContent = "Slots are out!";
-        slotMsg.textContent = "Better luck next time ...";
+        slotTitle.textContent = commState.disableInteractivity ? "Commission disabled" : "Slots are out!";
+        slotMsg.textContent = commState.disableInteractivity ? longFakeDaemonError : "But you can still select and play around the options to see the prices";
       } else if (dbSlots.count === dbSlots.max - 1) {
         slotStat.style.background = "var(--info)";
-        icon.style.background = `url(${info.src})`;
+        icon.style.background = `url(${warn.src})`;
         slotTitle.textContent = "1 Slot left ...";
         slotMsg.textContent = "Slots filled in:";
       } else {
@@ -336,5 +338,12 @@ const iconEval = commState.message && evalMsgIcon(commState.message.icon);
   }
   .mmMsg {
     padding-top: 0.1em;
+  }
+
+  .sCount::before {
+    content: "(";
+  }
+  .sMax::after {
+    content: ")";
   }
 </style>
