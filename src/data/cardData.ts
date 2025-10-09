@@ -179,7 +179,7 @@ export const cardList: Record<string, CardData> = {
                 questionTitle: "What do you have in mind?",
                 questionDescription: "Briefly elaborate what you want me to draw for you",
                 id: "request_text",
-                placeholder: `You can leave this VERY brief and discuss it directly!`,
+                placeholder: `You can leave this brief and discuss it directly later if you choose so`,
                 required: true,
             },
             {
@@ -191,7 +191,7 @@ export const cardList: Record<string, CardData> = {
                 Most active chats: <span class="b7">Discord</span>, <span class="b7">Twitter</span>, <span class="b7">Bluesky</span>. <br>
                 If you have none of these, you could provide an <span class="b7">email address</span> instead`,
                 id: "contacts",
-                placeholder: `@yourTag OR your@email.com`,
+                placeholder: `<Social media>: @yourTag OR your@email.com`,
                 required: true,
             },
             {
@@ -339,7 +339,7 @@ export const cardList: Record<string, CardData> = {
                 questionTitle: "What do you have in mind?",
                 questionDescription: "Briefly elaborate what you want me to draw for you",
                 id: "request_text",
-                placeholder: `You can leave this VERY brief and discuss it directly!`,
+                placeholder: `You can leave this brief and discuss it directly later if you choose so`,
                 required: true,
             },
             {
@@ -351,7 +351,7 @@ export const cardList: Record<string, CardData> = {
                 Most active chats: <span class="b7">Discord</span>, <span class="b7">Twitter</span>, <span class="b7">Bluesky</span>. <br>
                 If you have none of these, you could provide an <span class="b7">email address</span> instead`,
                 id: "contacts",
-                placeholder: `@yourTag OR your@email.com`,
+                placeholder: `<Social media>: @yourTag OR your@email.com`,
                 required: true,
             },
             {
@@ -554,11 +554,10 @@ export const cardList: Record<string, CardData> = {
                 type: "quantityCounter",
                 subCategory: "accessoryCounter",
                 questionTitle: "Accessories",
-                questionDescription: "How many accessories are you considering to add or have?",
+                questionDescription: "Anything you character is wearing or interacting with! (Worn clothes and undergarments, equipments, props, etc.)",
                 id: "accessories_count",
 
                 perPrice: 5,
-                qMax: 15,
             },
             {
                 category: "request_detailing",
@@ -567,7 +566,7 @@ export const cardList: Record<string, CardData> = {
                 questionTitle: "What do you have in mind?",
                 questionDescription: "Briefly elaborate what you want me to draw for you",
                 id: "request_text",
-                placeholder: `You can leave this VERY brief and discuss it directly!`,
+                placeholder: `You can leave this brief and discuss it directly later if you choose so`,
                 required: true,
             },
             {
@@ -575,11 +574,11 @@ export const cardList: Record<string, CardData> = {
                 type: "quantityCounter",
                 subCategory: "versionCounter",
                 questionTitle: "Add versions",
-                questionDescription: "How many extra versions of your request are you considering? (leave at 0 if you only considered one)",
+                questionDescription: "How many extra versions are you considering? (0 if no extras)",
                 id: "version_count",
 
                 perPrice: 5,
-                qMax: 10,
+                qMax: 5,
             },
             {
                 category: "contacts",
@@ -590,7 +589,7 @@ export const cardList: Record<string, CardData> = {
                 Most active chats: <span class="b7">Discord</span>, <span class="b7">Twitter</span>, <span class="b7">Bluesky</span>. <br>
                 If you have none of these, you could provide an <span class="b7">email address</span> instead`,
                 id: "contacts",
-                placeholder: `@yourTag OR your@email.com`,
+                placeholder: `<Social media>: @yourTag OR your@email.com`,
                 required: true,
             },
             {
