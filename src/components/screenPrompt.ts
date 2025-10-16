@@ -91,7 +91,7 @@ export async function screenPrompt(mode: string) {
             break;
         case "checkOnlyPSA":
             screenPrompt("close");
-            await sleep(410)
+            await sleep(512)
             screenPrompt("initialize");
             const b3 = document.getElementById("screen-button0") as HTMLElement;
             const b4 = document.getElementById("screen-button1") as HTMLElement;
