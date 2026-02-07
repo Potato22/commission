@@ -203,7 +203,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
               {config.subCategory === "characterRender" && (
                 <div class="subCategoryBox">
                   <div class="subCategory">
-                    Character Detail{" "}
+                    Character Detail
                     {config.required && (
                       <span style="color: var(--accent)">*</span>
                     )}
@@ -214,7 +214,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
               {config.subCategory === "bodyForm" && (
                 <div class="subCategoryBox">
                   <div class="subCategory">
-                    Anthro?{" "}
+                    Anthro?
                     {config.required && (
                       <span style="color: var(--accent)">*</span>
                     )}
@@ -225,13 +225,13 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
               {config.subCategory === "background" && (
                 <div class="subCategoryBox">
                   <div class="subCategory">
-                    Background Art{" "}
+                    Background Art
                     {config.required && (
                       <span style="color: var(--accent)">*</span>
                     )}
                   </div>
                   <div class="subCategoryDesc">
-                    Choose an option.{" "}
+                    Choose an option.
                     <i>
                       <br />
                       (Some options are hidden depending the selected "Character
@@ -323,7 +323,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                     data-visible-if={
                       opt.visibleIf ? JSON.stringify(opt.visibleIf) : ""
                     }
-                    style={opt.visibleIf ? "display:none;" : ""}
+                    style={""}
                     id={`${config.id}_${optIdx}_wrapper`}
                   >
                     <div class="ocHeader">

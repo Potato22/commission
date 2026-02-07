@@ -121,6 +121,17 @@
     }
 }
 
+.radioDisabled {
+    cursor: not-allowed;
+    opacity: .3;
+    pointer-events: none;
+
+    .customRadio {
+        border-color: var(--foreSecondary);
+        background: var(--baseSecondary);
+    }
+}
+
 .categoryLabel {
     font-family: var(--content);
     font-size: 2rem;
@@ -433,6 +444,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 //can firefox shut up for ONE SECOND
 input[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 

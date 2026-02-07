@@ -209,8 +209,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         //devConsole('updateConditionalOptions fired')
         //searcha all
         document.querySelectorAll(".conditionalOpt").forEach((elem) => {
-            const elAsHTML = elem as HTMLElement;
-            const visibleIf = elAsHTML.getAttribute("data-visible-if") as string;
+            const theThingie = elem as HTMLElement;
+            const visibleIf = theThingie.getAttribute("data-visible-if") as string;
             if (!visibleIf) return;
             try {
                 const cond = JSON.parse(visibleIf);
@@ -228,11 +228,13 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                     }
                 }
                 if (shouldShow) {
-                    elAsHTML.style.display = "";
+                    theThingie.style.display = "";
+                    theThingie.classList.remove("radioDisabled");
                 } else {
-                    elAsHTML.style.display = "none";
+                    // theThingie.style.display = "flex";
+                    theThingie.classList.add("radioDisabled");
                     //failsafe, nullify precheck if hidden
-                    const input = elAsHTML.querySelector('input[type="radio"]');
+                    const input = theThingie.querySelector('input[type="radio"]');
                     if (input) (input as HTMLInputElement).checked = false;
                 }
             } catch (e) { }

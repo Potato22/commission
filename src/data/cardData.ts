@@ -305,7 +305,7 @@ export const cardList: Record<string, CardData> = {
                         An art blending technique where it involves blending your character into existing photograph or any image.<br>
                         Simply provide me an image I should use!<br>
                         <br>
-                        (Only available for <span class="b7">Flat Color</span> & <span class="b7">Fully Rendered</span> character detail)
+                        <span style="color: rgba(var(--accentRGB), .7);">(<span class="b7">Flat Color</span> OR <span class="b7">Fully Rendered</span> required)</span>
                         `,
                         optionPrice: 10,
                         visibleIf: { questionId: "character_detail", value: ["Flat Color", "Fully Rendered"] }
@@ -466,7 +466,7 @@ export const cardList: Record<string, CardData> = {
                         An art blending technique where it involves blending your character into existing photograph or any image.<br>
                         Simply provide me an image I should use!<br>
                         <br>
-                        (Only available for <span class="b7">Flat Color</span> & <span class="b7">Fully Rendered</span> character detail)
+                        <span style="color: rgba(var(--accentRGB), .7);">(<span class="b7">Flat Color</span> OR <span class="b7">Fully Rendered</span> required)</span>
                         `,
                         optionPrice: 25,
                         visibleIf: { questionId: "character_detail", value: ["Fully Rendered", "Flat Color"] }
@@ -474,13 +474,13 @@ export const cardList: Record<string, CardData> = {
                     },
                     {
                         optionName: "Basic",
-                        optionDescription: `Basic details, simplified rendering <br><br>(Only available for <span class="b7">Flat Color</span> & <span class="b7">Fully Rendered</span> character detail)`,
+                        optionDescription: `Basic details, simplified rendering <br><br><span style="color: rgba(var(--accentRGB), .7);">(<span class="b7">Flat Color</span> OR <span class="b7">Fully Rendered</span> required)</span>`,
                         optionPrice: 35,
                         visibleIf: { questionId: "character_detail", value: ["Fully Rendered", "Flat Color"] }
                     },
                     {
                         optionName: "Complex",
-                        optionDescription: `Complex and well rendered background. <br><br>(Only available for <span class="b7">Fully Rendered</span> character detail)`,
+                        optionDescription: `Complex and well rendered background. <br><br><span style="color: rgba(var(--accentRGB), .7);">(<span class="b7">Fully Rendered</span> required)</span>`,
                         optionPrice: 50,
                         visibleIf: { questionId: "character_detail", value: "Fully Rendered" }
                     },
