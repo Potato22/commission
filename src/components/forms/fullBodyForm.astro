@@ -50,6 +50,22 @@ assertSingleFileUpload(cardData.configData ?? []);
 
 const groupedConfig = groupByCategory(cardData.configData ?? []);
 ---
+<script>
+  //dbslots full check for confirmation screen msg
+  import { slotCheckLS } from "../utils/slotCheck";
+  const isSlotFull = slotCheckLS("get")?.isFull;
+  const confirmText = isSlotFull ? "You were thinking of ordering..." : null;
+  const summaryProceed = isSlotFull ? "What's next?" : null;
+
+  const summaryProceedBtn = document.getElementById("summary-proceed");
+  const confirmTextElement = document.getElementById("confirmText");
+  if (confirmTextElement && confirmText && confirmText !== null) {
+    confirmTextElement.textContent = confirmText;
+  }
+  if (summaryProceedBtn && summaryProceed && summaryProceed !== null) {
+    summaryProceedBtn.textContent = summaryProceed;
+  }
+</script>
 
 <div class="backBMobile material-symbols-rounded">arrow_back</div>
 <div class="imgGridMobile">

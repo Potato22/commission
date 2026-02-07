@@ -701,7 +701,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                             }, 2000);
                             startButton.classList.add("disabled");
                         } else {
-                            loadBar.classList.add((cardData.isDisabled || commState.isClosed) && !import.meta.env.DEV ? "loadDemo" : "loadErr");
+                            const whatIfItsOnlyFullSlots = slotCheckLS("get")?.isFull ? "loadDemo" : "loadErr";
+                            loadBar.classList.add((cardData.isDisabled || commState.isClosed) && !import.meta.env.DEV ? "loadDemo" : whatIfItsOnlyFullSlots);
                             loadString.innerHTML = `<span style="color: var(--accent)">fail:</span> ${error ?? "unknown error"}`;
                             setTimeout(() => summaryDisplayControl("close", {}), (cardData.isDisabled || commState.isClosed) ? 5000 : 2000);
                         }
@@ -812,7 +813,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         devConsole("  isClosed: _________________________", isClosed);
         devConsole("  isDev: ____________________________", isDev);
         devConsole("  ----------------------")
-        devConsole("  isIdeal (TOS true, Closed false): _", isIdeal);
+        devConsole("  isIdeal (TOS true, Closed false):  ", isIdeal);
         devConsole("  isDemo (TOS NOT true, Closed true):", isDemo);
         //devConsole("  allowAnyway (TOS true):", allowAnyway);
 
@@ -837,7 +838,7 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
             if (status.isClosed || status.tosAccepted) {
                 return {
                     success: false,
-                    error: "It's closed, but thanks for trying the website!",
+                    error: "Well. It's closed, but thanks for trying the website!",
                 };
             } else if (!status.tosAccepted) {
                 return {
