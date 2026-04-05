@@ -409,18 +409,14 @@ import { slotCheckLS } from "./utils/slotCheck";
   .imgContainer {
     --imgGridRounding: calc(var(--cardRounding) - 1em);
     width: var(--imgSize);
-    height: var(--imgSize);
-    min-width: var(--imgSize);
-    min-height: var(--imgSize);
+    aspect-ratio: 1;
     position: relative;
     overflow: hidden;
     transition: all var(--animDur) var(--sleek);
+    flex-shrink: 0;
 
     @include breakpoint(tiny, mobile) {
-      min-height: 100px;
-      min-width: 100px;;
-      max-width: 200px;
-      max-height: 200px;
+      width: 200px;
     }
 
     &.expanded {
@@ -428,7 +424,7 @@ import { slotCheckLS } from "./utils/slotCheck";
     }
 
     &.expanded {
-      border-radius: var(--cardRounding / 2) !important;
+      border-radius: calc(var(--cardRounding) / 2) !important;
     }
 
     @include breakpoint(tiny, mobile) {
