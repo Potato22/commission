@@ -4,9 +4,9 @@ export const commState: messageObject = {
     disableInteractivity: false,
     message: {
         icon: "warn",
-        title: `Test run batch`,
+        title: `Warning: Major slowdown`,
         content: `
-        Commissions capacity is very limited.
+        I currently have a j*b (involuntary), it actively robs away my time, and my time and energy is as thin as it gets. <b>Turnaround and queues may take an unexpectedly <i>much</i> longer time.</b>
         `
     }
 };
