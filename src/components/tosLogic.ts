@@ -1,15 +1,18 @@
 import { devConsole } from "./utils/devConsole";
 const DAY: number = 864e5;
 const WEEK: number = 6048e5;
+const HOUR: number = 3600e3;
 
 devConsole("%c" + "[DEV: TosLogic] TOS logic loaded", "color: pink; font-style: italic;");
 
 export function isTOSAccepted(): boolean {
     const isRead = localStorage.getItem("potto.dev-LSLOGIC.TAA");
     const isDev = import.meta.env.DEV;
-    if (isDev) {
+    if (isDev && !isRead) {
         localStorage.removeItem("potto.dev-LSLOGIC.TAA");
-        return confirm("skip tos?");
+        const isDevChoice = confirm("skip tos?");
+        confirm("remember choice? (3h)") && localStorage.setItem("potto.dev-LSLOGIC.TAA", new Date().toISOString() + "_d" + (3 * HOUR));
+        return isDevChoice;
     }
     if (!isRead) return false;
 
