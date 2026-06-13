@@ -220,9 +220,9 @@ export const cardList: Record<string, CardData> = {
             },
         ]
     },
-    headshot: {
-        title: "Headshot",
-        description: "Headshot features the character's face and bust.",
+    halfbody: {
+        title: "Halfbody",
+        description: "Half body renders show the character from the shoulders down.",
         images: [
             { src: getImagePath(`imgs/showcase/portrait4.jpg`) },
             { src: getImagePath(`imgs/showcase/portrait2.jpg`) },
@@ -278,7 +278,7 @@ export const cardList: Record<string, CardData> = {
                 id: "anthro",
                 options: [
                     { optionName: "No", optionDescription: `quadruped shoulders!`, optionPrice: 0, preChecked: true },
-                    { optionName: "Yes", optionDescription: "humanoid shoulders!", optionPrice: 0 },
+                    { optionName: "Yes", optionDescription: "humanoid entirely!", optionPrice: 5 },
                 ],
             },
             {
@@ -315,6 +315,16 @@ export const cardList: Record<string, CardData> = {
                 required: false,
             },
             {
+                category: "general_configurations",
+                subCategory: "nsfw",
+                type: "flipflop",
+                id: "nsfw",
+                options: [
+                    { optionName: "No", optionDescription: "Pure as a summer.", optionPrice: 0, preChecked: true },
+                    { optionName: "Yes", optionDescription: "NSFW may require extra effort.", optionPrice: 15 },
+                ],
+            },
+            {
                 category: "request_detailing",
                 type: "fileUpload",
                 subCategory: "character",
@@ -323,6 +333,16 @@ export const cardList: Record<string, CardData> = {
                 id: "character_reference",
                 required: true,
                 maxFiles: 10,
+            },
+            {
+                category: "request_detailing",
+                type: "characterCount",
+                subCategory: "characterCountMultiplier",
+                questionTitle: "Character count",
+                questionDescription: "How many characters did you put?",
+                id: "character_count",
+
+                qMax: 5,
             },
             {
                 category: "request_detailing",
@@ -341,6 +361,17 @@ export const cardList: Record<string, CardData> = {
                 id: "request_text",
                 placeholder: `You can leave this brief and discuss it directly later if you choose so`,
                 required: true,
+            },
+            {
+                category: "request_detailing",
+                type: "quantityCounter",
+                subCategory: "versionCounter",
+                questionTitle: "Add versions",
+                questionDescription: "How many extra versions are you considering? (0 if no extras)",
+                id: "version_count",
+
+                perPrice: 5,
+                qMax: 5,
             },
             {
                 category: "contacts",
