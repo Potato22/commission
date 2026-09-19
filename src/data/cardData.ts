@@ -4,9 +4,10 @@ export const commState: messageObject = {
     disableInteractivity: false,
     message: {
         icon: "warn",
-        title: `Warning: Major slowdown`,
+        title: `Limited service`,
         content: `
-        I currently have a j*b (involuntary), it actively robs away my time, and my time and energy is as thin as it gets. <b>Turnaround and queues may take an unexpectedly <i>much</i> longer time.</b>
+        I currently have a j*b, my time and energy is as thin as it gets. <b>Turnaround and queues WILL take an unexpectedly <i>much</i> longer time.</b>
+        <br><br>Some options may be reduced, disabled, or unavailable altogether.
         `
     }
 };
@@ -38,6 +39,7 @@ export interface FormQuestion {
     category: string;
     subCategory: string;
     id: string;
+    disableAll?: boolean; //stub, not implemented
     type:
     "textArea"
     | "flipflop"
@@ -58,6 +60,7 @@ export interface FormQuestion {
             questionId: string;
             value: string | string[];
         }
+        disabled?: boolean;
     }[];
     //textArea & fileUpload
     placeholder?: string;
@@ -94,7 +97,7 @@ function getImagePath(path: string): string {
 }
 const drawQuantityGroup = {
     name: "drawQuantity",
-    gMax: 5,
+    gMax: 3,
 };
 
 export const cardList: Record<string, CardData> = {
@@ -127,7 +130,7 @@ export const cardList: Record<string, CardData> = {
                 id: "sketch_quantity",
 
                 qVal: 1,
-                qMax: 5,
+                qMax: 3,
                 qMin: 0,
                 perPrice: 10,
                 qGroup: drawQuantityGroup,
@@ -141,7 +144,7 @@ export const cardList: Record<string, CardData> = {
                 id: "color_quantity",
 
                 qVal: 0,
-                qMax: 5,
+                qMax: 3,
                 qMin: 0,
                 perPrice: 15,
                 qGroup: drawQuantityGroup,
@@ -311,6 +314,20 @@ export const cardList: Record<string, CardData> = {
                         visibleIf: { questionId: "character_detail", value: ["Flat Color", "Fully Rendered"] }
                         //preChecked: true
                     },
+                    {
+                        optionName: "Basic",
+                        optionDescription: `Basic details, simplified rendering <br><br><span style="color: rgba(var(--accentRGB), .7);">(<span class="b7">Flat Color</span> OR <span class="b7">Fully Rendered</span> required)</span>`,
+                        optionPrice: 35,
+                        visibleIf: { questionId: "character_detail", value: ["Fully Rendered", "Flat Color"] },
+                        disabled: true,
+                    },
+                    {
+                        optionName: "Complex",
+                        optionDescription: `Complex and well rendered background. <br><br><span style="color: rgba(var(--accentRGB), .7);">(<span class="b7">Fully Rendered</span> required)</span>`,
+                        optionPrice: 50,
+                        visibleIf: { questionId: "character_detail", value: "Fully Rendered" },
+                        disabled: true,
+                    },
                 ],
                 required: false,
             },
@@ -342,7 +359,7 @@ export const cardList: Record<string, CardData> = {
                 questionDescription: "How many characters did you put?",
                 id: "character_count",
 
-                qMax: 5,
+                qMax: 2,
             },
             {
                 category: "request_detailing",
@@ -371,7 +388,7 @@ export const cardList: Record<string, CardData> = {
                 id: "version_count",
 
                 perPrice: 5,
-                qMax: 5,
+                qMax: 2,
             },
             {
                 category: "contacts",
@@ -489,6 +506,7 @@ export const cardList: Record<string, CardData> = {
                         optionName: "Sketches",
                         optionDescription: "Background is drawn as sketches, little to no color",
                         optionPrice: 15,
+                        disabled: true,
                         //preChecked: true
                     },
                     {
@@ -507,13 +525,15 @@ export const cardList: Record<string, CardData> = {
                         optionName: "Basic",
                         optionDescription: `Basic details, simplified rendering <br><br><span style="color: rgba(var(--accentRGB), .7);">(<span class="b7">Flat Color</span> OR <span class="b7">Fully Rendered</span> required)</span>`,
                         optionPrice: 35,
-                        visibleIf: { questionId: "character_detail", value: ["Fully Rendered", "Flat Color"] }
+                        visibleIf: { questionId: "character_detail", value: ["Fully Rendered", "Flat Color"] },
+                        disabled: true,
                     },
                     {
                         optionName: "Complex",
                         optionDescription: `Complex and well rendered background. <br><br><span style="color: rgba(var(--accentRGB), .7);">(<span class="b7">Fully Rendered</span> required)</span>`,
                         optionPrice: 50,
-                        visibleIf: { questionId: "character_detail", value: "Fully Rendered" }
+                        visibleIf: { questionId: "character_detail", value: "Fully Rendered" },
+                        disabled: true,
                     },
                     //{
                     //    optionName: "This is a robbery, fuck you",
@@ -530,8 +550,8 @@ export const cardList: Record<string, CardData> = {
                 type: "flipflop",
                 id: "specialty",
                 options: [
-                    { optionName: "Off", optionDescription: "No need.", optionPrice: 0, preChecked: true },
-                    { optionName: "On", optionDescription: "I need intricate details of specific things!", optionPrice: 30 },
+                    { optionName: "Off", optionDescription: "No need.", optionPrice: 0, preChecked: true, disabled: false },
+                    { optionName: "On", optionDescription: "I need intricate details of specific things!", optionPrice: 30, disabled: true },
                 ],
             },
             {
@@ -570,7 +590,7 @@ export const cardList: Record<string, CardData> = {
                 questionDescription: "How many characters did you put?",
                 id: "character_count",
 
-                qMax: 5,
+                qMax: 2,
             },
             {
                 category: "request_detailing",
@@ -589,6 +609,7 @@ export const cardList: Record<string, CardData> = {
                 id: "accessories_count",
 
                 perPrice: 5,
+                qMax: 3,
             },
             {
                 category: "request_detailing",
@@ -609,7 +630,7 @@ export const cardList: Record<string, CardData> = {
                 id: "version_count",
 
                 perPrice: 5,
-                qMax: 5,
+                qMax: 2,
             },
             {
                 category: "contacts",

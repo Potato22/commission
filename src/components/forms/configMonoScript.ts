@@ -211,6 +211,8 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
         document.querySelectorAll(".conditionalOpt").forEach((elem) => {
             const theThingie = elem as HTMLElement;
             const visibleIf = theThingie.getAttribute("data-visible-if") as string;
+            const disabled = theThingie.classList.contains("radioNA");
+            disabled ? theThingie.classList.add("radioDisabled") : null;
             if (!visibleIf) return;
             try {
                 const cond = JSON.parse(visibleIf);
@@ -220,14 +222,14 @@ function initConfigPageLogic(cardData: CardData, lookupConfigId: string, command
                 ) as HTMLInputElement;
 
                 let shouldShow = false;
-                if (selected) {
+                if (selected && !disabled) {
                     if (Array.isArray(cond.value)) {
                         shouldShow = cond.value.includes(selected.value);
                     } else {
                         shouldShow = selected.value === cond.value;
                     }
                 }
-                if (shouldShow) {
+                if (shouldShow && !disabled) {
                     theThingie.style.display = "";
                     theThingie.classList.remove("radioDisabled");
                 } else {

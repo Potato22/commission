@@ -1,4 +1,5 @@
 import { withLoaderAnim } from "../utils/quirkyLoaderAsync";
+import { devConsole } from "./devConsole";
 
 import.meta.env.DEV
   ? console.log(
@@ -11,14 +12,31 @@ const localUrl = "http://127.0.0.1:8787?rc";
 // const onlineUrl = "http://127.0.0.1:8787?rc";
 const onlineUrl = "https://pottocomm-collector.pottoart.workers.dev?rc";
 
+//devfunc; fake return of slots for testing
+const fakeSlots: DbSlots = {
+  isFull: false,
+  count: 5,
+  max: 5
+};
+
 async function fetchWithFallback() {
+  const tryFetch = async (url: string) => {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) throw new Error(`Slot fetch failed: ${response.status}`);
+    return response;
+  };
+
   try {
     if (import.meta.env.DEV) {
-      const response = await fetch(localUrl, { method: "GET" });
-      // logIfSlotsFull();
-      if (response.ok) return response;
+      devConsole("%c" + "[DEV] Slot check faked.", "color: red; font-size: 2rem; font-weight: bold;");
+      //inject fake
+      return new Response(JSON.stringify(fakeSlots), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } else {
+      return await fetch(onlineUrl, { method: "GET" });
     }
-    return await fetch(onlineUrl, { method: "GET" });
   } catch (err) {
     console.log(
       "%c" + "[DEV: slotCheck] Local worker did not respond, using deployed worker",
@@ -35,7 +53,23 @@ export type DbSlots = {
   max: number;
 };
 
-export const dbSlotsPromise = fetchWithFallback().then(res => res.json()) as Promise<DbSlots>;
+export const dbSlotsPromise = fetchWithFallback()
+  .then(async (res) => {
+    const data = await res.json();
+    if (
+      typeof data?.count !== "number" ||
+      typeof data?.max !== "number" ||
+      typeof data?.isFull !== "boolean"
+    ) {
+      throw new Error("Invalid slot payload");
+    }
+    return data as DbSlots;
+  })
+  .catch(() => ({
+    count: 0,
+    max: 0,
+    isFull: true,
+  }));
 
 export function slotCheckLS(command: string, slots?: DbSlots) {
 

@@ -123,12 +123,17 @@
 
 .radioDisabled {
     cursor: not-allowed;
-    opacity: .3;
+    opacity: .5;
     pointer-events: none;
 
     .customRadio {
         border-color: var(--foreSecondary);
         background: var(--baseSecondary);
+    }
+
+    &.radioNA {
+        filter: saturate(0);
+        opacity: .3;
     }
 }
 

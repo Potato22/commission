@@ -271,7 +271,7 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                 config.options &&
                 config.options.map((opt, optIdx) => (
                   <label
-                    class={`formComponent ${opt.visibleIf ? "conditionalOpt" : ""}`}
+                    class={`formComponent ${opt.visibleIf ? "conditionalOpt" : ""} ${opt.disabled ? "radioNA radioDisabled" : ""}`}
                     data-visible-if={
                       opt.visibleIf ? JSON.stringify(opt.visibleIf) : ""
                     }
@@ -288,29 +288,31 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                           required={config.required}
                           checked={!!opt.preChecked}
                         />
-                        <span class="customRadio" />
+                        {opt.disabled ? <span class="material-symbols-rounded">close</span> : <span class="customRadio" />}
                         <div class="optionTitle">
-                          {opt.optionName ? opt.optionName : "?"}
+                          {opt.optionName ? opt.optionName : "?"} {opt.disabled && <span class="b7" style="color: var(--accent); font-size: 1rem;">N/A</span>}
                         </div>
                       </div>
                       <div class="optionValue">
                         {opt.optionPrice == null || opt.optionPrice === 0
                           ? "-"
                           : opt.basePrice //elseif
-                            ? "€" + opt.optionPrice
-                            : "+€" + opt.optionPrice}
+                            ? (opt.disabled ? "..." : "€" + opt.optionPrice)
+                            : (opt.disabled ? "..." : "+€" + opt.optionPrice)
+                            }
                       </div>
                     </div>
                     <div class="optionDesc" set:html={opt.optionDescription} />
                   </label>
-                ))}
+                ))
+              }
 
               {config.type === "flipflop" &&
                 config.options &&
                 config.options.length === 2 && (
                   <div class="flipflopBox">
                     {config.options.map((opt, optIdx) => (
-                      <label class="formComponent flipflop">
+                      <label class={`formComponent flipflop ${opt.disabled ? "radioDisabled radioNA" : ""}`}>
                         <input
                           type="radio"
                           name={config.id}
@@ -320,21 +322,23 @@ const groupedConfig = groupByCategory(cardData.configData ?? []);
                         />
                         <div class="flipflopHeader">
                           <div class="optionTitle">
-                            {opt.optionName ? opt.optionName : "?"}
+                            {opt.optionName ? opt.optionName : "?"} {opt.disabled && <span class="b7" style="color: var(--accent); font-size: 1rem;">N/A</span>}
                           </div>
                           <div class="optionValue">
                             {opt.optionPrice == null || opt.optionPrice === 0
                               ? ""
                               : opt.basePrice //elseif
-                                ? "€" + opt.optionPrice
-                                : "+€" + opt.optionPrice}
+                                ? (opt.disabled ? "-" : "€" + opt.optionPrice)
+                                : (opt.disabled ? "-" : "+€" + opt.optionPrice)
+                                }
                           </div>
                         </div>
                         <div class="optionDesc">{opt.optionDescription}</div>
                       </label>
                     ))}
                   </div>
-                )}
+                )
+              }
 
               {config.type === "textArea" && (
                 <div class="formComponent notLabel">
